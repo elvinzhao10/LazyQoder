@@ -2,7 +2,7 @@
 
 const fs = require('node:fs');
 
-const HOSTS = Object.freeze(['qoder-cli', 'qoder-ide', 'qoder', 'trae-cli', 'trae-ide', 'trae-work']);
+const HOSTS = Object.freeze(['codebuddy-cli', 'codebuddy-ide', 'workbuddy', 'trae-cli', 'trae-ide', 'trae-work']);
 const NATIVE_MODES = Object.freeze(['invoke-documented', 'observe-only', 'descriptor-only', 'unavailable']);
 const RAW_EVENTS = Object.freeze([
   'PostToolUse', 'PostToolUseFailure', 'PreCompact', 'PreToolUse', 'SessionStart', 'Stop', 'StopFailure',
@@ -82,7 +82,7 @@ function validateSurface(value, { now, allowPending = false }) {
   text(value.surface_id, 'surface.surface_id', ID);
   oneOf(value.native_mode, NATIVE_MODES, 'surface.native_mode');
   if (value.host_authority !== 'host') fail('surface authority must remain host');
-  oneOf(value.package_owner, ['LazyQoder', 'LazyTrae'], 'surface.package_owner');
+  oneOf(value.package_owner, ['LazyBuddy', 'LazyTrae'], 'surface.package_owner');
   oneOf(value.direction, ['host-to-package', 'package-to-host', 'bidirectional', 'none'], 'surface.direction');
   text(value.merge_key, 'surface.merge_key', ID);
   text(value.base_digest, 'surface.base_digest', SHA256);
@@ -101,7 +101,7 @@ function validateBase(value, type, required, { now, allowPending = false }) {
   if (value.record_type !== type) fail(`record_type must be ${type}`);
   oneOf(value.host, HOSTS, 'host');
   validateSurface(record(value.surface, 'surface'), { now, allowPending });
-  const expectedOwner = value.host.startsWith('trae-') ? 'LazyTrae' : 'LazyQoder';
+  const expectedOwner = value.host.startsWith('trae-') ? 'LazyTrae' : 'LazyBuddy';
   if (value.surface.package_owner !== expectedOwner) fail(`surface package owner must be ${expectedOwner}`);
   return value;
 }
@@ -114,7 +114,7 @@ function canonicalizeEvent(value, { seen = new Set(), now = new Date().toISOStri
   if (value.record_type !== 'canonical-event') fail('record_type must be canonical-event');
   oneOf(value.host, HOSTS, 'host');
   validateSurface(record(value.surface, 'surface'), { now });
-  const expectedOwner = value.host.startsWith('trae-') ? 'LazyTrae' : 'LazyQoder';
+  const expectedOwner = value.host.startsWith('trae-') ? 'LazyTrae' : 'LazyBuddy';
   if (value.surface.package_owner !== expectedOwner) fail(`surface package owner must be ${expectedOwner}`);
   text(value.event_id, 'event_id', ID);
   text(value.raw_event, 'raw_event');
@@ -180,7 +180,7 @@ function createPendingOnboardingReceipts({ generatedAt = new Date().toISOString(
   return HOSTS.map(host => validateOnboardingReceipt({
     schema_version: 1, contract_version: '1.0.0', record_type: 'onboarding-receipt', receipt_id: `pending:${host}`,
     host, status: 'pending', generated_at: generatedAt,
-    surface: { surface_id: `${host}:onboarding`, native_mode: 'observe-only', host_authority: 'host', package_owner: host.startsWith('trae-') ? 'LazyTrae' : 'LazyQoder', direction: 'host-to-package', merge_key: `${host}:onboarding`, base_digest: '0'.repeat(64), freshness: { status: 'pending', observed_at: null, expires_at: null }, source_receipt: { receipt_id: `pending:${host}`, sha256: '0'.repeat(64), redacted: true } },
+    surface: { surface_id: `${host}:onboarding`, native_mode: 'observe-only', host_authority: 'host', package_owner: host.startsWith('trae-') ? 'LazyTrae' : 'LazyBuddy', direction: 'host-to-package', merge_key: `${host}:onboarding`, base_digest: '0'.repeat(64), freshness: { status: 'pending', observed_at: null, expires_at: null }, source_receipt: { receipt_id: `pending:${host}`, sha256: '0'.repeat(64), redacted: true } },
     current_host_evidence: null,
   }, { now: generatedAt }));
 }

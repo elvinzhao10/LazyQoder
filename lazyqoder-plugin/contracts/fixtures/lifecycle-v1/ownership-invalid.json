@@ -8,7 +8,7 @@
         0,
         "path"
       ],
-      "value": "../LazyQoder/releases",
+      "value": "../LazyBuddy/releases",
       "expected_boundary": "schema"
     },
     {
@@ -23,14 +23,14 @@
       "expected_boundary": "schema"
     },
     {
-      "id": "qoder-private-path",
+      "id": "workbuddy-private-path",
       "operation": "replace",
       "path": [
         "created_files",
         0,
         "path"
       ],
-      "value": "~/.qoder/plugins/lazytrae",
+      "value": "~/.workbuddy/plugins/lazytrae",
       "expected_boundary": "schema"
     },
     {
@@ -41,7 +41,7 @@
         0,
         "project_root"
       ],
-      "value": "/home/example/.qoder/plugins/lazytrae",
+      "value": "/home/example/.workbuddy/plugins/lazytrae",
       "expected_boundary": "schema"
     },
     {
@@ -56,14 +56,14 @@
       "expected_boundary": "schema"
     },
     {
-      "id": "project-root-qoder-shorthand",
+      "id": "project-root-workbuddy-shorthand",
       "operation": "replace",
       "path": [
         "registered_project_declarations",
         0,
         "project_root"
       ],
-      "value": "~/.qoder/project",
+      "value": "~/.workbuddy/project",
       "expected_boundary": "schema"
     },
     {
@@ -147,7 +147,7 @@
         0,
         "path"
       ],
-      "value": "LazyQoder/releases/1.0.3-ec3bbbf9e170",
+      "value": "LazyBuddy/releases/1.0.3-ec3bbbf9e170",
       "expected_boundary": "schema"
     }
   ]

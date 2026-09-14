@@ -5,8 +5,8 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const HOSTS = Object.freeze(['qoder-cli', 'qoder-ide', 'qoder', 'trae-cli', 'trae-ide', 'trae-work']);
-const PRODUCTS = Object.freeze(['lazyqoder', 'lazytrae']);
+const HOSTS = Object.freeze(['codebuddy-cli', 'codebuddy-ide', 'workbuddy', 'trae-cli', 'trae-ide', 'trae-work']);
+const PRODUCTS = Object.freeze(['lazybuddy', 'lazytrae']);
 const EXCLUDED_SEGMENTS = new Set(['.git', '.cache', 'cache', 'caches', 'secrets', 'runtime', 'state', 'manifests', 'receipts']);
 const SHA256 = /^[0-9a-f]{64}$/;
 const SOURCE_SHA = /^[0-9a-f]{40}$/;
@@ -140,7 +140,7 @@ function validateProducts(products, inventory) {
     }
     refuse(typeof product.command !== 'string' || product.command.length === 0, 'PRODUCT_SCHEMA', 'command');
     refuse(typeof product.runtime !== 'string' || product.runtime.length === 0, 'PRODUCT_SCHEMA', 'runtime');
-    const prefix = product.product_id === 'lazyqoder' ? 'LazyQoder/' : 'LazyTrae/';
+    const prefix = product.product_id === 'lazybuddy' ? 'LazyBuddy/' : 'LazyTrae/';
     const records = inventory.filter((entry) => entry.path.startsWith(prefix));
     refuse(records.length === 0, 'PRODUCT_INVENTORY', product.product_id);
     const archive = records.find((entry) => entry.path === product.archive_path);
@@ -163,7 +163,7 @@ function destinationExists(destination) {
 function validateCandidate(candidate, options) {
   exactKeys(candidate, ['schema_version', 'release_version', 'payload_stage', 'products', 'shared_contract_digests', 'payload_inventory', 'detached_metadata', 'host_rows', 'onboarding_sibling', 'combined_digest'], 'CANDIDATE_SCHEMA');
   refuse(candidate.schema_version !== 'lazyseries.paired-candidate.v1', 'CANDIDATE_SCHEMA', 'schema version');
-  refuse(candidate.release_version !== '1.2.2', 'CANDIDATE_SCHEMA', 'release version');
+  refuse(candidate.release_version !== '1.2.0', 'CANDIDATE_SCHEMA', 'release version');
   refuse(candidate.payload_stage !== 'staged' && candidate.payload_stage !== 'immutable-final', 'PAYLOAD_STAGE', candidate.payload_stage);
   refuse(destinationExists(options.destination), 'DESTINATION_EXISTS', options.destination);
   const inventory = candidate.payload_inventory;
@@ -196,7 +196,7 @@ function validateCandidate(candidate, options) {
     refuse(index > 0 && candidate.shared_contract_digests[index - 1].name >= entry.name, 'SHARED_CONTRACTS', 'not ordered');
   });
   validateHostRows(candidate.host_rows, 'pending');
-  refuse(candidate.onboarding_sibling !== 'live-test-v1.2.2-<combined-digest>-onboarding', 'CANDIDATE_SCHEMA', 'onboarding sibling');
+  refuse(candidate.onboarding_sibling !== 'live-test-v1.2.0-<combined-digest>-onboarding', 'CANDIDATE_SCHEMA', 'onboarding sibling');
   refuse(computeCombinedDigest(candidate) !== candidate.combined_digest, 'COMBINED_DIGEST_MISMATCH', 'candidate projection');
   return candidate.combined_digest;
 }

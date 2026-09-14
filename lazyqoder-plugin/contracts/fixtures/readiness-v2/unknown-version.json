@@ -2,7 +2,7 @@
   "schema_version": 2,
   "contract_version": "99.0.0",
   "policy_digest": "3a65e1d7108c1a607035cbb127117dc5c18d0116ddf88c3e9ca5aaa4db032c4a",
-  "host": "qoder-cli",
+  "host": "codebuddy-cli",
   "capability": "local_search",
   "provider": "rg",
   "internal_status": "package-ready",
