@@ -342,7 +342,7 @@ an endorsement of installation through private host state.
 
 ## v0.3.0 — Plugin Scaffold (2026-07-09)
 
-- **Created** plugin structure: `.qodercli-plugin/plugin.json`, component directories
+- **Created** plugin structure: `.qoder-plugin/plugin.json`, component directories
 - **Created** 8 placeholder commands + 8 placeholder skills (stubs for v0.4)
 - **Created** hooks scaffold (`hooks/hooks.json`) — 12 event types (populated with real commands in v0.6)
 - **Created** MCP scaffold (`.mcp.json`) — `mcpServers` populated with 5 servers in v0.8

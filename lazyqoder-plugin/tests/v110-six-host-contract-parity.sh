@@ -234,10 +234,10 @@ for (const root of [buddyContracts, traeContracts]) {
 }
 
 const versionFiles = [
-  [path.join(buddyRoot, 'lazyqoder-plugin', '.qodercli-plugin', 'plugin.json'), (value) => value.version],
+  [path.join(buddyRoot, 'lazyqoder-plugin', '.qoder-plugin', 'plugin.json'), (value) => value.version],
   [path.join(buddyRoot, 'lazyqoder-plugin', '.qoder-plugin', 'plugin.json'), (value) => value.version],
   [path.join(buddyRoot, 'lazyqoder-plugin', 'tooling', 'package.json'), (value) => value.version],
-  [path.join(buddyRoot, '.qodercli-plugin', 'marketplace.json'), (value) => value.plugins?.[0]?.version],
+  [path.join(buddyRoot, '.qoder-plugin', 'marketplace.json'), (value) => value.plugins?.[0]?.version],
   [path.join(traeRoot, 'lazytrae-plugin', 'packages', 'cli', 'package.json'), (value) => value.version],
   [path.join(traeRoot, 'lazytrae-plugin', 'packages', 'cli', 'tooling', 'package.json'), (value) => value.version],
   [path.join(traeRoot, 'lazytrae-plugin', 'packages', 'mcp', 'package.json'), (value) => value.version],

@@ -46,11 +46,11 @@ function fixture() {
   const sourceRoot = path.join(sandbox, 'source checkout');
   const packageRoot = path.join(sourceRoot, 'lazyqoder-plugin');
   fs.mkdirSync(path.join(packageRoot, 'scripts'), { recursive: true });
-  fs.mkdirSync(path.join(packageRoot, '.qodercli-plugin'), { recursive: true });
+  fs.mkdirSync(path.join(packageRoot, '.qoder-plugin'), { recursive: true });
   fs.cpSync(path.join(PLUGIN_ROOT, 'scripts', 'lifecycle'), path.join(packageRoot, 'scripts', 'lifecycle'), { recursive: true });
   fs.copyFileSync(CLI, path.join(packageRoot, 'scripts', 'lazyqoder-lifecycle.js'));
   fs.writeFileSync(
-    path.join(packageRoot, '.qodercli-plugin', 'plugin.json'),
+    path.join(packageRoot, '.qoder-plugin', 'plugin.json'),
     '{"name":"lazyqoder","version":"1.0.3"}\n',
   );
   fs.mkdirSync(projectRoot);
@@ -61,7 +61,7 @@ function fixture() {
     ...staged,
     commitSha,
     entrypoint: 'lazyqoder-plugin/scripts/lazyqoder-lifecycle.js',
-    manifestRelativePath: 'lazyqoder-plugin/.qodercli-plugin/plugin.json',
+    manifestRelativePath: 'lazyqoder-plugin/.qoder-plugin/plugin.json',
     origin: ORIGIN,
     runtimePath: process.execPath,
     version: '1.0.3',

@@ -49,7 +49,7 @@ from pathlib import Path
 import sys
 
 root = Path(sys.argv[1])
-code = json.loads((root / ".qodercli-plugin/plugin.json").read_text(encoding="utf-8"))
+code = json.loads((root / ".qoder-plugin/plugin.json").read_text(encoding="utf-8"))
 work = json.loads((root / ".qoder-plugin/plugin.json").read_text(encoding="utf-8"))
 descriptor = code["userConfig"]["mcp_mode"]
 assert set(descriptor) == {"description", "sensitive"}

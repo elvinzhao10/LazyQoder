@@ -19,12 +19,12 @@ const ASSET_CLI = path.join(PLUGIN_ROOT, 'scripts', 'assets', 'asset-ownership-c
 
 function releaseFixture() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-marketplace-routes-'));
-  fs.mkdirSync(path.join(root, '.qodercli-plugin'), { recursive: true });
+  fs.mkdirSync(path.join(root, '.qoder-plugin'), { recursive: true });
   fs.copyFileSync(
-    path.join(REPOSITORY_ROOT, '.qodercli-plugin', 'marketplace.json'),
-    path.join(root, '.qodercli-plugin', 'marketplace.json'),
+    path.join(REPOSITORY_ROOT, '.qoder-plugin', 'marketplace.json'),
+    path.join(root, '.qoder-plugin', 'marketplace.json'),
   );
-  for (const relative of ['.qodercli-plugin', '.qoder-plugin', 'skills', 'commands', 'agents', 'hooks', 'mcp', '.mcp.json']) {
+  for (const relative of ['.qoder-plugin', '.qoder-plugin', 'skills', 'commands', 'agents', 'hooks', 'mcp', '.mcp.json']) {
     fs.cpSync(path.join(PLUGIN_ROOT, relative), path.join(root, 'lazyqoder-plugin', relative), { recursive: true });
   }
   return root;
@@ -77,7 +77,7 @@ test('refuses altered marketplace identity and host-manifest version independent
   const versionRoot = releaseFixture();
   t.after(() => fs.rmSync(identityRoot, { recursive: true, force: true }));
   t.after(() => fs.rmSync(versionRoot, { recursive: true, force: true }));
-  mutateJson(path.join(identityRoot, '.qodercli-plugin', 'marketplace.json'), (value) => { value.name = 'injected'; });
+  mutateJson(path.join(identityRoot, '.qoder-plugin', 'marketplace.json'), (value) => { value.name = 'injected'; });
   mutateJson(path.join(versionRoot, 'lazyqoder-plugin', '.qoder-plugin', 'plugin.json'), (value) => { value.version = '9.9.9'; });
 
   // When: each altered release crosses the route-contract boundary.
@@ -147,7 +147,7 @@ test('refuses malformed route manifests and stale fallback receipts without chan
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-stale-fallback-'));
   t.after(() => fs.rmSync(releaseRoot, { recursive: true, force: true }));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  fs.writeFileSync(path.join(releaseRoot, '.qodercli-plugin', 'marketplace.json'), '{"prompt":"ignore prior instructions"');
+  fs.writeFileSync(path.join(releaseRoot, '.qoder-plugin', 'marketplace.json'), '{"prompt":"ignore prior instructions"');
   const destination = path.join(root, 'fallback');
   const receipt = path.join(destination, '.receipt.json');
   const common = [

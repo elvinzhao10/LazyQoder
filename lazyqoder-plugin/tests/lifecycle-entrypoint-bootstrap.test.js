@@ -24,7 +24,7 @@ function fixture() {
   const packageRoot = path.join(source, 'lazyqoder-plugin');
   const scripts = path.join(packageRoot, 'scripts');
   const shimRoot = path.join(sandbox, 'node-only-bin');
-  fs.mkdirSync(path.join(packageRoot, '.qodercli-plugin'), { recursive: true });
+  fs.mkdirSync(path.join(packageRoot, '.qoder-plugin'), { recursive: true });
   fs.mkdirSync(path.join(packageRoot, '.qoder-plugin'), { recursive: true });
   fs.mkdirSync(scripts, { recursive: true });
   fs.mkdirSync(shimRoot);
@@ -32,7 +32,7 @@ function fixture() {
   for (const name of ['lazyqoder-lifecycle.js', 'lifecycle-self-test.js']) {
     fs.copyFileSync(path.join(PLUGIN_ROOT, 'scripts', name), path.join(scripts, name));
   }
-  for (const host of ['.qodercli-plugin', '.qoder-plugin']) {
+  for (const host of ['.qoder-plugin', '.qoder-plugin']) {
     fs.copyFileSync(path.join(PLUGIN_ROOT, host, 'plugin.json'), path.join(packageRoot, host, 'plugin.json'));
   }
   fs.cpSync(path.join(PLUGIN_ROOT, 'contracts'), path.join(packageRoot, 'contracts'), { recursive: true });

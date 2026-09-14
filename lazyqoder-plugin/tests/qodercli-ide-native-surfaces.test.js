@@ -10,7 +10,7 @@ const { defaultRouteForHost } = require('../scripts/lifecycle/host-handoff');
 
 const PLUGIN_ROOT = path.resolve(__dirname, '..');
 const CLI = path.join(PLUGIN_ROOT, 'scripts', 'lazyqoder-qodercli-ide-surfaces.js');
-const MARKETPLACE = path.join(PLUGIN_ROOT, '..', '.qodercli-plugin', 'marketplace.json');
+const MARKETPLACE = path.join(PLUGIN_ROOT, '..', '.qoder-plugin', 'marketplace.json');
 const SURFACES = [
   'automation-status',
   'plan-design-todo',

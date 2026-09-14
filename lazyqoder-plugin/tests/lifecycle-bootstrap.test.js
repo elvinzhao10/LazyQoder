@@ -31,11 +31,11 @@ function git(cwd, args) {
 function writeFixtureFiles(root, selfTest = "process.stdout.write('self-test-ok\\n');\n") {
   const packageRoot = path.join(root, 'lazyqoder-plugin');
   const contracts = path.join(packageRoot, 'contracts');
-  fs.mkdirSync(path.join(packageRoot, '.qodercli-plugin'), { recursive: true });
+  fs.mkdirSync(path.join(packageRoot, '.qoder-plugin'), { recursive: true });
   fs.mkdirSync(path.join(packageRoot, '.qoder-plugin'), { recursive: true });
   fs.mkdirSync(path.join(packageRoot, 'scripts'), { recursive: true });
   fs.mkdirSync(contracts, { recursive: true });
-  fs.writeFileSync(path.join(packageRoot, '.qodercli-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.2.2"}\n');
+  fs.writeFileSync(path.join(packageRoot, '.qoder-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.2.2"}\n');
   fs.writeFileSync(path.join(packageRoot, '.qoder-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.2.2"}\n');
   fs.writeFileSync(path.join(packageRoot, 'scripts', 'lazyqoder-lifecycle.js'), "console.log('fixture-launch-ok')\n");
   fs.writeFileSync(path.join(packageRoot, 'scripts', 'lifecycle-self-test.js'), selfTest);
@@ -220,7 +220,7 @@ test('same version at a different SHA requires an exact revision confirmation', 
 
 test('manifest, checksum, self-test, prerequisite, and clone failures preserve active state', async (t) => {
   for (const scenario of [
-    ['missing manifest', (f) => fs.rmSync(path.join(f.source, 'lazyqoder-plugin/.qodercli-plugin/plugin.json')), 'INVALID_MANIFEST'],
+    ['missing manifest', (f) => fs.rmSync(path.join(f.source, 'lazyqoder-plugin/.qoder-plugin/plugin.json')), 'INVALID_MANIFEST'],
     ['host manifest mismatch', (f) => fs.writeFileSync(path.join(f.source, 'lazyqoder-plugin/.qoder-plugin/plugin.json'), '{"name":"lazyqoder","version":"1.0.2"}\n'), 'INVALID_MANIFEST'],
     ['bad checksum', (f) => fs.writeFileSync(path.join(f.source, 'lazyqoder-plugin/contracts/lazy-harness-lifecycle.v1.schema.json.sha256'), `${'0'.repeat(64)}  lazy-harness-lifecycle.v1.schema.json\n`), 'CHECKSUM_MISMATCH'],
     ['misleading self-test success', (f) => fs.writeFileSync(path.join(f.source, 'lazyqoder-plugin/scripts/lifecycle-self-test.js'), "console.log('PASS'); process.exit(7);\n"), 'SELF_TEST_FAILED'],

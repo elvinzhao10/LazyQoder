@@ -41,7 +41,7 @@ test('classifier rejects a current 1.2.1 claim even when migration wording is pr
 for (const [name, relativePath, transform, failure] of [
   ['current 1.2.1 drift', 'README.md', text => text.replace('v1.2.2', 'v1.2.1'), 'CURRENT_VERSION_DRIFT_TEXT'],
   ['missing release-note section', 'RELEASE_NOTES.md', text => text.replace('## Rollback', '## Recovery'), 'MISSING_RELEASE_NOTE_SECTION'],
-  ['package/runtime mismatch', 'lazyqoder-plugin/.qodercli-plugin/plugin.json', text => text.replace('"version": "1.2.2"', '"version": "1.2.1"'), 'CURRENT_VERSION_DRIFT'],
+  ['package/runtime mismatch', 'lazyqoder-plugin/.qoder-plugin/plugin.json', text => text.replace('"version": "1.2.2"', '"version": "1.2.1"'), 'CURRENT_VERSION_DRIFT'],
   ['superseded versioned release note', 'RELEASE_NOTES.md', text => text, 'VERSIONED_RELEASE_NOTE_PRESENT'],
 ]) {
   test(`classifier rejects ${name} in a copy`, () => {

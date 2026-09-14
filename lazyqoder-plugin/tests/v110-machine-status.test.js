@@ -68,8 +68,8 @@ test('machine status publishes authoritative v1.1 three-host route boundaries', 
 test('authoritative version fields advance without rewriting historical v1.0.3 fixtures', () => {
   // Given: current package manifests plus immutable historical lifecycle examples.
   const currentFiles = [
-    path.join(REPOSITORY_ROOT, '.qodercli-plugin', 'marketplace.json'),
-    path.join(PLUGIN_ROOT, '.qodercli-plugin', 'plugin.json'),
+    path.join(REPOSITORY_ROOT, '.qoder-plugin', 'marketplace.json'),
+    path.join(PLUGIN_ROOT, '.qoder-plugin', 'plugin.json'),
     path.join(PLUGIN_ROOT, '.qoder-plugin', 'plugin.json'),
     path.join(PLUGIN_ROOT, 'tooling', 'package.json'),
     path.join(PLUGIN_ROOT, 'tooling', 'package-lock.json'),

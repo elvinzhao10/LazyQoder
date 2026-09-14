@@ -4,7 +4,7 @@ set -euo pipefail
 PLUGIN_ROOT="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
 PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" && pwd)"
 REPOSITORY_ROOT="$(cd "$PLUGIN_ROOT/.." && pwd)"
-EXPECTED_VERSION="$(node -p 'require(process.argv[1]).version' "$PLUGIN_ROOT/.qodercli-plugin/plugin.json")"
+EXPECTED_VERSION="$(node -p 'require(process.argv[1]).version' "$PLUGIN_ROOT/.qoder-plugin/plugin.json")"
 
 python3 - "$REPOSITORY_ROOT" "$PLUGIN_ROOT" "$EXPECTED_VERSION" <<'PY'
 import json
@@ -93,8 +93,8 @@ def assert_durable_lifecycle_docs(root, package_root):
 def assert_static_versions(root, package_root, value):
     version_pattern = re.escape(value)
     json_versions = [
-        (root / ".qodercli-plugin/marketplace.json", ("plugins", 0, "version")),
-        (package_root / ".qodercli-plugin/plugin.json", ("version",)),
+        (root / ".qoder-plugin/marketplace.json", ("plugins", 0, "version")),
+        (package_root / ".qoder-plugin/plugin.json", ("version",)),
         (package_root / ".qoder-plugin/plugin.json", ("version",)),
         (package_root / "tooling/package.json", ("version",)),
         (package_root / "tooling/lsp/python/package.json", ("version",)),
@@ -144,7 +144,7 @@ def assert_release_integrity(root, package_root, value):
 assert_static_versions(repository_root, plugin_root, expected)
 assert_durable_lifecycle_docs(repository_root, plugin_root)
 
-source_manifest = plugin_root / ".qodercli-plugin/plugin.json"
+source_manifest = plugin_root / ".qoder-plugin/plugin.json"
 source_before = source_manifest.read_bytes()
 with tempfile.TemporaryDirectory(prefix="lazyqoder v102 version fixture ") as temporary:
     fixture_root = Path(temporary) / "Lazy Buddy Release"
@@ -157,7 +157,7 @@ with tempfile.TemporaryDirectory(prefix="lazyqoder v102 version fixture ") as te
     assert_release_integrity(fixture_root, fixture_package, expected)
     if " " not in str(fixture_root):
         raise AssertionError("portable release fixture does not contain spaces")
-    fixture_manifest = fixture_package / ".qodercli-plugin/plugin.json"
+    fixture_manifest = fixture_package / ".qoder-plugin/plugin.json"
     value = load_json(fixture_manifest, fixture_root)
     value["version"] = "1.0.1"
     fixture_manifest.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
@@ -165,7 +165,7 @@ with tempfile.TemporaryDirectory(prefix="lazyqoder v102 version fixture ") as te
         assert_release_integrity(fixture_root, fixture_package, expected)
     except AssertionError as error:
         message = str(error)
-        if "lazyqoder-plugin/.qodercli-plugin/plugin.json#version" not in message:
+        if "lazyqoder-plugin/.qoder-plugin/plugin.json#version" not in message:
             raise AssertionError(f"mutation failure omitted the exact manifest path: {message}") from error
         if f"expected '{expected}', got '1.0.1'" not in message:
             raise AssertionError(f"mutation failure omitted the expected values: {message}") from error
