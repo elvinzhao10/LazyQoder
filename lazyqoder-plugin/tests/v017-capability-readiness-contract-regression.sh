@@ -20,7 +20,7 @@ contract_path = pathlib.Path(sys.argv[1])
 fixture_path = pathlib.Path(sys.argv[2])
 policy_digest = sys.argv[3]
 statuses = [
-    "host-ready",
+    "package-ready",
     "owned-ready",
     "missing",
     "incompatible",
