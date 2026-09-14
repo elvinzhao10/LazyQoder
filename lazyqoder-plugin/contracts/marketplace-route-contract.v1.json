@@ -2,30 +2,38 @@
   "schema_version": 1,
   "version": "1.2.2",
   "identity": {
-    "marketplace": "lazybuddy",
-    "owner": "LazyBuddy",
-    "plugin": "lazybuddy",
-    "codebuddy_install_id": "lazybuddy@lazybuddy"
+    "marketplace": "lazyqoder",
+    "owner": "LazyQoder",
+    "plugin": "lazyqoder",
+    "qodercli_install_id": "lazyqoder@lazyqoder"
   },
   "artifacts": {
-    ".codebuddy-plugin/marketplace.json": "abff630891640ecfbbfc81b8740e6458faf4ef4b263fb313483b006cafddfebf",
-    "lazybuddy-plugin/.codebuddy-plugin/plugin.json": "13399949f19039edd6a6fac6562b929da0501fd132c5da237ec78854ca3c2cec",
-    "lazybuddy-plugin/.workbuddy-plugin/plugin.json": "c4bb3ec0d7827a299bd5ae73521478ec9f9f16ec3c4cf3ce6c177aa76a363a43"
+    ".qoder-plugin/marketplace.json": "d2f8fa0822dba5fd38cad5279fa43f93fbd769a15a0c9f7424e7c243b97689ee",
+    "lazyqoder-plugin/.qodercli-plugin/plugin.json": "078cfaeed3c30627fde9ec6d1069c618e1902e9ef76cbcb7c2262fb229c4fd99",
+    "lazyqoder-plugin/.qoder-plugin/plugin.json": "d5829aca63c366bada99c607bb2da3bb538734d6f0c8e52d9e803563b58f06b5"
   },
   "payload": {
-    "roots": ["skills", "commands", "agents", "hooks", "mcp"],
-    "files": [".mcp.json"],
-    "file_count": 61,
-    "inventory_sha256": "3ddfbc45e0b1ba9dd15de24a3c1e593e5f160c0e3a6839018f6bd0d33b449c60"
+    "roots": [
+      "skills",
+      "commands",
+      "agents",
+      "hooks",
+      "mcp"
+    ],
+    "files": [
+      ".mcp.json"
+    ],
+    "file_count": 75,
+    "inventory_sha256": "e2a437f875c5326b17a569c9ba8499e89a15bc0dca5c0dbb7c905391080eebee"
   },
   "default_routes": {
-    "codebuddy-ide": "codebuddy-marketplace",
-    "workbuddy": "workbuddy-full-plugin"
+    "qodercli-ide": "qodercli-marketplace",
+    "qoder": "qoder-full-plugin"
   },
   "fallback": {
     "route": "manual-skills-mcp-fallback",
     "generated_only": true,
-    "asset_manifest": "lazybuddy-plugin/asset-source-manifest.v1.json",
+    "asset_manifest": "lazyqoder-plugin/asset-source-manifest.v1.json",
     "receipt_required_for_removal": true,
     "coexists_with_marketplace": false
   }
