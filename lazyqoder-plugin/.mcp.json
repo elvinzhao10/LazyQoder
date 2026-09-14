@@ -1,0 +1,82 @@
+{
+  "mcpServers": {
+    "run-ledger": {
+      "type": "stdio",
+      "command": "bash",
+      "args": ["${QODER_PLUGIN_ROOT}/mcp/run-ledger/server.sh"],
+      "env": {
+        "CWD": "${QODER_PROJECT_DIR}",
+        "QODER_PROJECT_DIR": "${QODER_PROJECT_DIR}",
+        "LAZYQODER_MCP_MODE": "${user_config.mcp_mode}",
+        "LAZYQODER_DEPENDENCY_ROOT": "${QODER_PLUGIN_DATA}/dependencies",
+        "LAZYQODER_CACHE_ROOT": "${QODER_PLUGIN_DATA}/cache"
+      },
+      "defer_loading": false
+    },
+    "verification": {
+      "type": "stdio",
+      "command": "bash",
+      "args": ["${QODER_PLUGIN_ROOT}/mcp/verification/server.sh"],
+      "env": {
+        "CWD": "${QODER_PROJECT_DIR}",
+        "QODER_PROJECT_DIR": "${QODER_PROJECT_DIR}",
+        "LAZYQODER_MCP_MODE": "${user_config.mcp_mode}",
+        "LAZYQODER_DEPENDENCY_ROOT": "${QODER_PLUGIN_DATA}/dependencies",
+        "LAZYQODER_CACHE_ROOT": "${QODER_PLUGIN_DATA}/cache"
+      },
+      "defer_loading": false
+    },
+    "status-dashboard": {
+      "type": "stdio",
+      "command": "bash",
+      "args": ["${QODER_PLUGIN_ROOT}/mcp/status-dashboard/server.sh"],
+      "env": {
+        "CWD": "${QODER_PROJECT_DIR}",
+        "QODER_PROJECT_DIR": "${QODER_PROJECT_DIR}",
+        "LAZYQODER_MCP_MODE": "${user_config.mcp_mode}",
+        "LAZYQODER_DEPENDENCY_ROOT": "${QODER_PLUGIN_DATA}/dependencies",
+        "LAZYQODER_CACHE_ROOT": "${QODER_PLUGIN_DATA}/cache"
+      },
+      "defer_loading": false
+    },
+    "context-graph": {
+      "type": "stdio",
+      "command": "bash",
+      "args": ["${QODER_PLUGIN_ROOT}/mcp/context-graph/server.sh"],
+      "env": {
+        "CWD": "${QODER_PROJECT_DIR}",
+        "QODER_PROJECT_DIR": "${QODER_PROJECT_DIR}",
+        "LAZYQODER_MCP_MODE": "${user_config.mcp_mode}",
+        "LAZYQODER_DEPENDENCY_ROOT": "${QODER_PLUGIN_DATA}/dependencies",
+        "LAZYQODER_CACHE_ROOT": "${QODER_PLUGIN_DATA}/cache"
+      },
+      "defer_loading": true
+    },
+    "code-intel": {
+      "type": "stdio",
+      "command": "bash",
+      "args": ["${QODER_PLUGIN_ROOT}/mcp/code-intel/server.sh"],
+      "env": {
+        "CWD": "${QODER_PROJECT_DIR}",
+        "QODER_PROJECT_DIR": "${QODER_PROJECT_DIR}",
+        "LAZYQODER_MCP_MODE": "${user_config.mcp_mode}",
+        "LAZYQODER_DEPENDENCY_ROOT": "${QODER_PLUGIN_DATA}/dependencies",
+        "LAZYQODER_CACHE_ROOT": "${QODER_PLUGIN_DATA}/cache"
+      },
+      "defer_loading": true
+    },
+    "docs": {
+      "type": "stdio",
+      "command": "bash",
+      "args": ["${QODER_PLUGIN_ROOT}/mcp/docs/server.sh"],
+      "env": {
+        "CWD": "${QODER_PROJECT_DIR}",
+        "QODER_PROJECT_DIR": "${QODER_PROJECT_DIR}",
+        "LAZYQODER_MCP_MODE": "${user_config.mcp_mode}",
+        "LAZYQODER_DEPENDENCY_ROOT": "${QODER_PLUGIN_DATA}/dependencies",
+        "LAZYQODER_CACHE_ROOT": "${QODER_PLUGIN_DATA}/cache"
+      },
+      "defer_loading": true
+    }
+  }
+}

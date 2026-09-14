@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Deterministic validation
+    runs-on: macos-15
+    timeout-minutes: 25
+    env:
+      LAZYQODER_VERIFY_SUITE: core
+      LAZYQODER_VERIFY_TIMEOUT_SECONDS: 180
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.13"
+
+      - name: Run package verification
+        run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
+
+      - name: Run publication verification
+        run: bash lazyqoder-plugin/tests/publication-regression.sh
+
+  lifecycle:
+    name: Lifecycle regressions (advisory)
+    runs-on: macos-15
+    timeout-minutes: 30
+    continue-on-error: true
+    env:
+      LAZYQODER_VERIFY_SUITE: lifecycle
+      LAZYQODER_VERIFY_TIMEOUT_SECONDS: 240
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.13"
+
+      - name: Run timing-sensitive lifecycle regressions
+        run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh

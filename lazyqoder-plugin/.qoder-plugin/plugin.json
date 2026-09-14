@@ -1,0 +1,10 @@
+{
+  "name": "lazyqoder",
+  "version": "1.2.2",
+  "description": "LazySeries workflow harness for Qoder (RepoWiki/Quest/Agent+Subagents/Expert teams/Model selector/MCP).",
+  "skills": ["./skills/"],
+  "commands": ["./commands/"],
+  "agents": ["./agents/"],
+  "hooks": ["./hooks/hooks.json"],
+  "mcpServers": ["./.mcp.json"]
+}

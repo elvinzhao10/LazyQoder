@@ -1,0 +1,12 @@
+{
+  "name": "@lazyseries/lazyqoder-lsp-python",
+  "version": "1.2.2",
+  "private": true,
+  "description": "Locked Python LSP provider for LazyQoder.",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "basedpyright": "1.39.10"
+  }
+}

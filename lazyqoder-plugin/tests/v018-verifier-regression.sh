@@ -1,0 +1,237 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/lazyqoder-verifier.XXXXXX")"
+PASS=0
+FAIL=0
+cleanup() { rm -rf "$TMP"; }
+trap cleanup EXIT
+pass() { printf 'PASS %s\n' "$1"; PASS=$((PASS + 1)); }
+fail() { printf 'FAIL %s\n' "$1" >&2; FAIL=$((FAIL + 1)); }
+
+cp -R "$PLUGIN_ROOT" "$TMP/plugin"
+FIXTURE="$TMP/plugin"
+grep -Fq 'VERIFY_TIMEOUT="${LAZYQODER_VERIFY_TIMEOUT_SECONDS:-90}"' "$FIXTURE/scripts/lazyqoder-verify.sh" && pass "aggregate default timeout is finite release budget" || fail "aggregate default timeout budget"
+grep -Fq 'LAZYQODER_VERIFY_TIMEOUT_SECONDS:-90' "$FIXTURE/scripts/hook-pipeline-test.sh" && pass "hook pipeline shares finite release budget" || fail "hook pipeline default timeout budget"
+
+# Given a short trusted package check, when it completes before its deadline,
+# then the runner reports a normal pass.
+python3 "$FIXTURE/scripts/lazyqoder-bounded-run.py" --label fast --timeout 1 --result-file "$TMP/fast.json" -- bash -c 'exit 0' >"$TMP/fast.out" 2>"$TMP/fast.stderr"
+python3 - "$TMP/fast.json" <<'PY'
+import json
+import sys
+
+assert json.load(open(sys.argv[1], encoding="utf-8")) == {"status": "pass", "reason": "ok", "tail": ""}
+PY
+grep -q '^PASS: fast$' "$TMP/fast.stderr" && pass "fast trusted command succeeds" || fail "fast trusted command result"
+
+# Given a trusted process inspector that executes but reports failure, cleanup
+# must treat inspection as unavailable instead of interpreting empty output as
+# proof that no descendants remain.
+python3 - "$FIXTURE/scripts/lazyqoder-bounded-run.py" <<'PY'
+import importlib.util
+import subprocess
+import sys
+from unittest import mock
+
+module_path = sys.argv[1]
+spec = importlib.util.spec_from_file_location("lazyqoder_bounded_run", module_path)
+assert spec is not None and spec.loader is not None
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module
+spec.loader.exec_module(module)
+
+failed_snapshot = subprocess.CompletedProcess(["/bin/ps"], 1, stdout="", stderr="inspection failed")
+with mock.patch.object(module.subprocess, "run", return_value=failed_snapshot):
+    try:
+        module.process_records()
+    except subprocess.CalledProcessError:
+        pass
+    else:
+        raise AssertionError("nonzero ps exit was treated as an empty successful snapshot")
+
+invalid_snapshot = subprocess.CompletedProcess(["/bin/ps"], 0, stdout="not a process record\n", stderr="")
+with mock.patch.object(module.subprocess, "run", return_value=invalid_snapshot):
+    try:
+        module.process_records()
+    except OSError:
+        pass
+    else:
+        raise AssertionError("invalid ps output was treated as an empty successful snapshot")
+
+class FinishedProcess:
+    pid = 424242
+
+    @staticmethod
+    def wait(timeout):
+        return 0
+
+inspection_error = subprocess.CalledProcessError(1, ["/bin/ps"])
+with (
+    mock.patch.object(module, "descendant_records", side_effect=inspection_error),
+    mock.patch.object(module, "process_records", side_effect=inspection_error),
+    mock.patch.object(module.os, "killpg", side_effect=ProcessLookupError),
+):
+    cleanup = module.terminate_owned_group(FinishedProcess())
+assert cleanup == {
+    "process_group_terminated": True,
+    "detectable_descendants_remaining": True,
+    "detectable_descendant_pids": [],
+}
+PY
+pass "failed process inspection remains fail-closed"
+
+# Given a command whose child remains in the runner-owned process group, when
+# its deadline expires, then cleanup terminates that group.
+GROUP_CHILD_PID="$TMP/group-child.pid"
+if CHILD_PID="$GROUP_CHILD_PID" python3 "$FIXTURE/scripts/lazyqoder-bounded-run.py" --label group --timeout 1 --result-file "$TMP/group.json" -- bash -c '( sleep 30 ) & printf "%s\n" "$!" > "$CHILD_PID"; sleep 30' >"$TMP/group.out" 2>"$TMP/group.stderr"; then
+    fail "group timeout must fail"
+else
+    pass "group timeout fails"
+fi
+group_child_pid="$(cat "$GROUP_CHILD_PID")"
+python3 - "$TMP/group.json" "$group_child_pid" <<'PY'
+import json
+import sys
+
+payload = json.load(open(sys.argv[1], encoding="utf-8"))
+assert payload["status"] == "timeout"
+assert payload["reason"] == "deadline_exceeded"
+assert payload["cleanup"] == {
+    "process_group_terminated": True,
+    "detectable_descendants_remaining": False,
+    "detectable_descendant_pids": [],
+}
+PY
+if kill -0 "$group_child_pid" 2>/dev/null; then fail "timeout left owned group child alive"; else pass "timeout terminates owned process group"; fi
+
+# Given a child that escapes into another process group, when the parent times
+# out, then the runner reports the still-detectable child but never signals it.
+ESCAPED_CHILD_PID="$TMP/escaped-child.pid"
+if CHILD_PID="$ESCAPED_CHILD_PID" python3 "$FIXTURE/scripts/lazyqoder-bounded-run.py" --label escaped --timeout 1 --result-file "$TMP/escaped.json" -- bash -c 'python3 -c "import os, time; os.setsid(); time.sleep(30)" & printf "%s\n" "$!" > "$CHILD_PID"; sleep 30' >"$TMP/escaped.out" 2>"$TMP/escaped.stderr"; then
+    fail "escaped timeout must fail"
+else
+    pass "escaped timeout fails"
+fi
+escaped_child_pid="$(cat "$ESCAPED_CHILD_PID")"
+python3 - "$TMP/escaped.json" "$escaped_child_pid" <<'PY'
+import json
+import sys
+
+payload = json.load(open(sys.argv[1], encoding="utf-8"))
+assert payload["status"] == "timeout"
+assert payload["cleanup"] == {
+    "process_group_terminated": True,
+    "detectable_descendants_remaining": True,
+    "detectable_descendant_pids": [int(sys.argv[2])],
+}
+PY
+if kill -0 "$escaped_child_pid" 2>/dev/null; then pass "escaped child is reported without signaling"; else fail "escaped child was signaled"; fi
+grep -q '^CLEANUP: escaped detectable_descendants_remaining=true' "$TMP/escaped.stderr" && pass "stderr reports detectable escaped child" || fail "escaped child cleanup report"
+kill -KILL "$escaped_child_pid" 2>/dev/null || true
+
+cat > "$FIXTURE/scripts/lazyqoder-smoke-test.sh" <<'SH'
+#!/usr/bin/env bash
+set -euo pipefail
+( sleep 30 ) &
+printf '%s\n' "$!" > "${LAZYQODER_CHILD_PID:?}"
+sleep 30
+SH
+chmod +x "$FIXTURE/scripts/lazyqoder-smoke-test.sh"
+for check_script in \
+    lazyqoder-plugin-doctor.sh \
+    lazyqoder-docs-check.sh \
+    lazyqoder-security-check.sh \
+    lazyqoder-mcp-test.sh \
+    hook-pipeline-test.sh \
+    lazyqoder-load-check.sh \
+    lazyqoder-contract-check.sh; do
+    printf '%s\n' '#!/usr/bin/env bash' 'exit 0' > "$FIXTURE/scripts/$check_script"
+    chmod +x "$FIXTURE/scripts/$check_script"
+done
+if QODER_PLUGIN_ROOT="$FIXTURE" LAZYQODER_VERIFY_TIMEOUT_SECONDS=3 LAZYQODER_VERIFY_REGRESSION_DEPTH=1 LAZYQODER_CHILD_PID="$TMP/child.pid" bash "$FIXTURE/scripts/lazyqoder-verify.sh" >"$TMP/verify.json" 2>"$TMP/verify.stderr"; then
+    fail "aggregate timeout must fail"
+else
+    pass "aggregate timeout fails"
+fi
+grep -q '^START: smoke$' "$TMP/verify.stderr" && pass "progress starts immediately" || fail "missing smoke START"
+if grep -q '^TIMEOUT: smoke$' "$TMP/verify.stderr"; then
+    pass "timeout is named"
+else
+    cat "$TMP/verify.stderr" >&2
+    fail "missing named timeout"
+fi
+if python3 - "$TMP/verify.json" <<'PY'
+import json
+import sys
+payload = json.load(open(sys.argv[1], encoding="utf-8"))
+assert payload["all_pass"] is False
+assert payload["checks"]["smoke"] == {"status": "timeout", "reason": "deadline_exceeded"}
+PY
+then
+    pass "final summary is valid fail-closed JSON"
+else
+    cat "$TMP/verify.stderr" >&2
+    fail "final summary is valid fail-closed JSON"
+fi
+for _ in $(seq 1 50); do [ -f "$TMP/child.pid" ] && break; sleep 0.02; done
+child_pid="$(cat "$TMP/child.pid")"
+if kill -0 "$child_pid" 2>/dev/null; then fail "timeout left owned group child alive"; else pass "timeout terminates smoke process group"; fi
+
+cat > "$FIXTURE/scripts/lazyqoder-smoke-test.sh" <<'SH'
+#!/usr/bin/env bash
+exit 0
+SH
+chmod +x "$FIXTURE/scripts/lazyqoder-smoke-test.sh"
+python3 "$FIXTURE/scripts/lazyqoder-bounded-run.py" --label "later-check" --timeout 1 --result-file "$TMP/repeat.json" -- bash -c 'exit 0' >"$TMP/repeat.out" 2>"$TMP/repeat.stderr"
+python3 - "$TMP/repeat.json" <<'PY'
+import json
+import sys
+assert json.load(open(sys.argv[1], encoding="utf-8"))["status"] == "pass"
+PY
+grep -q '^PASS: later-check$' "$TMP/repeat.stderr"
+pass "independent later aggregate runs"
+
+# Given an unversioned regression matching the package suffix, when the
+# aggregate inventory runs, then it rejects the unclassified script.
+cat > "$FIXTURE/tests/unlisted-regression.sh" <<'SH'
+#!/usr/bin/env bash
+exit 0
+SH
+chmod +x "$FIXTURE/tests/unlisted-regression.sh"
+if QODER_PLUGIN_ROOT="$FIXTURE" LAZYQODER_VERIFY_REGRESSION_DEPTH=1 bash "$FIXTURE/scripts/lazyqoder-verify.sh" >"$TMP/unclassified.json" 2>"$TMP/unclassified.stderr"; then
+    fail "unversioned unclassified regression must fail inventory"
+else
+    pass "unversioned unclassified regression fails inventory"
+fi
+grep -Fq 'ERROR: unclassified package-local regression: unlisted-regression.sh' "$TMP/unclassified.stderr" && pass "unversioned regression rejection is identified" || fail "unversioned regression rejection detail"
+
+cp "$PLUGIN_ROOT/scripts/lazyqoder-plugin-doctor.sh" "$FIXTURE/scripts/lazyqoder-plugin-doctor.sh"
+mkdir "$TMP/fake-bin"
+cat > "$TMP/fake-bin/qoder" <<'SH'
+#!/usr/bin/env bash
+case "${FAKE_QODER_MODE:-pass}" in
+  pass) printf '%s\n' 'Validation successful: 0 errors' ;;
+  semantic) printf '%s\n' 'Validation failed: 2 errors' ;;
+  misleading) printf '%s\n' 'Validation passed with errors: 2' ;;
+  nonzero) printf '%s\n' 'validator rejected manifest'; exit 9 ;;
+  timeout) sleep 30 ;;
+esac
+SH
+chmod +x "$TMP/fake-bin/qoder"
+for mode in pass semantic misleading nonzero timeout; do
+    output="$TMP/doctor-$mode.out"
+    if PATH="$TMP/fake-bin:$PATH" FAKE_QODER_MODE="$mode" LAZYQODER_HOST_VALIDATOR_TIMEOUT_SECONDS=1 QODER_PLUGIN_ROOT="$FIXTURE" bash "$FIXTURE/scripts/lazyqoder-plugin-doctor.sh" >"$output" 2>"$output.err"; then status=0; else status=$?; fi
+    case "$mode" in
+      pass) [ "$status" -eq 0 ] && grep -q '\[PASS\] Qoder IDE manifest validator' "$output" && pass "doctor accepts validator pass" || fail "doctor pass classification" ;;
+      semantic) [ "$status" -eq 1 ] && grep -q '\[FAIL\] Qoder IDE manifest validator' "$output" && pass "doctor hard-fails semantic validator output" || fail "doctor semantic classification" ;;
+      misleading) [ "$status" -eq 1 ] && grep -q '\[FAIL\] Qoder IDE manifest validator' "$output" && pass "doctor rejects misleading success output" || fail "doctor misleading output classification" ;;
+      nonzero) [ "$status" -eq 1 ] && grep -q '\[FAIL\] Qoder IDE manifest validator' "$output" && pass "doctor hard-fails validator nonzero" || fail "doctor nonzero classification" ;;
+      timeout) [ "$status" -eq 1 ] && grep -q 'timeout' "$output" && grep -q '^TIMEOUT: Qoder IDE manifest validator$' "$output.err" && pass "doctor classifies validator timeout" || fail "doctor timeout classification" ;;
+    esac
+done
+PATH="/usr/bin:/bin" QODER_PLUGIN_ROOT="$FIXTURE" bash "$FIXTURE/scripts/lazyqoder-plugin-doctor.sh" >"$TMP/doctor-absent.out" 2>"$TMP/doctor-absent.err"
+grep -q '\[UNCHECKED\] Qoder IDE manifest validator' "$TMP/doctor-absent.out" && pass "doctor leaves absent CLI unchecked" || fail "doctor absent classification"
+printf 'Passed: %s\nFailed: %s\n' "$PASS" "$FAIL"
+[ "$FAIL" -eq 0 ]

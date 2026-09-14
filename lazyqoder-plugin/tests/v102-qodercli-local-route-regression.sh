@@ -1,0 +1,229 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
+REPOSITORY_ROOT="$(cd "$PLUGIN_ROOT/.." && pwd -P)"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/lazyqoder-local-route.XXXXXX")"
+PASS=0
+FAIL=0
+
+cleanup() { rm -rf "$TMP"; }
+trap cleanup EXIT
+
+pass() { printf 'PASS %s\n' "$1"; PASS=$((PASS + 1)); }
+fail() { printf 'FAIL %s\n' "$1" >&2; FAIL=$((FAIL + 1)); }
+
+if python3 - "$REPOSITORY_ROOT" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+repository_root = Path(sys.argv[1])
+version = "1.2.2"
+marketplace = json.loads((repository_root / ".qodercli-plugin/marketplace.json").read_text(encoding="utf-8"))
+qodercli = json.loads((repository_root / "lazyqoder-plugin/.qodercli-plugin/plugin.json").read_text(encoding="utf-8"))
+qoder = json.loads((repository_root / "lazyqoder-plugin/.qoder-plugin/plugin.json").read_text(encoding="utf-8"))
+assert marketplace["name"] == "lazyqoder"
+entry = next(item for item in marketplace["plugins"] if item.get("name") == "lazyqoder")
+assert entry["version"] == version
+assert entry["source"] == "./lazyqoder-plugin"
+assert qodercli["name"] == qoder["name"] == "lazyqoder"
+assert qodercli["version"] == qoder["version"] == version
+assert (repository_root / entry["source"] / ".qodercli-plugin/plugin.json").is_file()
+assert (repository_root / "lazyqoder-plugin/.qoder-plugin/plugin.json").is_file()
+PY
+then
+    pass 'release marketplace maps lazyqoder to the package root and versions agree'
+else
+    fail 'release marketplace maps lazyqoder to the package root and versions agree'
+fi
+
+RELEASE_ROOT="$TMP/Lazy Buddy"
+mkdir -p "$RELEASE_ROOT/.qodercli-plugin"
+cp -R "$REPOSITORY_ROOT/lazyqoder-plugin" "$RELEASE_ROOT/lazyqoder-plugin"
+cp "$REPOSITORY_ROOT/.qodercli-plugin/marketplace.json" "$RELEASE_ROOT/.qodercli-plugin/marketplace.json"
+if python3 - "$RELEASE_ROOT" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+release_root = Path(sys.argv[1])
+marketplace = json.loads((release_root / ".qodercli-plugin/marketplace.json").read_text(encoding="utf-8"))
+entry = next(item for item in marketplace["plugins"] if item["name"] == "lazyqoder")
+source = (release_root / entry["source"]).resolve()
+assert source == (release_root / "lazyqoder-plugin").resolve()
+json.loads((source / ".qodercli-plugin/plugin.json").read_text(encoding="utf-8"))
+assert " " in str(release_root)
+PY
+then
+    pass 'marketplace source resolves from a copied release path containing spaces'
+else
+    fail 'marketplace source resolves from a copied release path containing spaces'
+fi
+
+PROJECT_ROOT="$TMP/project root"
+mkdir -p "$PROJECT_ROOT" "$TMP/home"
+PREPARATION_OUTPUT="$TMP/preparation.out"
+if HOME="$TMP/home" bash "$RELEASE_ROOT/lazyqoder-plugin/scripts/lazyqoder-qoder-preparation-check.sh" \
+    --project-dir "$PROJECT_ROOT" >"$PREPARATION_OUTPUT" \
+    && grep -Fq 'PACKAGE_PREPARATION=ready' "$PREPARATION_OUTPUT" \
+    && grep -Fq 'HOST_MUTATION=none' "$PREPARATION_OUTPUT"; then
+    pass 'release root preparation accepts the canonical package layout'
+else
+    fail 'release root preparation accepts the canonical package layout'
+fi
+
+NESTED_SOURCE_ROOT="$TMP/nested-source"
+cp -R "$RELEASE_ROOT" "$NESTED_SOURCE_ROOT"
+python3 - "$NESTED_SOURCE_ROOT/.qodercli-plugin/marketplace.json" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+with open(path, encoding="utf-8") as handle:
+    marketplace = json.load(handle)
+marketplace["plugins"][0]["source"] = "./lazyqoder-plugin/.qodercli-plugin"
+with open(path, "w", encoding="utf-8") as handle:
+    json.dump(marketplace, handle)
+PY
+if HOME="$TMP/home" bash "$NESTED_SOURCE_ROOT/lazyqoder-plugin/scripts/lazyqoder-qoder-preparation-check.sh" \
+    --project-dir "$PROJECT_ROOT" >"$TMP/nested-source.out" 2>&1; then
+    fail 'nested plugin metadata is rejected as a marketplace source'
+elif grep -Fq 'release marketplace must contain lazyqoder 1.2.2 from ./lazyqoder-plugin' "$TMP/nested-source.out"; then
+    pass 'nested plugin metadata is rejected as a marketplace source'
+else
+    fail 'nested plugin metadata is rejected with an actionable layout error'
+fi
+
+READINESS_OUTPUT="$TMP/readiness.out"
+if env QODER_PLUGIN_ROOT="$RELEASE_ROOT/lazyqoder-plugin" \
+    LAZYQODER_MARKETPLACE_FILE="$RELEASE_ROOT/.qodercli-plugin/marketplace.json" \
+    bash "$RELEASE_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh" >"$READINESS_OUTPUT" \
+    && grep -Fq 'PASS marketplace version agreement: 1.2.2' "$READINESS_OUTPUT" \
+    && grep -Fq 'PACKAGE_READINESS=full' "$READINESS_OUTPUT"; then
+    pass 'copied spaced release passes marketplace/plugin package readiness'
+else
+    fail 'copied spaced release passes marketplace/plugin package readiness'
+fi
+
+SETTINGS_LOCAL="$PROJECT_ROOT/.qodercli/settings.local.json"
+mkdir -p "$(dirname "$SETTINGS_LOCAL")"
+printf '%s\n' '{"machine":{"preserve":"settings-local-sentinel"}}' > "$SETTINGS_LOCAL"
+cp "$SETTINGS_LOCAL" "$TMP/settings.local.before"
+shasum -a 256 "$SETTINGS_LOCAL" > "$TMP/settings.local.before.sha256"
+if (
+    cd "$PROJECT_ROOT"
+    HOME="$TMP/home" bash "$RELEASE_ROOT/lazyqoder-plugin/scripts/lazyqoder-qoder-preparation-check.sh" \
+        --project-dir "$PROJECT_ROOT" > "$TMP/settings-preparation.out"
+    CWD="$PROJECT_ROOT" QODER_PLUGIN_ROOT="$RELEASE_ROOT/lazyqoder-plugin" \
+        LAZYQODER_MARKETPLACE_FILE="$RELEASE_ROOT/.qodercli-plugin/marketplace.json" \
+        bash "$RELEASE_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh" \
+        > "$TMP/settings-load-check.out"
+); then
+    SETTINGS_CHECK_RC=0
+else
+    SETTINGS_CHECK_RC=$?
+fi
+shasum -a 256 "$SETTINGS_LOCAL" > "$TMP/settings.local.after.sha256"
+if [ "$SETTINGS_CHECK_RC" -eq 0 ] \
+    && cmp -s "$TMP/settings.local.before" "$SETTINGS_LOCAL" \
+    && cmp -s "$TMP/settings.local.before.sha256" "$TMP/settings.local.after.sha256"; then
+    pass 'safe preparation and load check preserve local project settings bytes'
+else
+    fail 'safe preparation and load check preserve local project settings bytes'
+fi
+
+mkdir -p "$TMP/unrelated cwd"
+if (
+    cd "$TMP/unrelated cwd"
+    env QODER_PLUGIN_ROOT="$RELEASE_ROOT/lazyqoder-plugin" \
+        LAZYQODER_MARKETPLACE_FILE="$RELEASE_ROOT/.qodercli-plugin/marketplace.json" \
+        bash "$RELEASE_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh"
+) >"$TMP/default-discovery.out" 2>&1 \
+    && grep -Fq 'PASS skills: 14/14' "$TMP/default-discovery.out" \
+    && grep -Fq 'PACKAGE_READINESS=full' "$TMP/default-discovery.out"; then
+    pass 'spaced release load-check passes from an unrelated CWD with intact default skills'
+else
+    fail 'spaced release load-check passes from an unrelated CWD with intact default skills'
+fi
+
+BROKEN_DEFAULT_ROOT="$TMP/broken-default/Lazy Buddy"
+mkdir -p "$(dirname "$BROKEN_DEFAULT_ROOT")"
+cp -R "$RELEASE_ROOT" "$BROKEN_DEFAULT_ROOT"
+rm "$BROKEN_DEFAULT_ROOT/lazyqoder-plugin/skills/lazy-debugging/SKILL.md"
+if env QODER_PLUGIN_ROOT="$BROKEN_DEFAULT_ROOT/lazyqoder-plugin" \
+    LAZYQODER_MARKETPLACE_FILE="$BROKEN_DEFAULT_ROOT/.qodercli-plugin/marketplace.json" \
+    bash "$BROKEN_DEFAULT_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh" \
+    >"$TMP/broken-default.out" 2>&1; then
+    fail 'broken default skills tree is rejected'
+elif grep -Fq 'FAIL Qoder default skills' "$TMP/broken-default.out"; then
+    pass 'broken default skills tree is rejected'
+else
+    fail 'broken default skills tree is rejected with an actionable skill error'
+fi
+
+CUSTOM_SKILLS_ROOT="$TMP/custom-skills/Lazy Buddy"
+mkdir -p "$(dirname "$CUSTOM_SKILLS_ROOT")"
+cp -R "$RELEASE_ROOT" "$CUSTOM_SKILLS_ROOT"
+cp -R "$CUSTOM_SKILLS_ROOT/lazyqoder-plugin/skills" "$CUSTOM_SKILLS_ROOT/lazyqoder-plugin/custom-skills"
+python3 - "$CUSTOM_SKILLS_ROOT/lazyqoder-plugin/.qodercli-plugin/plugin.json" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+with open(path, encoding="utf-8") as handle:
+    manifest = json.load(handle)
+manifest["skills"] = "./custom-skills/"
+with open(path, "w", encoding="utf-8") as handle:
+    json.dump(manifest, handle)
+PY
+if env QODER_PLUGIN_ROOT="$CUSTOM_SKILLS_ROOT/lazyqoder-plugin" \
+    LAZYQODER_MARKETPLACE_FILE="$CUSTOM_SKILLS_ROOT/.qodercli-plugin/marketplace.json" \
+    bash "$CUSTOM_SKILLS_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh" \
+    >"$TMP/custom-skills.out" 2>&1; then
+    fail 'altered nested Qoder manifest is rejected'
+elif grep -Fq 'MARKETPLACE_IDENTITY_INVALID' "$TMP/custom-skills.out"; then
+    pass 'altered nested Qoder manifest is rejected'
+else
+    fail 'altered nested Qoder manifest is rejected with a route-contract error'
+fi
+
+if python3 - "$CUSTOM_SKILLS_ROOT/lazyqoder-plugin/.qoder-plugin/plugin.json" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    manifest = json.load(handle)
+assert manifest.get("skills") == ["./skills/"]
+PY
+then
+    pass 'Qoder manifest retains its explicit skills declaration'
+else
+    fail 'Qoder manifest retains its explicit skills declaration'
+fi
+
+WRONG_MARKETPLACE="$TMP/wrong-marketplace.json"
+python3 - "$RELEASE_ROOT/.qodercli-plugin/marketplace.json" "$WRONG_MARKETPLACE" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    marketplace = json.load(handle)
+marketplace["name"] = "wrong-marketplace"
+with open(sys.argv[2], "w", encoding="utf-8") as handle:
+    json.dump(marketplace, handle)
+PY
+if env QODER_PLUGIN_ROOT="$RELEASE_ROOT/lazyqoder-plugin" \
+    LAZYQODER_MARKETPLACE_FILE="$WRONG_MARKETPLACE" \
+    bash "$RELEASE_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh" \
+    >"$TMP/wrong-marketplace.out" 2>&1; then
+    fail 'wrong marketplace identity is rejected'
+elif grep -Fq 'FAIL marketplace name:' "$TMP/wrong-marketplace.out"; then
+    pass 'wrong marketplace identity is rejected'
+else
+    fail 'wrong marketplace identity is rejected with an actionable metadata error'
+fi
+
+printf 'Passed: %d\n' "$PASS"
+printf 'Failed: %d\n' "$FAIL"
+[ "$FAIL" -eq 0 ]

@@ -1,0 +1,18 @@
+{
+  "name": "@lazyseries/lazyqoder-tooling",
+  "version": "1.2.2",
+  "private": true,
+  "description": "Locked package-owned tooling foundation for LazyQoder.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "verify": "node --version"
+  },
+  "dependencies": {
+    "@ast-grep/cli": "0.45.3",
+    "@colbymchenry/codegraph": "1.6.0",
+    "@vscode/ripgrep": "1.18.0",
+    "ajv": "8.20.0"
+  }
+}

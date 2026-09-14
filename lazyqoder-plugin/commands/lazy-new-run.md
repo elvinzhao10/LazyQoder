@@ -1,0 +1,14 @@
+---
+description: "Create a new LazyQoder run using run-ledger MCP tools"
+---
+# /lazyqoder:lazy-new-run
+## Usage
+/lazyqoder:lazy-new-run <objective> [--plan <plan_file>]
+
+## What it does
+Creates a new run with run-ledger MCP (`create_run`) and initializes state.json + events.jsonl + plan.md.
+
+## Success criteria
+New run created with unique run_id, initialized state, and populated plan.md.
+
+Do not claim completion without verification.
