@@ -16,7 +16,7 @@ function run(command, args, options = {}) {
 }
 
 function createProject(t) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-v122-public-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazybuddy-v122-public-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   for (const args of [
     ['init', '-q'],
@@ -26,7 +26,7 @@ function createProject(t) {
     const result = run('/usr/bin/git', ['-C', root, ...args]);
     assert.equal(result.status, 0, result.stderr);
   }
-  fs.writeFileSync(path.join(root, '.gitignore'), '.lazyqoder/\n');
+  fs.writeFileSync(path.join(root, '.gitignore'), '.lazybuddy/\n');
   fs.writeFileSync(path.join(root, 'tracked.txt'), 'clean\n');
   const staged = run('/usr/bin/git', ['-C', root, 'add', '.gitignore', 'tracked.txt']);
   assert.equal(staged.status, 0, staged.stderr);
@@ -41,7 +41,7 @@ function adaptive(root, prompt, adaptiveContext) {
     adaptive_context: adaptiveContext,
   });
   const result = run('bash', [hook], {
-    cwd: root, env: { ...process.env, QODER_PLUGIN_ROOT: pluginRoot, CWD: root }, input,
+    cwd: root, env: { ...process.env, CODEBUDDY_PLUGIN_ROOT: pluginRoot, CWD: root }, input,
   });
   assert.equal(result.status, 0, result.stderr);
   return JSON.parse(result.stdout);

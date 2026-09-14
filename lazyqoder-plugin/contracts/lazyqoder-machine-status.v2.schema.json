@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "lazyqoder-machine-status.v2.schema.json",
-  "title": "LazyQoder v1.1 machine status",
+  "$id": "lazybuddy-machine-status.v2.schema.json",
+  "title": "LazyBuddy v1.1 machine status",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -18,7 +18,7 @@
   "properties": {
     "schema_version": { "const": 2 },
     "contract_version": { "const": "2.0.0" },
-    "product": { "const": "LazyQoder" },
+    "product": { "const": "LazyBuddy" },
     "version": { "const": "1.2.2" },
     "status": { "const": "ready" },
     "package_readiness": {
@@ -76,8 +76,8 @@
         "evidence"
       ],
       "properties": {
-        "host": { "enum": ["qoder-cli", "qoder-ide", "qoder"] },
-        "route": { "enum": ["qoder-marketplace", "qoder-full-plugin"] },
+        "host": { "enum": ["codebuddy-cli", "codebuddy-ide", "workbuddy"] },
+        "route": { "enum": ["codebuddy-marketplace", "workbuddy-full-plugin"] },
         "native_mode": { "enum": ["invoke-documented", "observe-only"] },
         "public_label": { "enum": ["documented-tested", "observed-build-specific"] },
         "package_status": { "const": "ready" },
@@ -102,12 +102,12 @@
       ],
       "properties": {
         "route": {
-          "enum": ["qoder-marketplace", "qoder-full-plugin", "manual-skills-mcp-fallback"]
+          "enum": ["codebuddy-marketplace", "workbuddy-full-plugin", "manual-skills-mcp-fallback"]
         },
         "hosts": {
           "type": "array",
           "minItems": 1,
-          "items": { "enum": ["qoder-cli", "qoder-ide", "qoder"] },
+          "items": { "enum": ["codebuddy-cli", "codebuddy-ide", "workbuddy"] },
           "uniqueItems": true
         },
         "route_role": { "enum": ["default", "recovery-only"] },

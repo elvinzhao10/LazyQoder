@@ -13,7 +13,7 @@ const validatorPath = path.join(contracts, 'validate-lazyseries-record.js');
 const HEAD = 'a'.repeat(40);
 const LANES = ['goal-verification', 'manual-qa', 'code-quality', 'security', 'context-mining'];
 
-function record(artifactRef = 'lazyqoder-plugin/contracts/tests/execution-context-contract.test.js') {
+function record(artifactRef = 'lazybuddy-plugin/contracts/tests/execution-context-contract.test.js') {
   return {
     schema_version: 'lazyseries.execution-context.v1',
     fixed_contract: 'TASK/DELTA/REFS/VERIFY',
@@ -67,10 +67,10 @@ function writePlanCommands(root, input, name = 'plan-commands.json') {
 }
 
 function writeExecutionAuthority(root, input, name = 'plan-commands.json') {
-  const planReference = '.lazyqoder/plans/current.md';
+  const planReference = '.lazybuddy/plans/current.md';
   const plan = path.join(root, planReference);
-  const run = path.join(root, '.lazyqoder', 'runs', input.task.run_id);
-  const commandsRelative = path.posix.join('.lazyqoder', 'runs', input.task.run_id, name);
+  const run = path.join(root, '.lazybuddy', 'runs', input.task.run_id);
+  const commandsRelative = path.posix.join('.lazybuddy', 'runs', input.task.run_id, name);
   const commands = path.join(root, commandsRelative);
   fs.mkdirSync(path.dirname(plan), { recursive: true });
   fs.mkdirSync(run, { recursive: true });
@@ -131,7 +131,7 @@ test('rejects mutating provenance and unsafe shell control syntax before dispatc
 
 test('rejects destructive remote mutating and approval-requiring plan argv without executing it', (t) => {
   // Given: unsafe argv classes and an owned file that validation must never mutate.
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-command-safety-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazybuddy-command-safety-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const owned = path.join(root, 'owned.txt');
   fs.writeFileSync(owned, 'preserve\n');
@@ -144,7 +144,7 @@ test('rejects destructive remote mutating and approval-requiring plan argv witho
     ['npm', 'install'],
     ['npm', 'publish'],
     ['sudo', 'touch', 'owned.txt'],
-    ['qoder', 'plugin', 'install', 'lazyqoder@lazyqoder'],
+    ['codebuddy', 'plugin', 'install', 'lazybuddy@lazybuddy'],
     ['node', '-e', 'require("node:fs").writeFileSync("owned.txt","changed")'],
   ];
   // When: each argv-only packet crosses the direct validator boundary.
@@ -190,8 +190,8 @@ test('accepts benign argv and binds it to the trusted stored plan command list',
 
 test('requires every execution and criterion artifact ref to be a regular in-scope file', (t) => {
   // Given: one real artifact plus missing, symlinked, and symlink-escaped references.
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-artifact-boundary-'));
-  const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-artifact-outside-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazybuddy-artifact-boundary-'));
+  const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'lazybuddy-artifact-outside-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   t.after(() => fs.rmSync(outside, { recursive: true, force: true }));
   fs.writeFileSync(path.join(root, 'valid.txt'), 'preserve\n');
@@ -231,7 +231,7 @@ test('requires real entry and state-transition artifacts for runtime criteria', 
 
 test('accepts memory only from a complete identity-bound terminal report', (t) => {
   // Given: a complete terminal report whose criterion artifacts exist.
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-terminal-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazybuddy-terminal-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   for (const relative of ['runtime.json', 'state.json']) fs.writeFileSync(path.join(root, relative), '{}\n');
   const accepted = record('runtime.json');
@@ -293,7 +293,7 @@ test('reruns only failed missing stale or input-affected lanes and retains all-f
 
 test('exposes execution-context validation through the existing public record CLI', (t) => {
   // Given: a compact record on disk.
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-execution-cli-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazybuddy-execution-cli-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const input = path.join(root, 'execution.json');
   const value = record('execution.json');
@@ -309,7 +309,7 @@ test('exposes execution-context validation through the existing public record CL
 
 test('public execution CLI rejects missing or mismatched plan authority and obscured mutation', (t) => {
   // Given: valid artifacts plus unbound evaluation, mismatched plan, and option-obscured Git records.
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-execution-adversarial-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazybuddy-execution-adversarial-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   fs.writeFileSync(path.join(root, 'artifact.txt'), 'preserve\n');
   const nodeEval = record('artifact.txt');
@@ -347,9 +347,9 @@ test('public execution CLI rejects missing or mismatched plan authority and obsc
 
 test('public execution CLI rejects caller-manufactured and external hard-linked plan authority', (t) => {
   // Given: one matching caller-owned record/file pair and one current authority hard-linked outside its project.
-  const attackerRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-execution-attacker-'));
-  const linkedRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-execution-hardlink-'));
-  const outside = path.join(os.tmpdir(), `lazyqoder-plan-outside-${process.pid}-${Date.now()}.json`);
+  const attackerRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'lazybuddy-execution-attacker-'));
+  const linkedRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'lazybuddy-execution-hardlink-'));
+  const outside = path.join(os.tmpdir(), `lazybuddy-plan-outside-${process.pid}-${Date.now()}.json`);
   t.after(() => {
     fs.rmSync(attackerRoot, { recursive: true, force: true });
     fs.rmSync(linkedRoot, { recursive: true, force: true });
