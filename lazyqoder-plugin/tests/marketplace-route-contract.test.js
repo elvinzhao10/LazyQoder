@@ -24,7 +24,7 @@ function releaseFixture() {
     path.join(REPOSITORY_ROOT, '.qoder-plugin', 'marketplace.json'),
     path.join(root, '.qoder-plugin', 'marketplace.json'),
   );
-  for (const relative of ['.qoder-plugin', '.qoder-plugin', 'skills', 'commands', 'agents', 'hooks', 'mcp', '.mcp.json']) {
+  for (const relative of ['.qodercli-plugin', '.qoder-plugin', 'skills', 'commands', 'agents', 'hooks', 'mcp', '.mcp.json']) {
     fs.cpSync(path.join(PLUGIN_ROOT, relative), path.join(root, 'lazyqoder-plugin', relative), { recursive: true });
   }
   return root;
@@ -103,7 +103,7 @@ test('treats fallback as generated recovery and conflicts with either marketplac
   assert.equal(fallback.recovery.generated_only, true);
   assert.equal(fallback.recovery.asset_manifest, 'lazyqoder-plugin/asset-source-manifest.v1.json');
   assert.equal(codebuddyConflict.kind, 'conflict');
-  assert.deepEqual(codebuddyConflict.routes, ['qodercli-marketplace', 'manual-skills-mcp-fallback']);
+  assert.deepEqual(codebuddyConflict.routes, ['manual-skills-mcp-fallback', 'qodercli-marketplace']);
   assert.equal(qoderConflict.kind, 'conflict');
   assert.deepEqual(qoderConflict.routes, ['manual-skills-mcp-fallback', 'qoder-full-plugin']);
 });

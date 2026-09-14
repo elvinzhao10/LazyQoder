@@ -253,6 +253,43 @@ else
     check "Canonical capability readiness report" "$readiness_result"
 fi
 
+if machine_status_result=$(python3 - "${PLUGIN_ROOT}" <<'PY' 2>&1
+import json
+import os
+import subprocess
+import sys
+
+root = sys.argv[1]
+completed = subprocess.run(
+    ["node", os.path.join(root, "scripts", "lazyqoder-machine-status.js"), "--json"],
+    check=False,
+    capture_output=True,
+    text=True,
+)
+try:
+    status = json.loads(completed.stdout)
+    rows = status.get("hosts")
+    if (
+        completed.returncode != 0
+        or status.get("schema_version") != 2
+        or status.get("version") != "1.2.2"
+        or status.get("package_readiness") != {"status": "ready", "scope": "package"}
+        or status.get("host_readiness") != {"status": "pending"}
+        or not isinstance(rows, list)
+        or [row.get("host") for row in rows] != ["qodercli-cli", "qodercli-ide", "qoder"]
+        or any(row.get("host_readiness") != "pending" for row in rows)
+    ):
+        raise ValueError("machine status v2 fields do not match the package boundary")
+except (AttributeError, TypeError, ValueError, json.JSONDecodeError) as exc:
+    raise SystemExit(str(exc))
+print("ok")
+PY
+); then
+    check "machine status v2" ok
+else
+    check "machine status v2" "$machine_status_result"
+fi
+
 if hook_result=$(python3 - "${PLUGIN_ROOT}" <<'PY' 2>&1
 import json
 import os

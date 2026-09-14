@@ -9,9 +9,9 @@ BUDDY_ARTIFACTS=""
 TRAE_ARTIFACTS=""
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        --lazyqoder-root) BUDDY_ROOT="${2:-}"; shift 2 ;;
+        --lazybuddy-root) BUDDY_ROOT="${2:-}"; shift 2 ;;
         --lazytrae-root) TRAE_ROOT="${2:-}"; shift 2 ;;
-        --lazyqoder-artifact-root) BUDDY_ARTIFACTS="${2:-}"; shift 2 ;;
+        --lazybuddy-artifact-root) BUDDY_ARTIFACTS="${2:-}"; shift 2 ;;
         --lazytrae-artifact-root) TRAE_ARTIFACTS="${2:-}"; shift 2 ;;
         *) fail "unknown argument: $1" ;;
     esac
@@ -40,8 +40,8 @@ trap cleanup EXIT HUP INT TERM
 
 assemble() {
     node "$SCRIPT" assemble \
-        --lazyqoder-root "$1" --lazytrae-root "$2" \
-        --lazyqoder-artifact-root "$3" --lazytrae-artifact-root "$4" \
+        --lazybuddy-root "$1" --lazytrae-root "$2" \
+        --lazybuddy-artifact-root "$3" --lazytrae-artifact-root "$4" \
         --output-root "$5"
 }
 
@@ -89,9 +89,9 @@ grep -F DESTINATION_EXISTS "$TMP/concurrent-1.err" "$TMP/concurrent-2.err" >/dev
 [ "$(find "$TMP/concurrent-out" -maxdepth 1 -type d -name 'live-test-v1.2.2-*' | wc -l | tr -d ' ')" = 2 ] || fail "concurrent assembly published partial layout"
 
 mkdir "$TMP/crash-out"
-expect_failure crash-before-rename INJECTED_FAILURE env LAZYQODER_PAIRED_FAIL_BEFORE_RENAME=1 \
-    node "$SCRIPT" assemble --lazyqoder-root "$BUDDY_ROOT" --lazytrae-root "$TRAE_ROOT" \
-    --lazyqoder-artifact-root "$BUDDY_ARTIFACTS" --lazytrae-artifact-root "$TRAE_ARTIFACTS" \
+expect_failure crash-before-rename INJECTED_FAILURE env LAZYBUDDY_PAIRED_FAIL_BEFORE_RENAME=1 \
+    node "$SCRIPT" assemble --lazybuddy-root "$BUDDY_ROOT" --lazytrae-root "$TRAE_ROOT" \
+    --lazybuddy-artifact-root "$BUDDY_ARTIFACTS" --lazytrae-artifact-root "$TRAE_ARTIFACTS" \
     --output-root "$TMP/crash-out"
 [ -z "$(find "$TMP/crash-out" -mindepth 1 -print -quit)" ] || fail "crash left output residue"
 
@@ -111,8 +111,8 @@ printf '%s\n' '#!/bin/sh' 'set -eu' \
     'exec /usr/bin/git "$@"' > "$TMP/signal-bin/git"
 chmod 0755 "$TMP/signal-bin/git"
 PATH="$TMP/signal-bin:$PATH" TODO33_GIT_COUNT="$signal_count" TODO33_GIT_CHILD_PID="$signal_child_pid" TODO33_GIT_READY="$signal_ready" \
-    node "$SCRIPT" assemble --lazyqoder-root "$BUDDY_ROOT" --lazytrae-root "$TRAE_ROOT" \
-    --lazyqoder-artifact-root "$BUDDY_ARTIFACTS" --lazytrae-artifact-root "$TRAE_ARTIFACTS" \
+    node "$SCRIPT" assemble --lazybuddy-root "$BUDDY_ROOT" --lazytrae-root "$TRAE_ROOT" \
+    --lazybuddy-artifact-root "$BUDDY_ARTIFACTS" --lazytrae-artifact-root "$TRAE_ARTIFACTS" \
     --output-root "$TMP/signal-out" >"$TMP/signal.out" 2>"$TMP/signal.err" &
 signal_pid=$!
 for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
@@ -168,14 +168,14 @@ expect_archive_path_failure() {
     [ -z "$(find "$TMP/$label-out" -mindepth 1 -print -quit)" ] || fail "$label left output residue"
 }
 
-expect_archive_path_failure buddy-parent buddy ../todo33-benign-sibling-marker 'UNSAFE_ARCHIVE_PATH: LazyQoder archive path: "../todo33-benign-sibling-marker"'
-expect_archive_path_failure buddy-traversal buddy ../../escape 'UNSAFE_ARCHIVE_PATH: LazyQoder archive path: "../../escape"'
-expect_archive_path_failure buddy-empty buddy '' 'UNSAFE_ARCHIVE_PATH: LazyQoder archive path: ""'
-expect_archive_path_failure buddy-absolute buddy /tmp/todo33-absolute 'UNSAFE_ARCHIVE_PATH: LazyQoder archive path: "/tmp/todo33-absolute"'
-expect_archive_path_failure buddy-dot buddy . 'UNSAFE_ARCHIVE_PATH: LazyQoder archive path: "."'
-expect_archive_path_failure buddy-dotdot buddy .. 'UNSAFE_ARCHIVE_PATH: LazyQoder archive path: ".."'
-expect_archive_path_failure buddy-backslash buddy 'archive\\escape.tgz' 'UNSAFE_ARCHIVE_PATH: LazyQoder archive path: "archive\\\\escape.tgz"'
-expect_archive_path_failure buddy-nul buddy __NUL__ 'UNSAFE_ARCHIVE_PATH: LazyQoder archive path: "\u0000"'
+expect_archive_path_failure buddy-parent buddy ../todo33-benign-sibling-marker 'UNSAFE_ARCHIVE_PATH: LazyBuddy archive path: "../todo33-benign-sibling-marker"'
+expect_archive_path_failure buddy-traversal buddy ../../escape 'UNSAFE_ARCHIVE_PATH: LazyBuddy archive path: "../../escape"'
+expect_archive_path_failure buddy-empty buddy '' 'UNSAFE_ARCHIVE_PATH: LazyBuddy archive path: ""'
+expect_archive_path_failure buddy-absolute buddy /tmp/todo33-absolute 'UNSAFE_ARCHIVE_PATH: LazyBuddy archive path: "/tmp/todo33-absolute"'
+expect_archive_path_failure buddy-dot buddy . 'UNSAFE_ARCHIVE_PATH: LazyBuddy archive path: "."'
+expect_archive_path_failure buddy-dotdot buddy .. 'UNSAFE_ARCHIVE_PATH: LazyBuddy archive path: ".."'
+expect_archive_path_failure buddy-backslash buddy 'archive\\escape.tgz' 'UNSAFE_ARCHIVE_PATH: LazyBuddy archive path: "archive\\\\escape.tgz"'
+expect_archive_path_failure buddy-nul buddy __NUL__ 'UNSAFE_ARCHIVE_PATH: LazyBuddy archive path: "\u0000"'
 expect_archive_path_failure trae-parent trae ../todo33-benign-sibling-marker 'UNSAFE_ARCHIVE_PATH: LazyTrae archive path: "../todo33-benign-sibling-marker"'
 expect_archive_path_failure trae-normalization trae 'nested//archive.tgz' 'UNSAFE_ARCHIVE_PATH: LazyTrae archive path: "nested//archive.tgz"'
 
@@ -230,7 +230,7 @@ rm -rf "$socket_base"
 socket_base=""
 
 copy_artifacts digest
-printf 'x' >> "$TMP/digest-buddy/lazyqoder-v1.2.2.tar.gz"
+printf 'x' >> "$TMP/digest-buddy/lazybuddy-v1.2.2.tar.gz"
 mkdir "$TMP/digest-out"
 expect_failure digest-mismatch ARCHIVE_DIGEST_MISMATCH assemble "$BUDDY_ROOT" "$TRAE_ROOT" \
     "$TMP/digest-buddy" "$TMP/digest-trae" "$TMP/digest-out"
@@ -262,11 +262,11 @@ if grep -E "require\(['\"].*lazytrae|spawnSync\([^,]+,.*lazytrae" "$SCRIPT" "$(d
     fail "assembler imports or executes LazyTrae runtime code"
 fi
 
-tampered="$first_path/LazyQoder/lazyqoder-v1.2.2.tar.gz"
+tampered="$first_path/LazyBuddy/lazybuddy-v1.2.2.tar.gz"
 chmod u+w "$tampered"
 printf 'x' >> "$tampered"
 chmod 0444 "$tampered"
-expect_failure final-tamper "LazyQoder/lazyqoder-v1.2.2.tar.gz" \
+expect_failure final-tamper "LazyBuddy/lazybuddy-v1.2.2.tar.gz" \
     node "$SCRIPT" verify --candidate "$first_path"
 
 printf 'PASS: paired live-test candidate assembler boundary\n'

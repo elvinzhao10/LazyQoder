@@ -80,10 +80,10 @@ function inventory(pluginRoot, policy) {
 }
 
 function validateManifest(value, host, expectedVersion) {
-  const expected = host === 'qoder'
+  const expected = host === 'qodercli'
     ? { name: 'lazyqoder', version: expectedVersion, commands: PAYLOAD_COMPONENTS.commands, agents: PAYLOAD_COMPONENTS.agents, hooks: PAYLOAD_COMPONENTS.hooks, mcpServers: PAYLOAD_COMPONENTS.mcpServers, userConfig: QODER_USER_CONFIG }
     : { name: 'lazyqoder', version: expectedVersion, description: 'LazyQoder workflows for Qoder and Qoder.', skills: PAYLOAD_COMPONENTS.skills, commands: PAYLOAD_COMPONENTS.commands, agents: PAYLOAD_COMPONENTS.agents, hooks: PAYLOAD_COMPONENTS.hooks, mcpServers: PAYLOAD_COMPONENTS.mcpServers };
-  if (host === 'qoder') expected.description = 'LazyQoder workflows for Qoder and Qoder.';
+  if (host === 'qodercli') expected.description = 'LazyQoder workflows for Qoder and Qoder.';
   const errorCode = value?.version === expectedVersion ? 'MARKETPLACE_IDENTITY_INVALID' : 'MARKETPLACE_VERSION_MISMATCH';
   const keysMatch = JSON.stringify(Object.keys(value || {}).sort()) === JSON.stringify(Object.keys(expected).sort());
   const valuesMatch = keysMatch && Object.entries(expected)
@@ -112,7 +112,7 @@ function validateMarketplaceRoutes(releaseRoot) {
     || entry?.source !== './lazyqoder-plugin' || entry?.version !== policy.version) {
     throw new LifecycleError('MARKETPLACE_IDENTITY_INVALID', 'Qoder marketplace identity does not match the contract');
   }
-  validateManifest(artifacts['lazyqoder-plugin/.qoder-plugin/plugin.json'], 'qoder', policy.version);
+  validateManifest(artifacts['lazyqoder-plugin/.qodercli-plugin/plugin.json'], 'qodercli', policy.version);
   validateManifest(artifacts['lazyqoder-plugin/.qoder-plugin/plugin.json'], 'qoder', policy.version);
   const payload = inventory(path.join(releaseRoot, 'lazyqoder-plugin'), policy.payload);
   if (payload.length !== policy.payload.file_count || digest(Buffer.from(JSON.stringify(payload))) !== policy.payload.inventory_sha256) {
@@ -120,7 +120,7 @@ function validateMarketplaceRoutes(releaseRoot) {
   }
   return {
     version: policy.version,
-    qoder: { plugin: policy.identity.qoder_install_id, payload_inventory: payload.map((entryValue) => entryValue.path) },
+    qodercli: { plugin: policy.identity.qodercli_install_id, payload_inventory: payload.map((entryValue) => entryValue.path) },
     qoder: {
       plugin: policy.identity.plugin,
       manifest_sha256: policy.artifacts['lazyqoder-plugin/.qoder-plugin/plugin.json'],

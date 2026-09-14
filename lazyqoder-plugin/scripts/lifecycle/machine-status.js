@@ -9,14 +9,14 @@ const { CURRENT_VERSION, MACHINE_STATUS_CONTRACT_VERSION } = require('./version'
 const CONTRACT_REF = 'contracts/marketplace-route-contract.v1.json';
 const CONTRACT_CHECKSUM = path.resolve(__dirname, '..', '..', `${CONTRACT_REF}.sha256`);
 const HOST_DEFINITIONS = Object.freeze([
-  Object.freeze(['qoder-cli', 'qoder-marketplace', 'invoke-documented', 'documented-tested']),
-  Object.freeze(['qoder-ide', 'qoder-marketplace', 'invoke-documented', 'documented-tested']),
+  Object.freeze(['qodercli-cli', 'qodercli-marketplace', 'invoke-documented', 'documented-tested']),
+  Object.freeze(['qodercli-ide', 'qodercli-marketplace', 'invoke-documented', 'documented-tested']),
   Object.freeze(['qoder', 'qoder-full-plugin', 'observe-only', 'observed-build-specific']),
 ]);
 const ROUTE_DEFINITIONS = Object.freeze([
-  Object.freeze(['qoder-marketplace', ['qoder-cli', 'qoder-ide'], 'default', false, true, 'invoke-documented', 'documented-tested']),
+  Object.freeze(['qodercli-marketplace', ['qodercli-cli', 'qodercli-ide'], 'default', false, true, 'invoke-documented', 'documented-tested']),
   Object.freeze(['qoder-full-plugin', ['qoder'], 'default', false, true, 'observe-only', 'observed-build-specific']),
-  Object.freeze(['manual-skills-mcp-fallback', ['qoder-ide', 'qoder'], 'recovery-only', true, false, 'invoke-documented', 'documented-untested']),
+  Object.freeze(['manual-skills-mcp-fallback', ['qodercli-ide', 'qoder'], 'recovery-only', true, false, 'invoke-documented', 'documented-untested']),
 ]);
 
 function fail() {

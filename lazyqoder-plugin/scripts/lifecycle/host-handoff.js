@@ -17,7 +17,7 @@ const {
 
 const CONNECTORS = MCP_SERVERS;
 const ROUTES = Object.freeze({
-  'qoder-marketplace': 'qoder',
+  'qodercli-marketplace': 'qodercli',
   'qoder-full-plugin': 'qoder',
   'manual-skills-mcp-fallback': 'qoder',
 });
@@ -25,7 +25,7 @@ const OBSERVATION_KEYS = ['artifact', 'host', 'observed_at', 'type'];
 
 function routeSelection(routes) {
   const selected = [...new Set(routes)].sort();
-  const hasFull = selected.includes('qoder-full-plugin') || selected.includes('qoder-marketplace');
+  const hasFull = selected.includes('qoder-full-plugin') || selected.includes('qodercli-marketplace');
   const hasFallback = selected.includes('manual-skills-mcp-fallback');
   if (hasFull && hasFallback) {
     return {

@@ -1,0 +1,23 @@
+{
+  "name": "lazyqoder",
+  "version": "1.2.2",
+  "description": "LazyQoder workflows for Qoder and Qoder.",
+  "commands": [
+    "./commands/"
+  ],
+  "agents": [
+    "./agents/"
+  ],
+  "hooks": [
+    "./hooks/hooks.json"
+  ],
+  "mcpServers": [
+    "./.mcp.json"
+  ],
+  "userConfig": {
+    "mcp_mode": {
+      "description": "MCP profile: direct, assisted, planned, orchestrated, or long-horizon.",
+      "sensitive": false
+    }
+  }
+}

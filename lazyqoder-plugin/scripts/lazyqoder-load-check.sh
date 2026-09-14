@@ -196,11 +196,37 @@ except (FileNotFoundError, OSError, ValueError, json.JSONDecodeError, subprocess
 else:
     result("PASS", "canonical capability readiness", "read-only report available; host and MCP connection remain unchecked")
 
+machine_status = subprocess.run(
+    ["node", os.path.join(root, "scripts", "lazyqoder-machine-status.js"), "--json"],
+    check=False,
+    capture_output=True,
+    text=True,
+)
+try:
+    status = json.loads(machine_status.stdout)
+    host_rows = status.get("hosts")
+    if (
+        machine_status.returncode != 0
+        or status.get("schema_version") != 2
+        or status.get("version") != "1.2.2"
+        or status.get("package_readiness") != {"status": "ready", "scope": "package"}
+        or status.get("host_readiness") != {"status": "pending"}
+        or not isinstance(host_rows, list)
+        or [row.get("host") for row in host_rows] != ["qodercli-cli", "qodercli-ide", "qoder"]
+        or any(row.get("host_readiness") != "pending" for row in host_rows)
+    ):
+        raise ValueError("status fields do not match the v2 package boundary")
+except (AttributeError, TypeError, ValueError, json.JSONDecodeError) as exc:
+    result("FAIL", "machine status v2", str(exc))
+else:
+    result("PASS", "machine status v2", "three package-scoped hosts; host readiness pending")
+
 if failed:
     print("PACKAGE_READINESS=failed")
     print("Package readiness failed. Reinstall the full plugin or correct the named package file.")
     sys.exit(1)
 
 print("PACKAGE_READINESS=full")
-print("Package files are ready. Host registration, runtime loading, and MCP connection remain unchecked.")
+print("READINESS_SCOPE=package-ready")
+print("Package files are ready. Host activation, runtime loading, and MCP status remain unchecked.")
 PY
