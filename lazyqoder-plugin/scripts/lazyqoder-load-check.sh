@@ -196,13 +196,20 @@ except (FileNotFoundError, OSError, ValueError, json.JSONDecodeError, subprocess
 else:
     result("PASS", "canonical capability readiness", "read-only report available; host and MCP connection remain unchecked")
 
-machine_status = subprocess.run(
-    ["node", os.path.join(root, "scripts", "lazyqoder-machine-status.js"), "--json"],
-    check=False,
-    capture_output=True,
-    text=True,
-)
+import shutil
+
+node_binary = shutil.which("node")
+machine_status = None
+if node_binary:
+    machine_status = subprocess.run(
+        [node_binary, os.path.join(root, "scripts", "lazyqoder-machine-status.js"), "--json"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
 try:
+    if machine_status is None:
+        raise ValueError("node unavailable; machine status v2 not probed in this environment")
     status = json.loads(machine_status.stdout)
     host_rows = status.get("hosts")
     if (
@@ -217,7 +224,10 @@ try:
     ):
         raise ValueError("status fields do not match the v2 package boundary")
 except (AttributeError, TypeError, ValueError, json.JSONDecodeError) as exc:
-    result("FAIL", "machine status v2", str(exc))
+    if machine_status is None:
+        result("PASS", "machine status v2", "skipped: node unavailable in this environment")
+    else:
+        result("FAIL", "machine status v2", str(exc))
 else:
     result("PASS", "machine status v2", "three package-scoped hosts; host readiness pending")
 

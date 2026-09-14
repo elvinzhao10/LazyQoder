@@ -7,7 +7,7 @@ user-invocable: true
 
 # ultrawork
 
-> **Maps to Qoder IDE:** Model selector (GLM / DeepSeek / Kimi / MiniMax per task) for OmO quota discipline.
+> **Maps to Qoder IDE:** Model selector (GLM / DeepSeek / Kimi / MiniMax per task) for the sibling-family quota discipline.
 
 > **earlier host implementation source:** `local project documentation`
 

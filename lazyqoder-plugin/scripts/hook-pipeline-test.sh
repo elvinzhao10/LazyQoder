@@ -66,7 +66,7 @@ PY
             RESULTS="${RESULTS}  [FAIL] $name — expected empty output, got: ${output:0:80}\n"
             FAIL=$((FAIL + 1))
         fi
-    elif echo "$output" | grep -qi "$expect_pattern"; then
+    elif echo "$output" | grep -Eqi "$expect_pattern"; then
         RESULTS="${RESULTS}  [PASS] $name — matched expected pattern\n"
         PASS=$((PASS + 1))
     else
@@ -92,7 +92,7 @@ test_hook "user-prompt-submit.sh" \
 # 3. UserPromptSubmit — should detect long-horizon keyword and suggest command
 test_hook "user-prompt-submit.sh" \
     '{"event":"user_prompt_submit","cwd":"'"$CWD"'","session_id":"'"$SESSION_ID"'","prompt":"implement the auth flow for the app"}' \
-    "TIP\|ultrawork\|ulw\|lazyqoder"
+    "TIP|ultrawork|ulw|lazyqoder"
 
 # 4. PreToolUse — should deny rm -rf
 test_hook "pre-tool-use.sh" \
@@ -157,7 +157,7 @@ test_hook "subagent-stop.sh" \
 # 16. SubagentStop — implementer with no evidence, should block
 test_hook "subagent-stop.sh" \
     '{"event":"subagent_stop","cwd":"'"$CWD"'","session_id":"'"$SESSION_ID"'","agent_id":"a2","agent_type":"implementer","last_assistant_message":"done","transcript_path":"/dev/null"}' \
-    "continue.*false\|block"
+    "continue.*false|block"
 
 echo -e "$RESULTS"
 echo ""

@@ -172,6 +172,7 @@ run_regression_inventory() {
         "v016-remote-capabilities-regression.sh"
         "v016-lsp-regression.sh"
         "v016-runtime-version-regression.sh"
+        "v019-local-first-version-regression.sh"
         "v017-capability-readiness-contract-regression.sh"
         "v017-capability-readiness-regression.sh"
         "v017-mcp-params-regression.sh"
@@ -182,6 +183,21 @@ run_regression_inventory() {
         "v018-coupled-work-contract-regression.sh"
         "v018-post-tool-use-injection-regression.sh"
         "v101-ci-suite-separation-regression.sh"
+        "v102-qodercli-local-route-regression.sh"
+        "v102-mcp-cwd-regression.sh"
+        "v102-readiness-claims-regression.sh"
+        "v102-qoder-package-preparation-regression.sh"
+        "v103-adaptive-contract-regression.sh"
+        "v110-qodercli-service-adapters-regression.sh"
+        "v110-qodercli-service-adversarial-regression.sh"
+        "v110-qodercli-structured-runner-regression.sh"
+        "v110-mcp-profiles-regression.sh"
+        "v110-state-task-schema-regression.sh"
+        "v110-qoder-observation-bundle-regression.sh"
+        "v120-python-preflight-regression.sh"
+        "v120-state-transaction-regression.sh"
+        "v2-capability-readiness-contract-regression.sh"
+        "v2-host-evidence-contract-regression.sh"
     )
     local lifecycle_tests=(
         "v015-readiness-regression.sh"
@@ -192,6 +208,7 @@ run_regression_inventory() {
         "v017-codegraph-lifecycle-caller-survival-regression.sh"
         "v017-codegraph-uninstall-pid-identity-regression.sh"
         "v018-verifier-regression.sh"
+        "v103-lifecycle-entrypoint-regression.sh"
     )
     local standalone_tests=("${core_tests[@]}" "${lifecycle_tests[@]}")
     local selected_tests=()
@@ -199,6 +216,10 @@ run_regression_inventory() {
         "v016-automatic-tooling-contract-parity.sh"
         "v017-capability-readiness-contract-parity.sh"
         "v018-docs-manifest-parity.sh"
+        "v103-lifecycle-contract-parity.sh"
+        "v110-six-host-contract-parity.sh"
+        "v110-six-host-contract-parity-regression.sh"
+        "v110-paired-live-test-candidate.sh"
     )
     local publication_tests=(
         "publication-regression.sh"

@@ -3,7 +3,7 @@
 > Self-contained workflow harness for Qoder IDE (Alibaba's successor to Tongyi Lingma).
 
 This package belongs to the LazyQoder learning project. It is
-primarily inspired by LazyCodex, while [NOTICE](../NOTICE) records LazyCodex and
+primarily inspired by LazyCodex, while the repo-root NOTICE records LazyCodex and
 OmO upstream attribution. It is an independent implementation and does not
 require LazyCodex or OmO at runtime.
 
@@ -26,7 +26,7 @@ package evidence, not proof of live host loading or MCP connection.
 ## What this plugin provides
 
 LazyQoder provides a workflow harness for Qoder IDE, with every primitive mapped
-to a native Qoder IDE feature (see [qoder-ide-integration.md](../qoder-ide-integration.md)):
+to a native Qoder IDE feature (see the repo-root qoder-ide-integration.md):
 
 - **Hierarchical project memory** (`/lazyqoder:qoder-init-deep`) — generates `qoder.md` with directory scoring; maps to **Qoder IDE RepoWiki**
 - **Prometheus planning** (`/lazyqoder:qoder-ulw-plan`) — decision-complete work plans; never writes product code; maps to **Qoder IDE Quest mode**
@@ -91,7 +91,7 @@ were manually registered. Never guess, scan for, or delete host-managed
 installation paths, `.qoder` state, or MCP configuration belonging to another
 host. The copied repository is independent of host removal and may be deleted
 only after the host confirms the plugin/skills and connectors are gone. The root
-`offboard` protocol (see [AGENTS.md](../AGENTS.md)) records this package result
+`offboard` protocol (see the repo-root AGENTS.md) records this package result
 separately from the user-observed host result.
 
 ## Verify
@@ -298,7 +298,7 @@ bash scripts/lazyqoder-tooling.sh remote-disable \
 
 ## License
 
-MIT — see the package [LICENSE](../LICENSE) and [NOTICE](../NOTICE).
+MIT — see the package the repo-root LICENSE and NOTICE.
 
 ---
 

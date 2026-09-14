@@ -33,7 +33,7 @@ FAIL_LIST=()
 check() {
     # check <label> <expected_substring> <actual_json>
     local label="$1" needle="$2" hay="$3"
-    if echo "$hay" | grep -qi "$needle"; then
+    if echo "$hay" | grep -Eqi "$needle"; then
         PASS=$((PASS+1)); PASS_LIST+=("$label")
     else
         FAIL=$((FAIL+1)); FAIL_LIST+=("$label")
@@ -142,7 +142,7 @@ check "run-ledger/list_runs" "runs" "$OUT"
 OUT=$(rpc verification '{"jsonrpc":"2.0","id":1,"method":"initialize"}')
 check "verification/initialize" "verification" "$OUT"
 OUT=$(rpc verification '{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
-check "verification/tools-list" "discover_checks\|summarize" "$OUT"
+check "verification/tools-list" "discover_checks|summarize" "$OUT"
 
 OUT=$(rpc status-dashboard '{"jsonrpc":"2.0","id":1,"method":"initialize"}')
 check "status-dashboard/initialize" "status-dashboard" "$OUT"
@@ -152,18 +152,18 @@ check "status-dashboard/tools-list" "show_run_status" "$OUT"
 OUT=$(rpc context-graph '{"jsonrpc":"2.0","id":1,"method":"initialize"}')
 check "context-graph/initialize" "context-graph" "$OUT"
 OUT=$(rpc context-graph '{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
-check "context-graph/tools-list" "blast_radius\|symbol_search" "$OUT"
+check "context-graph/tools-list" "blast_radius|symbol_search" "$OUT"
 OUT=$(rpc context-graph '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"symbol_refs","arguments":{"symbol":"lazyqoder","limit":3}}}')
-check "context-graph/symbol_refs" "symbol_refs\|hits" "$OUT"
+check "context-graph/symbol_refs" "symbol_refs|hits" "$OUT"
 
 OUT=$(rpc code-intel '{"jsonrpc":"2.0","id":1,"method":"initialize"}')
 check "code-intel/initialize" "code-intel" "$OUT"
 OUT=$(rpc code-intel '{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
-check "code-intel/tools-list" "diagnostics\|goto_definition" "$OUT"
+check "code-intel/tools-list" "diagnostics|goto_definition" "$OUT"
 CODE_INTEL_PATH="${LAZYQODER_MCP_TEST_CODE_PATH:-README.md}"
 OUT=$(rpc code-intel "$(tools_call "$CODE_INTEL_PATH")")
 if [ -f "$CWD/$CODE_INTEL_PATH" ]; then
-    check "code-intel/symbols" "symbols\|def " "$OUT"
+    check "code-intel/symbols" "symbols|def " "$OUT"
 else
     check "code-intel/no-project-file" "file not found" "$OUT"
 fi
@@ -173,7 +173,7 @@ check "docs/initialize" "docs" "$OUT"
 OUT=$(rpc docs '{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
 check "docs/tools-list" "get_library_docs" "$OUT"
 OUT=$(rpc docs '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"list_supported_registries","arguments":{}}}')
-check "docs/list_registries" "npm\|pypi" "$OUT"
+check "docs/list_registries" "npm|pypi" "$OUT"
 
 for server in run-ledger verification status-dashboard context-graph code-intel docs lsp; do
     check_stream_protocol "$server"
