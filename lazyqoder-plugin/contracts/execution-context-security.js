@@ -78,7 +78,7 @@ function parseJson(bytes, label) {
 }
 
 function currentRun(root, owner) {
-  const runs = path.join(root, '.lazyqoder', 'runs');
+  const runs = path.join(root, '.lazybuddy', 'runs');
   if (!fs.existsSync(runs)) throw new Error('current run execution authority is missing');
   requireDirectory(root, runs, 'run ledger', owner);
   const active = [];
@@ -116,11 +116,11 @@ function resolveExecutionContext(options, record) {
     throw new Error('record identity does not match current task execution authority');
   }
   const plan = path.resolve(root, authority.plan_reference || '');
-  if (!below(path.join(root, '.lazyqoder'), plan)) throw new Error('current plan authority must stay under .lazyqoder');
+  if (!below(path.join(root, '.lazybuddy'), plan)) throw new Error('current plan authority must stay under .lazybuddy');
   const planBytes = readAuthorityFile(root, plan, 'current plan authority', owner);
   if (sha256(planBytes) !== authority.plan_sha256) throw new Error('current plan authority digest mismatch');
   const commands = path.resolve(root, authority.plan_commands_path || '');
-  if (!below(path.join(root, '.lazyqoder', 'runs', current.entry), commands)) {
+  if (!below(path.join(root, '.lazybuddy', 'runs', current.entry), commands)) {
     throw new Error('plan commands authority must stay under the current run');
   }
   const originalRoot = path.resolve(options.projectRoot);
@@ -163,7 +163,7 @@ function commandErrors(commands) {
     }
     const packageMutation = ['npm', 'npm.cmd', 'pnpm', 'yarn'].includes(executable)
       && MUTATING_PACKAGES.has(subcommand);
-    const hostMutation = executable === 'qoder' && command.argv.includes('plugin')
+    const hostMutation = executable === 'codebuddy' && command.argv.includes('plugin')
       && command.argv.some((part) => ['add', 'install', 'uninstall', 'remove'].includes(part.toLowerCase()));
     if (NON_DISPATCHABLE.has(executable)
       || (executable === 'git' && MUTATING_GIT.has(gitSubcommand(command.argv)))
