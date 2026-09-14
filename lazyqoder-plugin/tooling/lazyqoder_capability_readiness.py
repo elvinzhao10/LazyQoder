@@ -17,7 +17,7 @@ READINESS_CONTRACT: Final = PLUGIN_ROOT / "contracts" / "lazyseries-capability-r
 READINESS_VERSION: Final = "2.0.0"
 READINESS_CHECKSUM: Final = READINESS_CONTRACT.with_suffix(READINESS_CONTRACT.suffix + ".sha256")
 READINESS_SCHEMA_SHA256: Final = "17898bbc1812c445c26bddacbe286d53eabcd5f2add3f30d10c2515942db1f87"
-READINESS_HOSTS: Final = frozenset({"codebuddy-cli", "codebuddy-ide", "workbuddy", "trae-cli", "trae-ide", "trae-work"})
+READINESS_HOSTS: Final = frozenset({"qodercli-cli", "qodercli-ide", "qoder", "codebuddy-cli", "codebuddy-ide", "workbuddy", "trae-cli", "trae-ide", "trae-work"})
 READINESS_REQUIRED_FIELDS: Final = frozenset({"schema_version", "contract_version", "policy_digest", "host", "capability", "provider", "internal_status", "native_mode", "public_label", "package_status", "probe_status", "readiness_scope", "reason_code", "message", "evidence"})
 EVIDENCE_REQUIRED_FIELDS: Final = frozenset({"scope", "ref", "sha256", "session_id"})
 INTERNAL_STATE_MAPPING: Final = {
@@ -209,7 +209,7 @@ def record(capability: str, provider: str | None, status: str, message: str, rea
         "schema_version": 2,
         "contract_version": READINESS_VERSION,
         "policy_digest": policy_digest,
-        "host": "qoder-cli",
+        "host": "qodercli-cli",
         "capability": capability,
         "provider": provider,
         "internal_status": status,
@@ -383,7 +383,7 @@ def normalize_v1_readiness_record(value: object) -> dict[str, object]:
     required = {"schema_version", "contract_version", "contract_digest", "host", "capability", "provider", "status", "readiness_scope", "reason_code", "message", "receipt", "details"}
     if not isinstance(value, dict) or set(value) != required or value.get("schema_version") != 1 or value.get("contract_version") != "0.18.0":
         raise ValueError("historical v1 readiness receipt is invalid")
-    host = {"lazyqoder": "qoder-cli", "lazytrae": "trae-cli"}.get(value["host"])
+    host = {"lazyqoder": "qodercli-cli", "lazytrae": "trae-cli"}.get(value["host"])
     status = value["status"]
     if host is None or not isinstance(status, str) or status not in INTERNAL_STATE_MAPPING:
         raise ValueError("historical v1 readiness receipt has unknown host or status")
