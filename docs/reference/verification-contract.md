@@ -6,18 +6,43 @@ the package commands from `lazyqoder-plugin/`.
 | Step | Command | Expected package evidence |
 | --- | --- | --- |
 | Package readiness | `bash scripts/lazyqoder-load-check.sh` | `PACKAGE_READINESS=full`, or a specific degraded explanation. |
-| Package health | `bash scripts/lazyqoder-plugin-doctor.sh` | `Doctor check: ALL PASS`. |
+| Package health | `bash scripts/lazyqoder-plugin-doctor.sh` | `Doctor check: ALL PASS`; package-only and no PATH host execution. |
+| Explicit host manifest validation | `bash scripts/lazyqoder-plugin-doctor.sh --host-validator "/absolute/path/to/qodercli"` | The named executable is bounded and reports semantic validation success. |
 | MCP integration | `bash scripts/lazyqoder-mcp-test.sh` | `MCP test: ALL PASS`. |
-| Aggregate verification | `bash scripts/lazyqoder-verify.sh` | JSON containing `"all_pass":true`. |
+| Aggregate verification | `bash scripts/lazyqoder-verify.sh` | JSON containing passing `shell_regressions`, `node_tests`, `python_tests`, and `all_pass`. |
 | Publication contract | `bash tests/publication-regression.sh` | Root publications, the learner-path manifest, and contained local links pass. |
-| Canonical capability readiness | `python lazyqoder_capability_readiness.py readiness-report --json` | Nine capability-readiness records, each with a clear readiness state. |
-| Cross-repository learner manifest | `bash tests/vXXX-docs-manifest-parity.sh --lazyqoder-root /absolute/lazyqoder --sibling-root /absolute/sibling` | Explicit roots have the same learner paths and page titles; host-specific prose may differ. |
+| Cross-repository learner manifest | `bash tests/v018-docs-manifest-parity.sh --lazyqoder-root "/absolute/lazyqoder" --lazytrae-root "/absolute/lazytrae"` | Explicit roots have the same learner paths and page titles; host-specific prose may differ. |
 
-Package readiness and doctor cover copied assets, eight local MCP declarations,
+Package readiness and doctor cover copied assets, six local MCP declarations,
 the optional-capability policy, and receipt-safe removal rules. They do not
-prove that Qoder IDE loaded the package, executed a hook, or connected MCP. A
-new-session or host-UI observation remains required; see
+prove that Qoder CLI or Qoder IDE loaded the package, executed a hook, or
+connected MCP. A new-session or host-UI observation remains required; see
 [host routes](host-routes.md).
+
+The readiness contract requires `readiness_scope`. Package reports use only
+`package-ready`; the other declared scopes are `observed-build-route`,
+`manual-skills-mcp-fallback`, and `live-host-proof`. The latter three are
+host-observation vocabulary, not package outcomes. In particular, package
+checks never emit `host-ready` and never upgrade a local declaration into a
+live or connected claim.
+
+The Skills/manual-MCP fallback exposes Skills plus six manually configured
+local connectors only. It excludes agents, commands, and hooks. Running the
+fallback and a full plugin route together is unsupported because duplicate
+Skills or MCP processes can collide. Migrate by stopping the host session,
+removing only the old route's LazyQoder entries through the host UI, choosing
+one route, starting a fresh session, and observing that route's capabilities.
+
+Verification MCP ledger parsing fails a request with
+`malformed events.jsonl line N` for any malformed nonblank event, without
+ending the stdio server or suppressing a later valid request. A missing runs
+root remains a normal no-active-run lifecycle state. A present candidate state
+that is corrupt or unreadable is a typed lifecycle error and must not cause an
+event to be appended to another run.
+
+Verification-risk reports include monotonic in-memory `elapsed_ms` for the
+whole run and each gate. Checked-in efficiency baselines use
+`validation_elapsed_ms` for the historical fixture duration.
 
 Timeouts cover trusted package-owned checks only. The runner starts each check
 in its own process group, terminates that group on deadline, and reports any
@@ -25,11 +50,11 @@ still-detectable descendants. This is best-effort cleanup, not a security sandbo
 
 ## Intentional exclusions
 
-- Qoder IDE uses its plugin/extension or CLI flow. The local fallback imports
-  `skills/` and manually configures compatible connectors in Agent-mode MCP.
+- Qoder CLI uses its plugin flow. Qoder IDE uses its UI/marketplace or imported
+  local skills with manually configured compatible connectors.
 - Tooling roots are receipt-owned. Host-managed paths, `.qoder` state,
   host MCP entries, and credentials are neither scanned nor removed.
-- The package declares eight local MCP servers. Context7 and `grep_app` are
+- The package declares six local MCP servers. Context7 and `grep_app` are
   optional export fragments; filesystem and Playwright are not bundled local
   MCP servers.
 
@@ -60,28 +85,6 @@ unversioned filename unless preserving release provenance is necessary.
 Use the narrowest matching sentence in a release note or DoneClaim. Combining
 different evidence types is useful, but it never upgrades one kind of proof
 into another.
-
-## Canonical capability readiness and automatic-tooling contract
-
-LazyQoder ships two contracts that bound every claim above:
-
-- `contracts/lazyseries-capability-readiness.v1.json` — the canonical
-  capability-readiness record set. `python lazyqoder_capability_readiness.py
-  readiness-report --json` emits **nine** records, one per harness primitive
-  (`qoder-init-deep`→RepoWiki, `qoder-ulw-plan`→Quest, `qoder-start-work` /
-  `qoder-ulw-loop`→Agent mode + Subagents, `qoder-review-work` /
-  `qoder-reviewer` / `qoder-verifier`→Expert teams, model routing→Model
-  selector, MCP→Agent-mode MCP, plus foundation, tooling, and receipt records).
-  A readiness record states only that the package declares and self-checks a
-  primitive; it never asserts a live Qoder IDE connection.
-- `contracts/automatic-tooling-contract.v1.json` — the automatic-tooling
-  contract. It defines providers, fallbacks, permissions, timeouts, and error
-  identifiers for any capability the package may auto-select. Automatic tooling
-  is confined to local/read-only providers and never performs remote egress,
-  browser automation, or credential use without explicit selection.
-
-These contracts are load-check-verified by sha256; their contents are copied
-verbatim and must not be edited by the port.
 
 Read [test and release verification](../09-test-and-release-verification.md)
 for the five evidence layers and [evidence and completion](../05-evidence-and-completion.md)
