@@ -14,9 +14,9 @@ import tempfile
 from pathlib import Path
 from typing import TypeAlias, assert_never
 
-from lazyqoder_qoder_service_contract import ServiceKind
-from lazyqoder_qoder_service_runtime import ServiceRuntimeError
-from lazyqoder_qoder_service_commands import (
+from lazyqoder_qodercli_service_contract import ServiceKind
+from lazyqoder_qodercli_service_runtime import ServiceRuntimeError
+from lazyqoder_qodercli_service_commands import (
     NAME,
     AdapterError,
     activate,

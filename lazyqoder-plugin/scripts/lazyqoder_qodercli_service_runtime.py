@@ -25,7 +25,7 @@ from lazyqoder_process_lifecycle import (
 )
 from lazyqoder_supervisor_contract import SupervisorAck, SupervisorState, parse_status, write_ack
 from lazyqoder_supervisor_runner import SupervisorLaunch
-from lazyqoder_qoder_service_contract import Endpoint, EndpointTransport, ServicePaths, ServiceReceipt
+from lazyqoder_qodercli_service_contract import Endpoint, EndpointTransport, ServicePaths, ServiceReceipt
 
 
 HEALTH_BODY_CAP: Final = 16 * 1024

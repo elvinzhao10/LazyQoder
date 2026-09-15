@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import assert_never
 
-from lazyqoder_qoder_service_contract import Endpoint, ServiceKind, SessionMode
-from lazyqoder_qoder_service_runtime import ServiceRuntimeError, http_target
+from lazyqoder_qodercli_service_contract import Endpoint, ServiceKind, SessionMode
+from lazyqoder_qodercli_service_runtime import ServiceRuntimeError, http_target
 
 
 @dataclass(frozen=True, slots=True)

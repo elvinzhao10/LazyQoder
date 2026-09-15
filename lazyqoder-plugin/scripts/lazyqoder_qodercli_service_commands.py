@@ -12,9 +12,9 @@ from typing import Final, Iterator, TypeAlias, assert_never
 
 from lazyqoder_bounded_process import executable_fingerprint
 from lazyqoder_process_lifecycle import CleanupStatus
-from lazyqoder_qoder_checkpoint import CheckpointError, observe_checkpoint
-from lazyqoder_qoder_service_argv import CommandSpec, command_for
-from lazyqoder_qoder_service_contract import (
+from lazyqoder_qodercli_checkpoint import CheckpointError, observe_checkpoint
+from lazyqoder_qodercli_service_argv import CommandSpec, command_for
+from lazyqoder_qodercli_service_contract import (
     Endpoint,
     EndpointTransport,
     ReceiptError,
@@ -26,7 +26,7 @@ from lazyqoder_qoder_service_contract import (
     parse_receipt,
     write_receipt,
 )
-from lazyqoder_qoder_service_runtime import (
+from lazyqoder_qodercli_service_runtime import (
     PersistentLaunch,
     ServiceRuntimeError,
     activate_prewarm,

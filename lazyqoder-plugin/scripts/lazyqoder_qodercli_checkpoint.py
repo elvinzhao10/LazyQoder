@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Final, TypeAlias
 
-from lazyqoder_qoder_service_contract import ServiceReceipt
+from lazyqoder_qodercli_service_contract import ServiceReceipt
 
 
 CHECKPOINT_ID: Final = re.compile(r"^[a-z0-9][a-z0-9._:-]{2,127}$")
