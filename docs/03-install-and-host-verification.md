@@ -6,7 +6,7 @@ This page explains the deployment boundary in code terms. A plugin package conta
 
 This documentation boundary covers `qodercli-cli`, `qodercli-ide`, and
 `qoder`; it does not publish a v1.2.3 package. Marketplace is the default
-full-plugin route for Qoder CLI IDE and Qoder IDE. The Skills/manual-MCP route
+full-plugin route for Qoder CLI and Qoder IDE. The Skills/manual-MCP route
 is recovery-only and mutually exclusive with a full-plugin route. v2 records
 native mode as `invoke-documented`, `observe-only`, `descriptor-only`, or
 `unavailable`; public label as `documented-tested`, `documented-untested`,
@@ -50,7 +50,7 @@ status or screenshot is observed evidence; otherwise **HOST READINESS:
 PENDING**.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI IDE route whenever the Qoder CLI CLI is
+CLI route and the preferred Qoder CLI route whenever the Qoder CLI is
 available**. Qoder IDE uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only. Package checks never upgrade any route to host proof.
@@ -74,7 +74,7 @@ The first channel supports claims about package contents. The second supports cl
 
 ## Delivery surfaces
 
-Qoder CLI CLI uses these documented terminal commands against the absolute
+Qoder CLI uses these documented terminal commands against the absolute
 active durable release root printed by `status --route
 qodercli-marketplace` (not a source checkout or nested `lazyqoder-plugin/`):
 
@@ -84,7 +84,7 @@ qodercli plugin install lazyqoder@lazyqoder
 ```
 
 Inside a Qoder CLI session, the interactive `/plugin` menu is equivalent; do
-not use the slash forms as terminal commands. Qoder CLI IDE uses that same
+not use the slash forms as terminal commands. Qoder CLI uses that same
 user-scope CLI marketplace route whenever the CLI is available; its supplied
 GUI Add local directory flow failed. If the CLI is unavailable, use the public
 Skills import plus manual MCP JSON fallback. Qoder IDE uses the active
@@ -94,7 +94,7 @@ hooks. Full plugin/manual coexistence is unsupported: stop the session, remove
 only old LazyQoder entries through the host UI, choose one route, start a new
 session, and verify it.
 
-For Qoder CLI IDE, the GUI full-plugin sequence is an observed-build
+For Qoder CLI, the GUI full-plugin sequence is an observed-build
 alternative only: add the release root as a local directory marketplace, wait
 for discovery, install as a separate action, fully restart, then verify a fresh
 session. The supplied GUI flow failed, so prefer the CLI route and retain

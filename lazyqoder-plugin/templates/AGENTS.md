@@ -19,7 +19,7 @@ workspace. Only an explicitly verified lifecycle-owned sibling bootstrap lock
 or product `staging/`/`locks/` artifact is recoverable; never remove or replace
 caller workspace files.
 
-1. Detect or ask for **Qoder CLI IDE**, **Qoder CLI CLI**, or **Qoder IDE**.
+1. Detect or ask for **Qoder CLI**, **Qoder IDE (extensions)**, or **Qoder IDE (app)**.
 2. Resolve the absolute release/plugin root; never guess it from PATH or treat
    `--plugin-dir` as an installed route.
 3. Run safe package checks only: from the release root, use
@@ -38,19 +38,19 @@ caller workspace files.
    MCP connections. Otherwise **HOST READINESS: PENDING**.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI IDE route whenever the Qoder CLI CLI is
+CLI route and the preferred Qoder CLI route whenever the CLI is
 available**. Qoder IDE uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only. None is current host proof until observed.
 
-Supplied macOS QA dated 2026-07-18 observed Qoder CLI IDE full-plugin loading
+Supplied macOS QA dated 2026-07-18 observed Qoder CLI full-plugin loading
 through the CLI-backed user-scope marketplace route. It inspected Qoder IDE
 v5.2.6 on macOS and reported full-plugin behavior after undocumented
 host-internal changes. That feedback is historical observation only, not an
 installation route. The GUI flows failed in that tested build. A current
 unsupported build remains **HOST READINESS: PENDING**.
 
-## Qoder CLI CLI local marketplace
+## Qoder CLI local marketplace
 
 Run durable `status --route qodercli-marketplace` and use its active durable
 release root containing `.qodercli-plugin/marketplace.json`:
@@ -71,10 +71,10 @@ session as the next action. Inside a Qoder CLI session, the interactive
 `.qodercli/settings.local.json` is ignored local/machine scope and must remain
 unstaged; secrets must never be committed.
 
-## Qoder CLI IDE route
+## Qoder CLI route
 
 When the CLI is available (`qodercli`), use the same release-root marketplace
-route as Qoder CLI CLI:
+route as Qoder CLI:
 
 ```text
 qodercli plugin marketplace add "<active-durable-release-root>"
@@ -117,7 +117,7 @@ ref requires `--confirm-revision <full-sha>`. Package success never upgrades
 
 ## IDE and Qoder IDE fallback
 
-Qoder CLI IDE's public fallback and Qoder IDE's supported local fallback import
+Qoder CLI's public fallback and Qoder IDE's supported local fallback import
 `lazyqoder-plugin/skills/` and configure six local MCP connectors manually:
 `run-ledger`, `verification`, `status-dashboard`, `context-graph`, `code-intel`,
 and `docs`. This route excludes commands, agents, and hooks. A package file,

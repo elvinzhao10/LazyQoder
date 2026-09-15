@@ -40,8 +40,8 @@ unchanged at 13/13 and 57/57 assertions. No new efficiency claim is made here.
 
 | Host | Package route | Readiness requirement |
 | --- | --- | --- |
-| Qoder CLI CLI | Release-root local marketplace | Fresh session with one loaded Skill or command and all six MCP connections. |
-| Qoder CLI IDE | CLI-backed marketplace when available; observed-build GUI or recovery fallback otherwise | Fresh IDE session with the same loaded surface and six live MCP connections. |
+| Qoder CLI | Release-root local marketplace | Fresh session with one loaded Skill or command and all six MCP connections. |
+| Qoder CLI | CLI-backed marketplace when available; observed-build GUI or recovery fallback otherwise | Fresh IDE session with the same loaded surface and six live MCP connections. |
 | Qoder IDE | `.qoder-plugin/plugin.json` through the host's visible marketplace/plugin flow | Current-build receipt for a Skill, command, agent, hook, and all six MCP connections. |
 
 Package checks are package evidence only. Every host remains **pending host

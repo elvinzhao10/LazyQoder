@@ -119,7 +119,7 @@ route_check = subprocess.run(
     text=True,
 )
 if route_check.returncode == 0:
-    result("PASS", "marketplace route contract", "Qoder CLI IDE and Qoder IDE marketplace defaults")
+    result("PASS", "marketplace route contract", "Qoder CLI and Qoder IDE marketplace defaults")
 else:
     result("FAIL", "marketplace route contract", route_check.stderr.strip())
 

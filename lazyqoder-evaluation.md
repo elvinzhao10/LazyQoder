@@ -7,7 +7,7 @@ plugin. Verification is on macOS only.
 ## Current documentation status: v1.2.3
 
 The v1.2.3 documentation boundary covers `qodercli-cli`, `qodercli-ide`, and
-`qoder`; it does not publish or alter a package. For Qoder CLI IDE and
+`qoder`; it does not publish or alter a package. For Qoder CLI and
 Qoder IDE, marketplace is the default full-plugin route. The manual
 Skills/MCP route is recovery-only and mutually exclusive with the full-plugin
 route for one project. Package readiness does not prove a live host.
@@ -76,8 +76,8 @@ a target manifest, lockfile, global tool, or host configuration.
 
 | Surface | Package evidence | Required user observation |
 |---|---|---|
-| Qoder CLI IDE | Copyable package, manifest, local checks, and six MCP declarations. | Install with the host plugin flow, reload if offered, then confirm a LazyQoder skill/command and MCP status in a new session. |
-| Qoder CLI CLI | Marketplace commands and package validation are documented. | Install through the host, start a new session, and inspect plugin/MCP activation. |
+| Qoder CLI | Copyable package, manifest, local checks, and six MCP declarations. | Install with the host plugin flow, reload if offered, then confirm a LazyQoder skill/command and MCP status in a new session. |
+| Qoder CLI (marketplace) | Marketplace commands and package validation are documented. | Install through the host, start a new session, and inspect plugin/MCP activation. |
 | Qoder IDE plugin/marketplace | Compatibility metadata and package assets are present. | Use the documented UI/marketplace and confirm a loaded session before relying on plugin capabilities. |
 | Qoder IDE local fallback | `lazyqoder-plugin/skills/` is the verified no-package-manager import source. | Import skills through Skills UI and add each compatible MCP connector manually in Settings. |
 
@@ -152,7 +152,7 @@ and release-evidence vocabulary.
 
 ## Host-specific exclusions
 
-- **Host integration:** Qoder CLI IDE/CLI use host plugin flows; Qoder IDE uses
+- **Host integration:** Qoder CLI and its IDE use host plugin flows; Qoder IDE uses
   its UI/marketplace or local skills with manual connectors.
 - **State/path:** tooling roots are package receipt-owned; `.qoder`,
   host plugin locations, host MCP entries, and credentials remain host/user

@@ -184,10 +184,10 @@ an endorsement of installation through private host state.
   UI intent without expanding host-setting or installation authority.
 - Aligned active manifests, tooling packages, MCP identities, hook/verifier
   banners, documentation clients, and public install guidance with v1.0.2.
-- Made the release-root local marketplace the documented Qoder CLI CLI route:
+- Made the release-root local marketplace the documented Qoder CLI route:
   add the absolute local root, install `lazyqoder@lazyqoder`, then start a fresh
   session as three separate actions. `--plugin-dir` remains development-only.
-- Qualified Qoder CLI IDE and Qoder IDE plugin behavior as observed-build
+- Qualified Qoder CLI and Qoder IDE plugin behavior as observed-build
   routes, retained Skills plus six manual MCP connectors as the supported
   fallback, and documented collision-free migration between the two.
 - Clarified `.qodercli/settings.json` versus ignored
@@ -197,7 +197,7 @@ an endorsement of installation through private host state.
 ### Post-prerelease host-route correction (2026-07-19)
 
 - Made the release-root Qoder CLI marketplace commands the preferred full-plugin
-  route for Qoder CLI IDE whenever its CLI is available; the supplied IDE GUI
+  route for Qoder CLI whenever it is available; the supplied IDE GUI
   Add local directory flow failed, so the UI path is now explicitly
   observed-build-only.
 - Recorded the supplied Qoder IDE v5.2.6 macOS build's durable route: after

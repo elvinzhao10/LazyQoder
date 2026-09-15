@@ -13,7 +13,7 @@ offboard/re-onboard rather than receipt edits. Package success leaves **HOST
 READINESS: PENDING** without current observation. Historical Qoder IDE feedback
 about undocumented host state is not an installation route.
 
-> Self-contained workflow harness for Qoder CLI IDE, Qoder CLI CLI, and Qoder IDE's Skills/manual-MCP fallback.
+> Self-contained workflow harness for Qoder CLI, the Qoder IDE extensions, and the Qoder IDE app's Skills/manual-MCP fallback.
 
 This package belongs to the LazyQoder learning project. It is
 primarily inspired by LazyCodex, while [NOTICE](NOTICE) records LazyCodex and
@@ -52,7 +52,7 @@ or product `staging/`/`locks/` artifact is recoverable; never remove or replace
 caller workspace files.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI IDE route whenever the Qoder CLI CLI is
+CLI route and the preferred Qoder CLI route whenever the CLI is
 available**. Qoder IDE uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. `manual-skills-mcp-fallback` is recovery-only.
 None is current host proof until observed.
@@ -119,8 +119,8 @@ files, and leaves the run eligible for retry.
 
 ## Install
 
-For **Qoder CLI CLI**, use the local release-root marketplace route below. For
-**Qoder CLI IDE**, use that same CLI marketplace route whenever the `qodercli`
+For **Qoder CLI**, use the local release-root marketplace route below. For
+**Qoder CLI**, use that same CLI marketplace route whenever the `qodercli`
 CLI is available; the supplied GUI Add local directory flow failed. If the CLI
 is unavailable, use the public Skills/manual-MCP fallback or an observed-build
 GUI route only after current discovery. For **Qoder IDE**, use the supported
@@ -144,7 +144,7 @@ bash scripts/lazyqoder-plugin-doctor.sh \
 
 ### Marketplace install
 
-For Qoder CLI CLI, run durable `status --route qodercli-marketplace` and pass
+For Qoder CLI, run durable `status --route qodercli-marketplace` and pass
 the printed active durable **release root** containing
 `.qodercli-plugin/marketplace.json` (not the nested `lazyqoder-plugin/`
 directory) to the local marketplace, then install the named entry:
@@ -168,7 +168,7 @@ install yet. Second, after a separate approval, install
 session and observe one real Skill/command plus all six MCP connections.
 Package metadata alone is not host readiness.
 
-### Qoder CLI IDE route
+### Qoder CLI route
 
 When the CLI is available (`qodercli`), add the absolute release root using the
 same two commands above, then restart the IDE and inspect a fresh session. The
@@ -226,7 +226,7 @@ and verify it in a fresh session.
 
 ## Uninstall
 
-Use Qoder CLI's plugin removal flow for a Qoder CLI IDE or CLI installation,
+Use Qoder CLI's plugin removal flow for a Qoder CLI or CLI installation,
 then remove or disable only the LazyQoder MCP servers that were manually
 registered. Use Qoder IDE's documented plugin/marketplace removal flow for a
 verified Qoder IDE plugin installation. For the local-import fallback, remove
