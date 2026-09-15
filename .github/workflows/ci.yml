@@ -15,9 +15,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: Deterministic validation
-    runs-on: macos-15
+  supported-floor:
+    name: Supported floor (Node 20)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "20.0.0"
+      - run: node lazyqoder-plugin/scripts/verify-supported-floor.mjs --expected-runtime 20.0.0 --exercise package,install,onboarding,lsp-provider
+
+  core:
+    name: Core verification (Node 22)
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
       LAZYQODER_VERIFY_SUITE: core
@@ -26,23 +39,47 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           persist-credentials: false
-
-      - name: Set up Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: "3.13"
-
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "22"
+      - name: Install locked tooling dependencies
+        working-directory: lazyqoder-plugin/tooling
+        run: npm ci --ignore-scripts --no-audit --fund=false
       - name: Run package verification
         run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
-
       - name: Run publication verification
         run: bash lazyqoder-plugin/tests/publication-regression.sh
 
+  core-current:
+    name: Core verification (Node 24)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      LAZYQODER_VERIFY_SUITE: core
+      LAZYQODER_VERIFY_TIMEOUT_SECONDS: 180
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24"
+      - name: Install locked tooling dependencies
+        working-directory: lazyqoder-plugin/tooling
+        run: npm ci --ignore-scripts --no-audit --fund=false
+      - name: Run package verification
+        run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
+
   lifecycle:
-    name: Lifecycle regressions (advisory)
+    name: Lifecycle regressions (macOS)
     runs-on: macos-15
     timeout-minutes: 30
-    continue-on-error: true
     env:
       LAZYQODER_VERIFY_SUITE: lifecycle
       LAZYQODER_VERIFY_TIMEOUT_SECONDS: 240
@@ -50,11 +87,33 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           persist-credentials: false
-
-      - name: Set up Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: "3.13"
-
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "22"
+      - name: Install locked tooling dependencies
+        working-directory: lazyqoder-plugin/tooling
+        run: npm ci --ignore-scripts --no-audit --fund=false
       - name: Run timing-sensitive lifecycle regressions
         run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
+
+  validate:
+    name: Deterministic validation
+    if: ${{ always() }}
+    needs: [supported-floor, core, core-current, lifecycle]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Require all blocking jobs to succeed
+        env:
+          SUPPORTED_FLOOR_RESULT: ${{ needs.supported-floor.result }}
+          CORE_RESULT: ${{ needs.core.result }}
+          CORE_CURRENT_RESULT: ${{ needs.core-current.result }}
+          LIFECYCLE_RESULT: ${{ needs.lifecycle.result }}
+        run: |
+          test "$SUPPORTED_FLOOR_RESULT" = success
+          test "$CORE_RESULT" = success
+          test "$CORE_CURRENT_RESULT" = success
+          test "$LIFECYCLE_RESULT" = success

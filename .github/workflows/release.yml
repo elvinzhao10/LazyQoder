@@ -35,9 +35,17 @@ jobs:
         with:
           python-version: "3.13"
 
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "20"
+
+      - name: Install locked tooling dependencies
+        working-directory: lazyqoder-plugin/tooling
+        run: npm ci --ignore-scripts --no-audit --fund=false
+
       - name: Validate release tag and package version
         run: |
-          package_version="$(python3 -c 'import json; print(json.load(open("lazyqoder-plugin/.qoder/plugin.json"))["version"])')"
+          package_version="$(python3 -c 'import json; print(json.load(open("lazyqoder-plugin/.qoder-plugin/plugin.json"))["version"])')"
           test "$RELEASE_TAG" = "v$package_version"
 
       - name: Run package verification
