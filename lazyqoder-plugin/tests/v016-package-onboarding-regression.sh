@@ -34,6 +34,8 @@ expect() {
 
 mkdir -p "$INSTALLED" "$HOME_ROOT" "$CONFIG_ROOT" "$TOOLING_ROOT" "$NPM_BIN"
 cp -R "$PLUGIN_ROOT/." "$INSTALLED/"
+mkdir -p "$TMP/installed/.qoder-plugin"
+cp "$PLUGIN_ROOT/../.qoder-plugin/marketplace.json" "$TMP/installed/.qoder-plugin/marketplace.json"
 cat > "$NPM_BIN/npm" <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
