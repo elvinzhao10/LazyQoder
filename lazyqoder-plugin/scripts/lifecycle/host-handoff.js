@@ -92,7 +92,7 @@ function connector(name, releaseRoot, projectRoot) {
 
 function renderHandoff(route, releaseRoot, projectRoot, marketplace = null) {
   const base = { namespace: 'lazyqoder', route, host: ROUTES[route], host_mutation: 'none' };
-  if (route === 'qoder-marketplace') {
+  if (route === 'qodercli-marketplace') {
     return {
       ...base,
       expected_artifacts: {
@@ -101,7 +101,7 @@ function renderHandoff(route, releaseRoot, projectRoot, marketplace = null) {
         version: marketplace.version,
       },
       degraded: { status: 'none' },
-      next_action: { kind: 'host-command', command: `qoder plugin marketplace add ${releaseRoot}` },
+      next_action: { kind: 'host-command', command: `qodercli plugin marketplace add ${releaseRoot}` },
     };
   }
   if (route === 'qoder-full-plugin') {
@@ -110,7 +110,7 @@ function renderHandoff(route, releaseRoot, projectRoot, marketplace = null) {
       ...base,
       route_priority: { rank: 1, fallback_rank: 2 },
       expected_artifacts: {
-        route: 'qoder-marketplace',
+        route: 'qodercli-marketplace',
         manifest: path.join(releaseRoot, 'lazyqoder-plugin', '.qoder-plugin', 'plugin.json'),
         plugin: 'lazyqoder',
         version: marketplace.version,

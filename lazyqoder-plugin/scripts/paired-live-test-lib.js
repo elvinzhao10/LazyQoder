@@ -11,7 +11,7 @@ const {
   computeTreeDigest,
 } = require('../contracts/validate-paired-candidate.js');
 
-const HOSTS = Object.freeze(['codebuddy-cli', 'codebuddy-ide', 'workbuddy', 'trae-cli', 'trae-ide', 'trae-work']);
+const HOSTS = Object.freeze(['qodercli-cli', 'qodercli-ide', 'qoder', 'trae-cli', 'trae-ide', 'trae-work']);
 const FORBIDDEN = new Set(['.git', '.cache', 'cache', 'caches', 'secrets']);
 const SOURCE_SHA = /^[0-9a-f]{40}$/;
 
@@ -183,7 +183,7 @@ async function verifySourceAsync(root, expectedSha, expectedTree, label, registe
 function verifyArtifacts(buddyRoot, traeRoot) {
   const buddyManifest = readJson(buddyRoot, 'manifest.json');
   const buddyReceipt = readJson(buddyRoot, 'self-verification-receipt.json');
-  const buddyArchive = parseArchivePath(buddyManifest.archive_path, 'LazyBuddy archive path');
+  const buddyArchive = parseArchivePath(buddyManifest.archive_path, 'LazyQoder archive path');
   assertClosedRegularTree(buddyRoot, [
     'manifest.json',
     'self-verification-receipt.json',
@@ -194,10 +194,10 @@ function verifyArtifacts(buddyRoot, traeRoot) {
   ]);
   const buddyBytes = readRegular(buddyRoot, buddyArchive);
   const buddyTree = readRegular(buddyRoot, 'ordered-tree.digest').toString('utf8').trim();
-  refuse(digest(buddyBytes) !== buddyManifest.archive_sha256 || buddyReceipt.archive_sha256 !== buddyManifest.archive_sha256, 'ARCHIVE_DIGEST_MISMATCH', `LazyBuddy/${buddyArchive}`);
-  refuse(buddyTree !== buddyManifest.ordered_extracted_tree_sha256 || buddyReceipt.ordered_extracted_tree_sha256 !== buddyTree, 'TREE_DIGEST_MISMATCH', 'LazyBuddy');
-  refuse(buddyReceipt.status !== 'pass' || buddyManifest.release_version !== '1.2.2' || buddyReceipt.release_version !== '1.2.2', 'INVALID_RECEIPT', 'LazyBuddy status/version');
-  refuse(buddyReceipt.source_sha !== buddyManifest.source_sha || buddyReceipt.source_tree !== buddyManifest.source_tree, 'INVALID_RECEIPT', 'LazyBuddy source binding');
+  refuse(digest(buddyBytes) !== buddyManifest.archive_sha256 || buddyReceipt.archive_sha256 !== buddyManifest.archive_sha256, 'ARCHIVE_DIGEST_MISMATCH', `LazyQoder/${buddyArchive}`);
+  refuse(buddyTree !== buddyManifest.ordered_extracted_tree_sha256 || buddyReceipt.ordered_extracted_tree_sha256 !== buddyTree, 'TREE_DIGEST_MISMATCH', 'LazyQoder');
+  refuse(buddyReceipt.status !== 'pass' || buddyManifest.release_version !== '1.2.3' || buddyReceipt.release_version !== '1.2.3', 'INVALID_RECEIPT', 'LazyQoder status/version');
+  refuse(buddyReceipt.source_sha !== buddyManifest.source_sha || buddyReceipt.source_tree !== buddyManifest.source_tree, 'INVALID_RECEIPT', 'LazyQoder source binding');
 
   const traeManifest = readJson(traeRoot, 'manifest.json');
   const traeReceipt = readJson(traeRoot, 'self-verification-receipt.json');
@@ -216,7 +216,7 @@ function verifyArtifacts(buddyRoot, traeRoot) {
   const traeSidecar = readRegular(traeRoot, `${traeArchive}.sha256`).toString('utf8').trim().split(/\s+/)[0];
   refuse(digest(traeBytes) !== traeManifest.artifact.sha256 || traeReceipt.artifact?.sha256 !== traeManifest.artifact.sha256 || traeSidecar !== traeManifest.artifact.sha256, 'ARCHIVE_DIGEST_MISMATCH', `LazyTrae/${traeArchive}`);
   refuse(traeTree !== traeManifest.artifact.treeDigest || traeReceipt.artifact?.treeDigest !== traeTree, 'TREE_DIGEST_MISMATCH', 'LazyTrae');
-  refuse(traeReceipt.status !== 'pass' || traeManifest.version !== '1.2.2' || traeReceipt.version !== '1.2.2', 'INVALID_RECEIPT', 'LazyTrae status/version');
+  refuse(traeReceipt.status !== 'pass' || traeManifest.version !== '1.2.3' || traeReceipt.version !== '1.2.3', 'INVALID_RECEIPT', 'LazyTrae status/version');
   refuse(traeReceipt.source?.sha !== traeManifest.source?.sha || traeReceipt.source?.tree !== traeManifest.source?.tree, 'INVALID_RECEIPT', 'LazyTrae source binding');
   return {
     buddy: {
@@ -255,8 +255,8 @@ function productRecord(id, prefix, archive, sourceSha, inventory) {
     archive_sha256: archiveRecord.sha256,
     tree_sha256: computeTreeDigest(records),
     payload_sha256: computeTreeDigest(records, 'payload-v1'),
-    command: id === 'lazybuddy' ? 'bash lazybuddy-plugin/scripts/lazybuddy-package-verify.sh' : 'npm test',
-    runtime: id === 'lazybuddy' ? 'node-20+python-3' : 'node-20',
+    command: id === 'lazyqoder' ? 'bash lazyqoder-plugin/scripts/lazyqoder-package-verify.sh' : 'npm test',
+    runtime: id === 'lazyqoder' ? 'node-20+python-3' : 'node-20',
   };
 }
 

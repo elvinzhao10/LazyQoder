@@ -40,7 +40,7 @@ function parse(argv) {
     values.set(argv[index], argv[index + 1]);
   }
   const required = command === 'assemble'
-    ? ['--lazybuddy-root', '--lazytrae-root', '--lazybuddy-artifact-root', '--lazytrae-artifact-root', '--output-root']
+    ? ['--lazyqoder-root', '--lazytrae-root', '--lazyqoder-artifact-root', '--lazytrae-artifact-root', '--output-root']
     : ['--candidate'];
   for (const flag of required) refuse(!values.has(flag), 'USAGE', `missing ${flag}`);
   refuse(values.size !== required.length, 'USAGE', 'unknown argument');
@@ -81,7 +81,7 @@ function verifyCandidate(candidateInput) {
   const manifest = JSON.parse(manifestBytes.toString('utf8'));
   const combined = computeCombinedDigest(manifest);
   refuse(combined !== manifest.combined_digest, 'COMBINED_DIGEST_MISMATCH', 'manifest projection');
-  refuse(path.basename(root) !== `live-test-v1.2.2-${combined}`, 'CANDIDATE_NAME_MISMATCH', root);
+  refuse(path.basename(root) !== `live-test-v1.2.3-${combined}`, 'CANDIDATE_NAME_MISMATCH', root);
   validateCandidate(manifest, {
     payloadRoot: root,
     destination: path.join(root, '.paired-candidate-validation-destination'),
@@ -99,7 +99,7 @@ function verifyCandidate(candidateInput) {
   const metadata = JSON.parse(detached.toString('utf8'));
   refuse(metadata.schema_version !== 'lazyseries.paired-build-metadata.v1', 'DETACHED_METADATA_MISMATCH', manifest.detached_metadata.path);
   for (const product of manifest.products) {
-    const prefix = product.product_id === 'lazybuddy' ? 'LazyBuddy/' : 'LazyTrae/';
+    const prefix = product.product_id === 'lazyqoder' ? 'LazyQoder/' : 'LazyTrae/';
     const records = actualInventory.filter((entry) => entry.path.startsWith(prefix));
     refuse(computeTreeDigest(records) !== product.tree_sha256, 'TREE_DIGEST_MISMATCH', product.product_id);
     refuse(computeTreeDigest(records, 'payload-v1') !== product.payload_sha256, 'PAYLOAD_DIGEST_MISMATCH', product.product_id);
@@ -139,21 +139,21 @@ function installSignalCleanup(transaction) {
 }
 
 async function assemble(values) {
-  const buddySource = resolveRealDirectory(values.get('--lazybuddy-root'), 'LazyBuddy source');
+  const buddySource = resolveRealDirectory(values.get('--lazyqoder-root'), 'LazyQoder source');
   const traeSource = resolveRealDirectory(values.get('--lazytrae-root'), 'LazyTrae source');
-  const buddyArtifacts = resolveRealDirectory(values.get('--lazybuddy-artifact-root'), 'LazyBuddy artifacts');
+  const buddyArtifacts = resolveRealDirectory(values.get('--lazyqoder-artifact-root'), 'LazyQoder artifacts');
   const traeArtifacts = resolveRealDirectory(values.get('--lazytrae-artifact-root'), 'LazyTrae artifacts');
   const outputRoot = resolveRealDirectory(values.get('--output-root'), 'output root', true);
   const artifacts = verifyArtifacts(buddyArtifacts, traeArtifacts);
-  verifySource(buddySource, artifacts.buddy.manifest.source_sha, artifacts.buddy.manifest.source_tree, 'LazyBuddy');
+  verifySource(buddySource, artifacts.buddy.manifest.source_sha, artifacts.buddy.manifest.source_tree, 'LazyQoder');
   verifySource(traeSource, artifacts.trae.manifest.source.sha, artifacts.trae.manifest.source.tree, 'LazyTrae');
 
-  const buddySchema = readRegular(path.join(buddySource, 'lazybuddy-plugin', 'contracts'), 'paired-candidate-contract.v1.schema.json');
+  const buddySchema = readRegular(path.join(buddySource, 'lazyqoder-plugin', 'contracts'), 'paired-candidate-contract.v1.schema.json');
   const traeSchema = readRegular(path.join(traeSource, 'lazytrae-plugin', 'packages', 'cli', 'contracts'), 'paired-candidate-contract.v1.schema.json');
   refuse(!buddySchema.equals(traeSchema), 'SHARED_SCHEMA_MISMATCH', 'paired-candidate-contract.v1.schema.json');
 
   const nonce = require('node:crypto').randomBytes(16).toString('hex');
-  const transaction = { child: null, lock: '', lockOwned: false, staging: path.join(outputRoot, `.live-test-v1.2.2.prestaging-${nonce}`), stagingOwned: true };
+  const transaction = { child: null, lock: '', lockOwned: false, staging: path.join(outputRoot, `.live-test-v1.2.3.prestaging-${nonce}`), stagingOwned: true };
   fs.mkdirSync(transaction.staging, { mode: 0o700 });
   const removeSignalCleanup = installSignalCleanup(transaction);
   let destination = '';
@@ -162,14 +162,14 @@ async function assemble(values) {
   let published = false;
   let onboardingPublished = false;
   try {
-    writeExclusive(transaction.staging, `LazyBuddy/${artifacts.buddy.archive}`, artifacts.buddy.archiveBytes);
+    writeExclusive(transaction.staging, `LazyQoder/${artifacts.buddy.archive}`, artifacts.buddy.archiveBytes);
     writeExclusive(transaction.staging, `LazyTrae/${artifacts.trae.archive}`, artifacts.trae.archiveBytes);
     const metadataBytes = jsonBytes({
       schema_version: 'lazyseries.paired-build-metadata.v1',
       artifact_input_policy: 'closed-artifact-inventory-v1',
       products: [
         {
-          product_id: 'lazybuddy',
+          product_id: 'lazyqoder',
           source_tree: artifacts.buddy.manifest.source_tree,
           extracted_tree_sha256: artifacts.buddy.extractedTreeSha256,
           todo32_self_verification_receipt_sha256: artifacts.buddy.receiptSha256,
@@ -186,31 +186,31 @@ async function assemble(values) {
     const inventory = buildInventory(transaction.staging);
     const manifest = {
       schema_version: 'lazyseries.paired-candidate.v1',
-      release_version: '1.2.2',
+      release_version: '1.2.3',
       payload_stage: 'immutable-final',
       products: [
-        productRecord('lazybuddy', 'LazyBuddy', artifacts.buddy.archive, artifacts.buddy.manifest.source_sha, inventory),
+        productRecord('lazyqoder', 'LazyQoder', artifacts.buddy.archive, artifacts.buddy.manifest.source_sha, inventory),
         productRecord('lazytrae', 'LazyTrae', artifacts.trae.archive, artifacts.trae.manifest.source.sha, inventory),
       ],
       shared_contract_digests: [{ name: 'paired-candidate-contract.v1.schema.json', sha256: digest(buddySchema) }],
       payload_inventory: inventory.filter((entry) => entry.path !== 'detached/build-metadata.json'),
       detached_metadata: { path: 'detached/build-metadata.json', sha256: digest(metadataBytes) },
       host_rows: HOSTS.map((host_id) => ({ host_id, status: 'pending' })),
-      onboarding_sibling: 'live-test-v1.2.2-<combined-digest>-onboarding',
+      onboarding_sibling: 'live-test-v1.2.3-<combined-digest>-onboarding',
     };
     manifest.combined_digest = computeCombinedDigest(manifest);
-    destination = path.join(outputRoot, `live-test-v1.2.2-${manifest.combined_digest}`);
+    destination = path.join(outputRoot, `live-test-v1.2.3-${manifest.combined_digest}`);
     onboardingDestination = `${destination}-onboarding`;
     refuse(fs.existsSync(destination), 'DESTINATION_EXISTS', destination);
     refuse(fs.existsSync(onboardingDestination), 'DESTINATION_EXISTS', onboardingDestination);
-    const namedStaging = path.join(outputRoot, `.live-test-v1.2.2-${manifest.combined_digest}.staging-${nonce}`);
+    const namedStaging = path.join(outputRoot, `.live-test-v1.2.3-${manifest.combined_digest}.staging-${nonce}`);
     fs.renameSync(transaction.staging, namedStaging);
     transaction.staging = namedStaging;
     validateCandidate(manifest, { payloadRoot: transaction.staging, destination, physicalStage: 'staged' });
     const manifestBytes = jsonBytes(manifest);
     writeExclusive(transaction.staging, 'manifest.json', manifestBytes);
     chmodImmutable(transaction.staging);
-    if (process.env.LAZYBUDDY_PAIRED_FAIL_BEFORE_RENAME === '1') throw new AssemblyError('INJECTED_FAILURE', 'before rename');
+    if (process.env.LAZYQODER_PAIRED_FAIL_BEFORE_RENAME === '1') throw new AssemblyError('INJECTED_FAILURE', 'before rename');
     transaction.lock = `${destination}.lock`;
     let lockFd;
     try { lockFd = fs.openSync(transaction.lock, 'wx', 0o600); }
@@ -221,14 +221,14 @@ async function assemble(values) {
     fs.closeSync(lockFd);
     transaction.lockOwned = true;
     const registerChild = (child) => { transaction.child = child; };
-    await verifySourceAsync(buddySource, artifacts.buddy.manifest.source_sha, artifacts.buddy.manifest.source_tree, 'LazyBuddy', registerChild);
+    await verifySourceAsync(buddySource, artifacts.buddy.manifest.source_sha, artifacts.buddy.manifest.source_tree, 'LazyQoder', registerChild);
     await verifySourceAsync(traeSource, artifacts.trae.manifest.source.sha, artifacts.trae.manifest.source.tree, 'LazyTrae', registerChild);
     refuse(fs.existsSync(destination), 'DESTINATION_EXISTS', destination);
     refuse(fs.existsSync(onboardingDestination), 'DESTINATION_EXISTS', onboardingDestination);
     fs.renameSync(transaction.staging, destination);
     transaction.stagingOwned = false;
     published = true;
-    onboardingStaging = path.join(outputRoot, `.live-test-v1.2.2-${manifest.combined_digest}-onboarding.staging-${nonce}`);
+    onboardingStaging = path.join(outputRoot, `.live-test-v1.2.3-${manifest.combined_digest}-onboarding.staging-${nonce}`);
     fs.mkdirSync(onboardingStaging, { mode: 0o700 });
     const onboarding = pendingTemplate(manifest.combined_digest, digest(manifestBytes));
     validateOnboarding(onboarding, manifest);

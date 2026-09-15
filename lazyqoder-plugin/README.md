@@ -1,6 +1,6 @@
 # LazyQoder Plugin
 
-## Durable v1.2.2 installation
+## Durable v1.2.3 installation
 
 **Node.js LTS 20 or newer** and **Git** are required. Bootstrap `onboard` only
 from `https://github.com/elvinzhao10/LazyQoder.git`, then use
@@ -22,7 +22,7 @@ require LazyCodex or OmO at runtime.
 
 ## Durable onboarding
 
-Bootstrap v1.2.2 once from a verified official source checkout, then use the
+Bootstrap v1.2.3 once from a verified official source checkout, then use the
 durable launcher rather than treating that checkout as the installed runtime:
 
 ```bash
@@ -196,9 +196,9 @@ Skills/manual-MCP fallback is recovery-only and excludes commands, agents, and
 hooks.
 
 For the fallback, derive a non-mutating host-settings copy from `.mcp.json`: replace
-`${CODEBUDDY_PLUGIN_ROOT}` with the absolute plugin root and
-`${CODEBUDDY_PROJECT_DIR}` with the absolute consumer project, and set both
-`cwd` and environment `CWD` / `CODEBUDDY_PROJECT_DIR` to that project. The exact
+`${QODER_PLUGIN_ROOT}` with the absolute plugin root and
+`${QODER_PROJECT_DIR}` with the absolute consumer project, and set both
+`cwd` and environment `CWD` / `QODER_PROJECT_DIR` to that project. The exact
 six server names are `run-ledger`, `verification`, `status-dashboard`,
 `context-graph`, `code-intel`, and `docs`; each uses its matching absolute
 `mcp/<server>/server.sh` path. Agents, commands, and hooks are excluded from

@@ -5,7 +5,7 @@ An MCP declaration is static configuration. A connected MCP tool is a running st
 ```mermaid
 sequenceDiagram
     participant Package as lazyqoder-plugin/.mcp.json
-    participant Host as Qoder IDE
+    participant Host as Qoder CLI or Qoder IDE
     participant Launcher as server.sh
     participant Server as local MCP server
     participant State as package/project state
@@ -17,9 +17,9 @@ sequenceDiagram
     Server-->>Host: JSON-RPC result or structured error
 ```
 
-## The eight local declarations
+## The six local declarations
 
-`.mcp.json` contains eight package-local launcher entries: `run-ledger`, `verification`, `status-dashboard`, `context-graph`, `code-intel`, `docs`, `codegraph`, and `lsp`. Their server scripts derive the package root from their own location rather than a sibling checkout. The docs endpoint accepts only validated package identifiers and fixed HTTPS registry endpoints; it does not follow package metadata homepages or arbitrary redirects. Qoder IDE launches and bridges each server through **Agent-mode MCP**.
+`.mcp.json` contains six package-local launcher entries: `run-ledger`, `verification`, `status-dashboard`, `context-graph`, `code-intel`, and `docs`. Their server scripts derive the package root from their own location rather than a sibling checkout. The docs endpoint accepts only validated package identifiers and fixed HTTPS registry endpoints; it does not follow package metadata homepages or arbitrary redirects.
 
 `context-graph` is a local grep-based heuristic. It is intentionally not a semantic CodeGraph replacement. Filesystem and Playwright are not part of the base local inventory.
 
@@ -53,3 +53,13 @@ endpoint. They do not provision dependencies, register themselves with a host,
 or write credentials. That small surface is what makes a copied package
 testable: the declaration is static, process lifetime is host-owned, and each
 server's mutable behavior remains behind a dedicated path/receipt boundary.
+
+## Host enablement and connection
+
+LazyQoder targets Qoder CLI IDE, Qoder CLI CLI, and Qoder IDE. Follow the selected
+route in [Host routes](reference/host-routes.md). A valid declaration, marketplace
+listing, or accepted trust prompt does not prove that a server connected. Verify
+the expected MCP tools in the current host session before reporting host readiness.
+
+Trae's project-level MCP toggle belongs to LazyTrae's installation flow; it is
+not a LazyQoder setup step or a restriction to copy into Buddy validation.

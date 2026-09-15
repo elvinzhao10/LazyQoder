@@ -2,7 +2,7 @@
   "$id": "lazy-harness-lifecycle.v1.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
-  "description": "Portable receipt contract for a product-isolated durable LazyTrae or LazyBuddy harness installation.",
+  "description": "Portable receipt contract for a product-isolated durable LazyTrae or LazyQoder harness installation.",
   "properties": {
     "$schema": {
       "const": "lazy-harness-lifecycle.v1.schema.json",
@@ -79,7 +79,7 @@
     "product": {
       "enum": [
         "LazyTrae",
-        "LazyBuddy"
+        "LazyQoder"
       ],
       "type": "string"
     },
@@ -172,7 +172,7 @@
       "if": {
         "properties": {
           "product": {
-            "const": "LazyBuddy"
+            "const": "LazyQoder"
           }
         },
         "required": [
@@ -184,18 +184,18 @@
           "layout": {
             "properties": {
               "product_root": {
-                "pattern": "(?:^|[\\\\/])LazyBuddy$"
+                "pattern": "(?:^|[\\\\/])LazyQoder$"
               }
             }
           },
           "origin": {
-            "const": "https://github.com/elvinzhao10/LazyBuddy.git"
+            "const": "https://github.com/elvinzhao10/LazyQoder.git"
           },
           "receipt_id": {
-            "pattern": "^lazybuddy-[a-z0-9-]+$"
+            "pattern": "^lazyqoder-[a-z0-9-]+$"
           },
           "receipt_path": {
-            "pattern": "^receipts/lazybuddy-[a-z0-9-]+\\.json$"
+            "pattern": "^receipts/lazyqoder-[a-z0-9-]+\\.json$"
           },
           "registered_project_declarations": {
             "maxItems": 0
@@ -213,7 +213,7 @@
         },
         {
           "not": {
-            "pattern": "(?:^|[\\\\/])\\.workbuddy(?:[\\\\/]|$)"
+            "pattern": "(?:^|[\\\\/])\\.qoder(?:[\\\\/]|$)"
           }
         },
         {
@@ -500,8 +500,8 @@
             "trae-ide",
             "trae-work",
             "trae-cli",
-            "codebuddy",
-            "workbuddy"
+            "qodercli",
+            "qoder"
           ],
           "type": "string"
         },
@@ -535,12 +535,12 @@
         },
         {
           "not": {
-            "pattern": "(?:^|/)(?:LazyTrae|LazyBuddy)(?:/|$)"
+            "pattern": "(?:^|/)(?:LazyTrae|LazyQoder)(?:/|$)"
           }
         },
         {
           "not": {
-            "pattern": "(?:^|/)\\.workbuddy(?:/|$)"
+            "pattern": "(?:^|/)\\.qoder(?:/|$)"
           }
         },
         {

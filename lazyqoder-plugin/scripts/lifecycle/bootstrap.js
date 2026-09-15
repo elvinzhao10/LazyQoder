@@ -18,14 +18,14 @@ const { CURRENT_VERSION: VERSION } = require('./version');
 
 const CONTRACT_DIGESTS = Object.freeze({
   'lazy-harness-lifecycle.v1.example.json': '6b10b60074fd9dac366b9b92d22daf06de73e76f8530cc376b58fcae20b05445',
-  'lazy-harness-lifecycle.v1.schema.json': '2e3a3208cecfc099ddd1cec5dfeebb9f27ef76423c6c5b8947dbea8f717f2e95',
+  'lazy-harness-lifecycle.v1.schema.json': 'acaf74b79f9814ddd3dcda09f864e05aaaad087ab328d70a4c8bd2259661b253',
 });
 const PRODUCTS = Object.freeze({
   LazyQoder: {
     entrypoint: 'lazyqoder-plugin/scripts/lazyqoder-lifecycle.js',
     manifest: 'lazyqoder-plugin/.qoder-plugin/plugin.json',
     manifests: [
-      ['lazyqoder-plugin/.qoder-plugin/plugin.json', 'lazyqoder'],
+      ['lazyqoder-plugin/.qodercli-plugin/plugin.json', 'lazyqoder'],
       ['lazyqoder-plugin/.qoder-plugin/plugin.json', 'lazyqoder'],
     ],
     selfTest: 'lazyqoder-plugin/scripts/lifecycle-self-test.js',

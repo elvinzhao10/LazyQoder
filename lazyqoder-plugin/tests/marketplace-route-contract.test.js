@@ -44,8 +44,8 @@ test('validates exact marketplace identities and byte-equivalent canonical paylo
   // When: both marketplace routes are validated against the route contract.
   const result = validateMarketplaceRoutes(root);
 
-  // Then: Qoder and Qoder retain distinct manifests over one canonical payload.
-  assert.equal(result.version, '1.2.2');
+  // Then: Qoder CLI and Qoder IDE retain distinct manifests over one canonical payload.
+  assert.equal(result.version, '1.2.3');
   assert.equal(result.qodercli.plugin, 'lazyqoder@lazyqoder');
   assert.equal(result.qoder.plugin, 'lazyqoder');
   assert.deepEqual(result.qodercli.payload_inventory, result.qoder.payload_inventory);
@@ -53,8 +53,8 @@ test('validates exact marketplace identities and byte-equivalent canonical paylo
   assert.ok(result.qodercli.payload_inventory.includes('mcp/run-ledger/server.sh'));
 });
 
-test('publishes an exact Qoder full-plugin receipt schema', () => {
-  // Given: the checked-in Qoder marketplace receipt schema.
+test('publishes an exact Qoder IDE full-plugin receipt schema', () => {
+  // Given: the checked-in Qoder IDE marketplace receipt schema.
   const schema = JSON.parse(fs.readFileSync(
     path.join(PLUGIN_ROOT, 'contracts', 'qoder-marketplace-receipt.v1.schema.json'),
     'utf8',
@@ -91,19 +91,19 @@ test('refuses altered marketplace identity and host-manifest version independent
 
 test('treats fallback as generated recovery and conflicts with either marketplace plugin route', () => {
   // Given: both full-plugin routes and the manual recovery route.
-  const releaseRoot = '/durable/LazyQoder/releases/v1.2.2-aaaaaaaaaaaa';
+  const releaseRoot = '/durable/LazyQoder/releases/v1.2.3-aaaaaaaaaaaa';
   const projectRoot = '/project';
 
   // When: fallback metadata and both coexistence selections are evaluated.
   const fallback = renderHandoff('manual-skills-mcp-fallback', releaseRoot, projectRoot);
-  const codebuddyConflict = routeSelection(['qodercli-marketplace', 'manual-skills-mcp-fallback']);
+  const qodercliConflict = routeSelection(['qodercli-marketplace', 'manual-skills-mcp-fallback']);
   const qoderConflict = routeSelection(['qoder-full-plugin', 'manual-skills-mcp-fallback']);
 
   // Then: fallback is recovery-only and neither full plugin may coexist with it.
   assert.equal(fallback.recovery.generated_only, true);
   assert.equal(fallback.recovery.asset_manifest, 'lazyqoder-plugin/asset-source-manifest.v1.json');
-  assert.equal(codebuddyConflict.kind, 'conflict');
-  assert.deepEqual(codebuddyConflict.routes, ['manual-skills-mcp-fallback', 'qodercli-marketplace']);
+  assert.equal(qodercliConflict.kind, 'conflict');
+  assert.deepEqual(qodercliConflict.routes, ['manual-skills-mcp-fallback', 'qodercli-marketplace']);
   assert.equal(qoderConflict.kind, 'conflict');
   assert.deepEqual(qoderConflict.routes, ['manual-skills-mcp-fallback', 'qoder-full-plugin']);
 });

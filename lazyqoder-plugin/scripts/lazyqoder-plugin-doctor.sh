@@ -18,6 +18,52 @@ fi
 PROJECT_ROOT="$(cd "${PLUGIN_ROOT}/.." && pwd)"
 RUNNER="${PLUGIN_ROOT}/scripts/lazyqoder-bounded-run.py"
 HOST_VALIDATOR_TIMEOUT="${LAZYQODER_HOST_VALIDATOR_TIMEOUT_SECONDS:-15}"
+DOCTOR_HOST="${LAZYQODER_DOCTOR_HOST:-package}"
+PYTHON_REQUEST="${LAZYQODER_PYTHON:-python3}"
+if ! PYTHON_BIN="$(command -v "$PYTHON_REQUEST" 2>/dev/null)"; then
+    printf 'ERROR: LazyQoder requires Python 3.10 or newer. Install Python 3.10+ and make it available as python3.\n' >&2
+    exit 2
+fi
+PYTHON_VERSION="$("$PYTHON_BIN" -c 'import sys; print(sys.version_info[0], sys.version_info[1])' 2>/dev/null || true)"
+read -r PYTHON_MAJOR PYTHON_MINOR _ <<<"$PYTHON_VERSION"
+if ! [[ "$PYTHON_MAJOR" =~ ^[0-9]+$ && "$PYTHON_MINOR" =~ ^[0-9]+$ ]] \
+    || [ "$PYTHON_MAJOR" -lt 3 ] \
+    || { [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -lt 10 ]; }; then
+    printf 'ERROR: LazyQoder requires Python 3.10 or newer. Install Python 3.10+ and make it available as python3.\n' >&2
+    exit 2
+fi
+HOST_VALIDATOR=""
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --host-validator)
+            [ "$#" -ge 2 ] || {
+                printf 'ERROR: --host-validator requires an absolute path\n' >&2
+                exit 2
+            }
+            HOST_VALIDATOR="$2"
+            shift 2
+            ;;
+        *)
+            printf 'ERROR: unsupported doctor option: %s\n' "$1" >&2
+            exit 2
+            ;;
+    esac
+done
+
+if [ -n "$HOST_VALIDATOR" ]; then
+    case "$HOST_VALIDATOR" in
+        /*) ;;
+        *)
+            printf 'ERROR: --host-validator must be an absolute executable file\n' >&2
+            exit 2
+            ;;
+    esac
+    if [ ! -f "$HOST_VALIDATOR" ] || [ ! -x "$HOST_VALIDATOR" ] || [ -L "$HOST_VALIDATOR" ]; then
+        printf 'ERROR: --host-validator must be an absolute executable file\n' >&2
+        exit 2
+    fi
+fi
 
 PASS=0
 FAIL=0
@@ -36,15 +82,75 @@ check() {
     fi
 }
 
-validator_reports_failure() {
-    local output="$1"
-    printf '%s\n' "$output" | grep -qiE 'validation[[:space:]]+(failed|failure)|found[[:space:]]+[1-9][0-9]*[[:space:]]+errors?|(^|[^[:alnum:]])errors?[[:space:]]*:|status code [45][0-9]{2}|HTTP(/[0-9.]+)?[[:space:]]+[45][0-9]{2}'
+validator_reports_success() {
+    local result_file="$1"
+    "$PYTHON_BIN" - "$result_file" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    result = json.load(handle)
+if result.get("status") != "pass" or result.get("reason") != "ok":
+    raise SystemExit(1)
+output = result.get("tail")
+if not isinstance(output, str):
+    raise SystemExit(1)
+output = output.strip()
+if output in {"Validation successful: 0 errors", "Validation passed with no errors"}:
+    raise SystemExit(0)
+
+structured_output = output
+for prefix in ("Validation passed with details:", "Validation passed"):
+    if not output.startswith(prefix):
+        continue
+    remainder = output[len(prefix):]
+    if not remainder or not remainder[0].isspace():
+        raise SystemExit(1)
+    structured_output = remainder.lstrip()
+    break
+
+decoder = json.JSONDecoder()
+try:
+    validator_result, consumed = decoder.raw_decode(structured_output)
+except json.JSONDecodeError:
+    raise SystemExit(1)
+if structured_output[consumed:].strip():
+    raise SystemExit(1)
+if not isinstance(validator_result, dict):
+    raise SystemExit(1)
+
+def has_nonempty_error(result):
+    for field in ("errors", "error"):
+        if field not in result:
+            continue
+        value = result[field]
+        if value is None:
+            continue
+        if isinstance(value, str):
+            if value.strip():
+                return True
+            continue
+        if value:
+            return True
+    return False
+
+if validator_result.get("valid") is True and not has_nonempty_error(validator_result):
+    raise SystemExit(0)
+raise SystemExit(1)
+PY
 }
 
 if ! [[ "$HOST_VALIDATOR_TIMEOUT" =~ ^[1-9][0-9]*$ ]]; then
     printf 'ERROR: LAZYQODER_HOST_VALIDATOR_TIMEOUT_SECONDS must be a positive integer\n' >&2
     exit 2
 fi
+case "$DOCTOR_HOST" in
+    package|qodercli-cli|qodercli-ide|qoder) ;;
+    *)
+        printf 'ERROR: LAZYQODER_DOCTOR_HOST must be package, qodercli-cli, qodercli-ide, or qoder\n' >&2
+        exit 2
+        ;;
+esac
 
 echo "=== LazyQoder Plugin Doctor ==="
 echo "Plugin root: ${PLUGIN_ROOT}"
@@ -59,9 +165,9 @@ for legal_file in LICENSE NOTICE; do
 done
 
 # 1-3. Both host manifests exist, parse, and describe the same plugin contract.
-QODER_MANIFEST="${PLUGIN_ROOT}/.qoder-plugin/plugin.json"
-QODER_MANIFEST="${PLUGIN_ROOT}/.qoder-plugin/plugin.json"
-for host_manifest in "Qoder IDE:${QODER_MANIFEST}" "Qoder IDE:${QODER_MANIFEST}"; do
+QODER_MANIFEST="${PLUGIN_ROOT}/.qodercli-plugin/plugin.json"
+WORKBUDDY_MANIFEST="${PLUGIN_ROOT}/.qoder-plugin/plugin.json"
+for host_manifest in "Qoder CLI:${QODER_MANIFEST}" "Qoder IDE:${WORKBUDDY_MANIFEST}"; do
     HOST="${host_manifest%%:*}"
     MANIFEST="${host_manifest#*:}"
     if [ -f "$MANIFEST" ]; then
@@ -69,7 +175,7 @@ for host_manifest in "Qoder IDE:${QODER_MANIFEST}" "Qoder IDE:${QODER_MANIFEST}"
     else
         check "$HOST manifest exists" "missing: $MANIFEST"
     fi
-    if python3 - "$MANIFEST" <<'PY' 2>/dev/null
+    if "$PYTHON_BIN" - "$MANIFEST" <<'PY' 2>/dev/null
 import json
 import sys
 with open(sys.argv[1], encoding="utf-8") as handle:
@@ -80,8 +186,12 @@ PY
     else
         check "$HOST manifest is valid JSON" "parse error"
     fi
-    for field in name version skills commands agents hooks mcpServers; do
-        if python3 - "$MANIFEST" "$field" <<'PY' 2>/dev/null
+    FIELDS="name version commands agents hooks mcpServers"
+    if [ "$HOST" = "Qoder IDE" ]; then
+        FIELDS="${FIELDS} skills"
+    fi
+    for field in $FIELDS; do
+        if "$PYTHON_BIN" - "$MANIFEST" "$field" <<'PY' 2>/dev/null
 import json
 import sys
 with open(sys.argv[1], encoding="utf-8") as handle:
@@ -96,7 +206,61 @@ PY
     done
 done
 
-if agreement=$(python3 - "$QODER_MANIFEST" "$QODER_MANIFEST" "${PROJECT_ROOT}/.qoder/marketplace.json" <<'PY' 2>&1
+if qodercli_skills=$("$PYTHON_BIN" - "$QODER_MANIFEST" "$PLUGIN_ROOT" <<'PY' 2>&1
+import json
+import os
+import sys
+
+manifest_path, root = sys.argv[1:]
+root = os.path.realpath(root)
+with open(manifest_path, encoding="utf-8") as handle:
+    manifest = json.load(handle)
+raw = manifest.get("skills")
+mode = "declared"
+if raw is None:
+    values = ["./skills/"]
+    mode = "default discovery"
+elif isinstance(raw, str):
+    values = [raw]
+else:
+    values = raw
+if not isinstance(values, list) or not values or any(not isinstance(value, str) or not value for value in values):
+    raise SystemExit("must be a non-empty relative directory or array of directories")
+count = 0
+for value in values:
+    if os.path.isabs(value):
+        raise SystemExit(f"path must stay inside plugin root: {value}")
+    directory = os.path.realpath(os.path.join(root, value))
+    try:
+        inside_root = os.path.commonpath([root, directory]) == root
+    except ValueError:
+        inside_root = False
+    if not inside_root:
+        raise SystemExit(f"path escapes plugin root: {value}")
+    if not os.path.isdir(directory):
+        raise SystemExit(f"directory missing: {value}")
+    children = sorted(
+        (entry for entry in os.scandir(directory) if entry.is_dir(follow_symlinks=False)),
+        key=lambda entry: entry.name,
+    )
+    if not children:
+        raise SystemExit(f"no skill directories under {value}")
+    for child in children:
+        if not os.path.isfile(os.path.join(child.path, "SKILL.md")):
+            raise SystemExit(f"missing {child.name}/SKILL.md")
+        count += 1
+if mode == "default discovery" and count != 19:
+    raise SystemExit(f"expected 19 default skills, found {count}")
+print(f"{mode}: {count} skill(s)")
+PY
+); then
+    check "Qoder CLI skills discovery" ok
+    echo "  [INFO] Qoder CLI skills: $qodercli_skills"
+else
+    check "Qoder CLI skills discovery" "$qodercli_skills"
+fi
+
+if agreement=$("$PYTHON_BIN" - "$QODER_MANIFEST" "$WORKBUDDY_MANIFEST" "${PROJECT_ROOT}/.qodercli-plugin/marketplace.json" <<'PY' 2>&1
 import json
 import os
 import sys
@@ -125,22 +289,52 @@ else
     check "Host/marketplace version agreement" "$agreement"
 fi
 
-if command -v qoder >/dev/null 2>&1; then
+if route_contract=$(node "${PLUGIN_ROOT}/scripts/lazyqoder-marketplace-route-check.js" "$PROJECT_ROOT" 2>&1); then
+    check "Marketplace route contract" ok
+    echo "  [INFO] Marketplace routes: $route_contract"
+else
+    check "Marketplace route contract" "$route_contract"
+fi
+
+if machine_status=$(node "${PLUGIN_ROOT}/scripts/lazyqoder-machine-status.js" --json 2>&1) \
+    && "$PYTHON_BIN" - "$machine_status" <<'PY'
+import json
+import sys
+
+status = json.loads(sys.argv[1])
+assert status.get("schema_version") == 2
+assert status.get("version") == "1.2.3"
+assert status.get("package_readiness") == {"status": "ready", "scope": "package"}
+assert status.get("host_readiness") == {"status": "pending"}
+hosts = status.get("hosts")
+assert isinstance(hosts, list)
+assert [row.get("host") for row in hosts] == ["qodercli-cli", "qodercli-ide", "qoder"]
+assert all(row.get("host_readiness") == "pending" for row in hosts)
+PY
+then
+    check "Machine status v2" ok
+else
+    check "Machine status v2" "invalid or unavailable"
+fi
+
+if [ "$DOCTOR_HOST" = "qodercli-ide" ] || [ "$DOCTOR_HOST" = "qoder" ]; then
+    echo "  [SKIP] Qoder CLI manifest validator — CLI-only validator not applicable to ${DOCTOR_HOST}"
+elif [ -n "$HOST_VALIDATOR" ]; then
     validator_result="$(mktemp "${TMPDIR:-/tmp}/lazyqoder-host-validator.XXXXXX")"
-    if python3 "$RUNNER" --label "Qoder IDE manifest validator" --timeout "$HOST_VALIDATOR_TIMEOUT" --result-file "$validator_result" -- qoder plugin validate "$PLUGIN_ROOT"; then
-        validator_output="$(python3 - "$validator_result" <<'PY'
+    if "$PYTHON_BIN" "$RUNNER" --label "Qoder CLI manifest validator" --timeout "$HOST_VALIDATOR_TIMEOUT" --result-file "$validator_result" -- "$HOST_VALIDATOR" plugin validate "$PLUGIN_ROOT"; then
+        validator_output="$("$PYTHON_BIN" - "$validator_result" <<'PY'
 import json
 import sys
 print(json.load(open(sys.argv[1], encoding="utf-8"))["tail"])
 PY
 )"
-        if validator_reports_failure "$validator_output"; then
-            check "Qoder IDE manifest validator" "$validator_output"
+        if validator_reports_success "$validator_result"; then
+            check "Qoder CLI manifest validator" ok
         else
-            check "Qoder IDE manifest validator" ok
+            check "Qoder CLI manifest validator" "$validator_output"
         fi
     else
-        validator_state="$(python3 - "$validator_result" <<'PY'
+        validator_state="$("$PYTHON_BIN" - "$validator_result" <<'PY'
 import json
 import sys
 result = json.load(open(sys.argv[1], encoding="utf-8"))
@@ -148,16 +342,28 @@ print(f'{result["status"]} {result["reason"]}')
 PY
 )"
         if [ "$validator_state" = "timeout deadline_exceeded" ]; then
-            check "Qoder IDE manifest validator" "timeout"
+            if [ "$DOCTOR_HOST" = "package" ]; then
+                echo "  [UNCHECKED] Qoder CLI manifest validator — timeout; package validation remains unverified"
+            else
+                check "Qoder CLI manifest validator" "timeout"
+            fi
         elif [ "$validator_state" = "unavailable launch_error" ]; then
-            check "Qoder IDE manifest validator" "unavailable"
+            if [ "$DOCTOR_HOST" = "package" ]; then
+                echo "  [UNCHECKED] Qoder CLI manifest validator — unavailable; package validation remains unverified"
+            else
+                check "Qoder CLI manifest validator" "unavailable"
+            fi
         else
-            check "Qoder IDE manifest validator" "validation command failed"
+            check "Qoder CLI manifest validator" "validation command failed"
         fi
     fi
     rm -f "$validator_result"
 else
-    echo "  [UNCHECKED] Qoder IDE manifest validator — qoder CLI unavailable"
+    if [ "$DOCTOR_HOST" = "package" ]; then
+        echo "  [SKIP] Qoder CLI manifest validator — package-only default; pass --host-validator /absolute/path to opt in"
+    else
+        check "Qoder CLI manifest validator" "--host-validator /absolute/path is required"
+    fi
 fi
 
 # 4. Component directories exist
@@ -172,7 +378,7 @@ done
 # 5. Hooks scaffold exists
 if [ -f "${PLUGIN_ROOT}/hooks/hooks.json" ]; then
     check "hooks/hooks.json exists" ok
-    if python3 -c "import json; json.load(open('${PLUGIN_ROOT}/hooks/hooks.json'))" 2>/dev/null; then
+    if "$PYTHON_BIN" -c "import json; json.load(open('${PLUGIN_ROOT}/hooks/hooks.json'))" 2>/dev/null; then
         check "hooks/hooks.json is valid JSON" ok
     else
         check "hooks/hooks.json is valid JSON" "parse error"
@@ -184,7 +390,7 @@ fi
 # 6. MCP scaffold exists
 if [ -f "${PLUGIN_ROOT}/.mcp.json" ]; then
     check ".mcp.json exists" ok
-    if python3 -c "import json; json.load(open('${PLUGIN_ROOT}/.mcp.json'))" 2>/dev/null; then
+    if "$PYTHON_BIN" -c "import json; json.load(open('${PLUGIN_ROOT}/.mcp.json'))" 2>/dev/null; then
         check ".mcp.json is valid JSON" ok
     else
         check ".mcp.json is valid JSON" "parse error"
@@ -193,7 +399,17 @@ else
     check ".mcp.json exists" "missing"
 fi
 
-if contract_result=$(python3 - "${PLUGIN_ROOT}" <<'PY' 2>&1
+PROFILE_VALIDATION_DATA="${TMPDIR:-/tmp}/lazyqoder-doctor-profile-data-$$"
+if profile_result=$("$PYTHON_BIN" "${PLUGIN_ROOT}/scripts/lazyqoder-mcp-profile.py" \
+    --mode orchestrated \
+    --project-dir "$PROJECT_ROOT" \
+    --plugin-data "$PROFILE_VALIDATION_DATA" 2>&1); then
+    check "MCP typed profile contract" ok
+else
+    check "MCP typed profile contract" "$profile_result"
+fi
+
+if contract_result=$("$PYTHON_BIN" - "${PLUGIN_ROOT}" <<'PY' 2>&1
 import hashlib
 import json
 import os
@@ -225,7 +441,7 @@ else
     check "Automatic tooling contract and provider adapter" "$contract_result"
 fi
 
-if readiness_result=$(python3 - "${PLUGIN_ROOT}" <<'PY' 2>&1
+if readiness_result=$("$PYTHON_BIN" - "${PLUGIN_ROOT}" <<'PY' 2>&1
 import json
 import os
 import subprocess
@@ -243,7 +459,12 @@ try:
 except subprocess.CalledProcessError as error:
     raise SystemExit(error.stderr.strip() or "canonical readiness report failed")
 records = json.loads(completed.stdout).get("records")
-if not isinstance(records, list) or len(records) != 9:
+if (
+    not isinstance(records, list)
+    or len(records) != 9
+    or any(record.get("readiness_scope") == "current-session" for record in records)
+    or any(record.get("readiness_scope") != "package" for record in records)
+):
     raise SystemExit("canonical readiness report did not return nine records")
 print("ok")
 PY
@@ -253,44 +474,7 @@ else
     check "Canonical capability readiness report" "$readiness_result"
 fi
 
-if machine_status_result=$(python3 - "${PLUGIN_ROOT}" <<'PY' 2>&1
-import json
-import os
-import subprocess
-import sys
-
-root = sys.argv[1]
-completed = subprocess.run(
-    ["node", os.path.join(root, "scripts", "lazyqoder-machine-status.js"), "--json"],
-    check=False,
-    capture_output=True,
-    text=True,
-)
-try:
-    status = json.loads(completed.stdout)
-    rows = status.get("hosts")
-    if (
-        completed.returncode != 0
-        or status.get("schema_version") != 2
-        or status.get("version") != "1.2.2"
-        or status.get("package_readiness") != {"status": "ready", "scope": "package"}
-        or status.get("host_readiness") != {"status": "pending"}
-        or not isinstance(rows, list)
-        or [row.get("host") for row in rows] != ["qodercli-cli", "qodercli-ide", "qoder"]
-        or any(row.get("host_readiness") != "pending" for row in rows)
-    ):
-        raise ValueError("machine status v2 fields do not match the package boundary")
-except (AttributeError, TypeError, ValueError, json.JSONDecodeError) as exc:
-    raise SystemExit(str(exc))
-print("ok")
-PY
-); then
-    check "machine status v2" ok
-else
-    check "machine status v2" "$machine_status_result"
-fi
-
-if hook_result=$(python3 - "${PLUGIN_ROOT}" <<'PY' 2>&1
+if hook_result=$("$PYTHON_BIN" - "${PLUGIN_ROOT}" <<'PY' 2>&1
 import json
 import os
 import shlex
@@ -298,6 +482,33 @@ import sys
 
 root = os.path.realpath(sys.argv[1])
 hooks_path = os.path.join(root, "hooks", "hooks.json")
+expected_events = [
+    "SessionStart",
+    "UserPromptSubmit",
+    "PreToolUse",
+    "PostToolUse",
+    "PostToolUseFailure",
+    "PreCompact",
+    "Stop",
+    "StopFailure",
+    "TaskCreated",
+    "TaskCompleted",
+    "SubagentStart",
+    "SubagentStop",
+    "PermissionRequest",
+    "PermissionDenied",
+    "Notification",
+    "PostCompact",
+    "SessionEnd",
+    "InstructionsLoaded",
+    "ConfigChange",
+    "CwdChanged",
+    "FileChanged",
+    "WorktreeCreate",
+    "WorktreeRemove",
+    "Elicitation",
+    "ElicitationResult",
+]
 errors = []
 
 def under_root(path):
@@ -317,10 +528,15 @@ if not isinstance(hooks, dict):
     print("hooks must be an object")
     sys.exit(1)
 
-# Validate every hook event declared in hooks.json (event set is dynamic;
-# parallel waves may add new host hook events).
+missing = [event for event in expected_events if event not in hooks]
+extra = sorted(event for event in hooks if event not in expected_events)
+if missing:
+    errors.append("missing hook events: " + ", ".join(missing))
+if extra:
+    errors.append("unexpected hook events: " + ", ".join(extra))
+
 targets = []
-for event in sorted(hooks):
+for event in expected_events:
     event_targets = []
     for group_index, group in enumerate(hooks.get(event, [])):
         for hook_index, hook in enumerate(group.get("hooks", [])):
@@ -353,9 +569,8 @@ for event in sorted(hooks):
     if len(event_targets) != 1:
         errors.append(f"{event} has {len(event_targets)} command targets, expected 1")
 
-# Hook command target count is reported dynamically; no fixed expectation
-# (parallel waves may expand hooks.json entries and hook targets).
-hook_target_count = len(targets)
+if len(targets) != 25:
+    errors.append(f"hook command target count is {len(targets)}, expected 25")
 
 if errors:
     print("; ".join(errors))
@@ -363,12 +578,12 @@ if errors:
 print("ok")
 PY
 ); then
-    check "Hook command targets (executable)" ok
+    check "Hook command targets (25 executable)" ok
 else
-    check "Hook command targets (executable)" "${hook_result}"
+    check "Hook command targets (25 executable)" "${hook_result}"
 fi
 
-if mcp_result=$(python3 - "${PLUGIN_ROOT}" <<'PY' 2>&1
+if mcp_result=$("$PYTHON_BIN" - "${PLUGIN_ROOT}" <<'PY' 2>&1
 import json
 import os
 import sys
@@ -394,8 +609,8 @@ if not isinstance(servers, dict):
     print("mcpServers must be an object")
     sys.exit(1)
 
-# MCP server count is reported dynamically; no fixed expectation
-# (parallel waves may change the bundled local MCP servers).
+if len(servers) != 6:
+    errors.append(f"mcp server count is {len(servers)}, expected 6")
 
 for name, server in sorted(servers.items()):
     if server.get("command") != "bash":
@@ -430,16 +645,27 @@ if errors:
 print("ok")
 PY
 ); then
-    check "MCP server scripts (executable)" ok
+    check "MCP server scripts (6 executable)" ok
 else
-    check "MCP server scripts (executable)" "${mcp_result}"
+    check "MCP server scripts (6 executable)" "${mcp_result}"
+fi
+
+# 6b. Qoder CLI executable/argv declarations and bundled launcher availability.
+if cmd_result=$("$PYTHON_BIN" "${PLUGIN_ROOT}/scripts/lazyqoder-mcp-profile.py" --validate-commands 2>&1); then
+    check "MCP declarations valid + bundled launchers resolvable" ok
+else
+    check "MCP declarations valid + bundled launchers resolvable" "$cmd_result"
 fi
 
 if [ -d "${PLUGIN_ROOT}/commands" ]; then
     command_count=$(find "${PLUGIN_ROOT}/commands" -maxdepth 1 -type f -name '*.md' | wc -l | tr -d ' ')
-    check "Command definitions (${command_count})" ok
+    if [ "$command_count" -eq 17 ]; then
+        check "Command definitions (17)" ok
+    else
+        check "Command definitions (17)" "found: ${command_count}"
+    fi
 else
-    check "Command definitions (0)" "directory missing"
+    check "Command definitions (14)" "directory missing"
 fi
 
 EXPECTED_COMMANDS="lazy-init-deep lazy-ulw-plan lazy-start-work lazy-ulw-loop lazy-verifier lazy-reviewer lazy-librarian lazy-migration-planner"
@@ -483,7 +709,7 @@ for script in lazyqoder-smoke-test.sh lazyqoder-docs-check.sh; do
     fi
 done
 
-if state_result=$(python3 - "${PROJECT_ROOT}" <<'PY' 2>&1
+if state_result=$("$PYTHON_BIN" - "${PROJECT_ROOT}" <<'PY' 2>&1
 import json
 import os
 import re
@@ -495,6 +721,7 @@ active_or_complete = {"active", "created", "executing", "blocked", "complete", "
 completed_task_statuses = {"complete", "completed", "done"}
 errors = []
 notes = []
+warnings = []
 checked_runs = 0
 
 def under_repo(path):
@@ -666,6 +893,13 @@ for run_dir in run_dirs:
                     stripped = line.strip()
                     if not stripped:
                         continue
+                    legacy_header = re.fullmatch(r"RUN_ID:\s*([A-Za-z0-9._-]+)", stripped)
+                    if line_number == 1 and legacy_header and legacy_header.group(1) == run_id:
+                        warnings.append(
+                            f"{run_id}: events.jsonl line 1 legacy RUN_ID header preserved unchanged; "
+                            "not a JSON event; excluded from package-health failure"
+                        )
+                        continue
                     try:
                         event = json.loads(stripped)
                     except Exception as exc:
@@ -676,6 +910,8 @@ for run_dir in run_dirs:
         else:
             notes.append(f"{run_id}: no events.jsonl")
 
+for warning in warnings:
+    print(f"WARN: {warning}")
 if errors:
     print("; ".join(errors))
     sys.exit(1)
@@ -685,9 +921,12 @@ else:
     print("ok: checked %d run(s)" % checked_runs)
 PY
 ); then
+    printf '%s\n' "$state_result" | sed -n 's/^WARN: /  [WARN] /p'
     check "Run state drift/evidence/boundaries" ok
 else
-    check "Run state drift/evidence/boundaries" "${state_result}"
+    printf '%s\n' "$state_result" | sed -n 's/^WARN: /  [WARN] /p'
+    state_error="$(printf '%s\n' "$state_result" | sed '/^WARN: /d')"
+    check "Run state drift/evidence/boundaries" "$state_error"
 fi
 
 echo ""

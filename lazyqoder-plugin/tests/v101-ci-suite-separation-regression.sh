@@ -38,7 +38,7 @@ while IFS= read -r regression; do
     regression_name="$(basename "$regression")"
     printf '#!/usr/bin/env bash\nprintf "%%s\\n" "%s" >> "$REGRESSION_LOG"\n' "$regression_name" > "$regression"
     chmod +x "$regression"
-done < <(find "$FIXTURE/tests" -maxdepth 1 -type f -name 'v*-regression.sh' -print)
+done < <(find "$FIXTURE/tests" -maxdepth 1 -type f \( -name 'v*-regression.sh' -o -name 'plan-format-compat.test.sh' \) -print)
 
 : > "$CORE_LOG"
 : > "$REGRESSION_LOG"
@@ -54,6 +54,7 @@ assert payload["suite"] == "core"
 assert payload["all_pass"] is True
 PY
 test -s "$CORE_LOG"
+grep -Fqx 'plan-format-compat.test.sh' "$REGRESSION_LOG"
 for regression_name in "${SENSITIVE_TESTS[@]}"; do
     if grep -Fqx "$regression_name" "$REGRESSION_LOG"; then
         printf 'FAIL core suite ran timing-sensitive lifecycle regression: %s\n' "$regression_name" >&2
@@ -75,16 +76,34 @@ assert payload["suite"] == "lifecycle"
 assert payload["all_pass"] is True
 PY
 test ! -s "$CORE_LOG"
+if grep -Fqx 'plan-format-compat.test.sh' "$REGRESSION_LOG"; then
+    printf 'FAIL lifecycle suite ran core plan-format regression\n' >&2
+    exit 1
+fi
 for regression_name in "${SENSITIVE_TESTS[@]}"; do
     grep -Fqx "$regression_name" "$REGRESSION_LOG"
 done
 
 WORKFLOW="$REPOSITORY_ROOT/.github/workflows/ci.yml"
 grep -Eq '^  validate:$' "$WORKFLOW"
+grep -Eq '^  supported-floor:$' "$WORKFLOW"
+grep -Eq '^  core:$' "$WORKFLOW"
+grep -Eq '^  core-current:$' "$WORKFLOW"
 grep -Eq '^  lifecycle:$' "$WORKFLOW"
+grep -Fq 'needs: [supported-floor, core, core-current, lifecycle]' "$WORKFLOW"
+grep -Fq 'if: ${{ always() }}' "$WORKFLOW"
 grep -Fq 'LAZYQODER_VERIFY_SUITE: core' "$WORKFLOW"
 grep -Fq 'LAZYQODER_VERIFY_SUITE: lifecycle' "$WORKFLOW"
-grep -Fq 'continue-on-error: true' "$WORKFLOW"
+grep -Fq 'node-version: "22"' "$WORKFLOW"
+grep -Fq 'node-version: "24"' "$WORKFLOW"
+grep -Fq 'node-version: "20.0.0"' "$WORKFLOW"
+grep -Fq 'node lazyqoder-plugin/scripts/verify-supported-floor.mjs --expected-runtime 20.0.0 --exercise package,install,onboarding,lsp-provider' "$WORKFLOW"
+grep -Fq 'SUPPORTED_FLOOR_RESULT: ${{ needs.supported-floor.result }}' "$WORKFLOW"
+grep -Fq 'test "$SUPPORTED_FLOOR_RESULT" = success' "$WORKFLOW"
+if grep -Fq 'continue-on-error:' "$WORKFLOW"; then
+    printf 'FAIL CI must not mask blocking lifecycle failures\n' >&2
+    exit 1
+fi
 grep -Fq 'LAZYQODER_VERIFY_SUITE: all' "$REPOSITORY_ROOT/.github/workflows/release.yml"
 
 printf 'PASS CI separates deterministic and lifecycle regression suites\n'

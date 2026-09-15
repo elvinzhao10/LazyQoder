@@ -142,7 +142,7 @@ try:
     if (
         machine_status.returncode != 0
         or status.get("schema_version") != 2
-        or status.get("version") != "1.2.2"
+        or status.get("version") != "1.2.3"
         or status.get("package_readiness") != {"status": "ready", "scope": "package"}
         or status.get("host_readiness") != {"status": "pending"}
         or not isinstance(host_rows, list)
@@ -405,4 +405,7 @@ if failed:
 print("PACKAGE_READINESS=full")
 print("READINESS_SCOPE=package-ready")
 print("Package files are ready. Host activation, runtime loading, and MCP status remain unchecked.")
+print('next (qodercli-cli): use durable status --route qodercli-marketplace to obtain the active release root and the next marketplace action')
+print('next (qodercli-ide): when the Qoder CLI is available, use durable status --route qodercli-marketplace for the next marketplace action; otherwise consult docs/reference/host-routes.md')
+print('next (qoder): use durable status --host qoder for the current marketplace handoff and receipt requirements')
 PY

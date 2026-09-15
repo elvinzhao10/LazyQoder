@@ -16,7 +16,7 @@ const {
 } = require('../validate-paired-candidate.js');
 const { productRecord } = require('../../scripts/paired-live-test-lib.js');
 
-const HOSTS = ['codebuddy-cli', 'codebuddy-ide', 'workbuddy', 'trae-cli', 'trae-ide', 'trae-work'];
+const HOSTS = ['qodercli-cli', 'qodercli-ide', 'qoder', 'trae-cli', 'trae-ide', 'trae-work'];
 const SHA = '1'.repeat(40);
 
 function writeFile(root, relativePath, content, mode = 0o644) {
@@ -27,10 +27,10 @@ function writeFile(root, relativePath, content, mode = 0o644) {
 
 function fixture() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'paired-candidate-contract.'));
-  writeFile(root, 'LazyBuddy/bin/run', '#!/bin/sh\nexit 0\n', 0o755);
-  writeFile(root, 'LazyBuddy/lazybuddy-v1.2.2.tar.gz', 'buddy archive');
+  writeFile(root, 'LazyQoder/bin/run', '#!/bin/sh\nexit 0\n', 0o755);
+  writeFile(root, 'LazyQoder/lazyqoder-v1.2.3.tar.gz', 'buddy archive');
   writeFile(root, 'LazyTrae/bin/run', '#!/bin/sh\nexit 0\n', 0o755);
-  writeFile(root, 'LazyTrae/lazytrae-ai-v1.2.2.tgz', 'trae archive');
+  writeFile(root, 'LazyTrae/lazytrae-ai-v1.2.3.tgz', 'trae archive');
   writeFile(root, 'detached/build-metadata.json', '{"note":"untrusted metadata is inert"}\n');
   const inventory = buildInventory(root);
   const product = (productId, prefix, archive) => {
@@ -43,19 +43,19 @@ function fixture() {
       archive_sha256: records.find((entry) => entry.path.endsWith(archive)).sha256,
       tree_sha256: computeTreeDigest(records),
       payload_sha256: computeTreeDigest(records, 'payload-v1'),
-      command: productId === 'lazybuddy'
-        ? 'bash lazybuddy-plugin/scripts/lazybuddy-package-verify.sh'
+      command: productId === 'lazyqoder'
+        ? 'bash lazyqoder-plugin/scripts/lazyqoder-package-verify.sh'
         : 'npm test',
-      runtime: productId === 'lazybuddy' ? 'python-3.13+node-20' : 'node-22',
+      runtime: productId === 'lazyqoder' ? 'python-3.13+node-20' : 'node-22',
     };
   };
   const candidate = {
     schema_version: 'lazyseries.paired-candidate.v1',
-    release_version: '1.2.2',
+    release_version: '1.2.3',
     payload_stage: 'staged',
     products: [
-      product('lazybuddy', 'LazyBuddy', 'lazybuddy-v1.2.2.tar.gz'),
-      product('lazytrae', 'LazyTrae', 'lazytrae-ai-v1.2.2.tgz'),
+      product('lazyqoder', 'LazyQoder', 'lazyqoder-v1.2.3.tar.gz'),
+      product('lazytrae', 'LazyTrae', 'lazytrae-ai-v1.2.3.tgz'),
     ],
     shared_contract_digests: [
       { name: 'lazyseries-capability-readiness.v2.json', sha256: '2'.repeat(64) },
@@ -66,7 +66,7 @@ function fixture() {
       sha256: inventory.find((entry) => entry.path === 'detached/build-metadata.json').sha256,
     },
     host_rows: HOSTS.map((host_id) => ({ host_id, status: 'pending' })),
-    onboarding_sibling: 'live-test-v1.2.2-<combined-digest>-onboarding',
+    onboarding_sibling: 'live-test-v1.2.3-<combined-digest>-onboarding',
   };
   candidate.combined_digest = computeCombinedDigest(candidate);
   const onboarding = {
@@ -158,9 +158,9 @@ test('accepts the declared inventory after the candidate tree is frozen immutabl
 
 test('refuses unexpected physical modes and directory modes after final freeze', async (t) => {
   const cases = [
-    ['writable final file', 'FILE_MODE', ({ root }) => { fs.chmodSync(path.join(root, 'LazyBuddy/bin/run'), 0o644); }],
-    ['nonimmutable final file', 'FILE_MODE', ({ root }) => { fs.chmodSync(path.join(root, 'LazyBuddy/bin/run'), 0o400); }],
-    ['writable final directory', 'DIRECTORY_MODE', ({ root }) => { fs.chmodSync(path.join(root, 'LazyBuddy/bin'), 0o755); }],
+    ['writable final file', 'FILE_MODE', ({ root }) => { fs.chmodSync(path.join(root, 'LazyQoder/bin/run'), 0o644); }],
+    ['nonimmutable final file', 'FILE_MODE', ({ root }) => { fs.chmodSync(path.join(root, 'LazyQoder/bin/run'), 0o400); }],
+    ['writable final directory', 'DIRECTORY_MODE', ({ root }) => { fs.chmodSync(path.join(root, 'LazyQoder/bin'), 0o755); }],
   ];
   for (const [name, code, mutate] of cases) {
     await t.test(name, () => {
@@ -180,20 +180,20 @@ test('refuses unexpected physical modes and directory modes after final freeze',
   }
 });
 
-test('advertises a fresh-extraction LazyBuddy verification command', () => {
-  // Given an extracted LazyBuddy archive whose locked tooling dependencies are not installed.
+test('advertises a fresh-extraction LazyQoder verification command', () => {
+  // Given an extracted LazyQoder archive whose locked tooling dependencies are not installed.
   const inventory = [{
-    path: 'LazyBuddy/lazybuddy-v1.2.2.tar.gz',
+    path: 'LazyQoder/lazyqoder-v1.2.3.tar.gz',
     mode: '0644',
     size: 1,
     sha256: '2'.repeat(64),
   }];
   // When the paired candidate records the product self-verification contract.
-  const product = productRecord('lazybuddy', 'LazyBuddy', 'lazybuddy-v1.2.2.tar.gz', SHA, inventory);
+  const product = productRecord('lazyqoder', 'LazyQoder', 'lazyqoder-v1.2.3.tar.gz', SHA, inventory);
   // Then the advertised command installs the locked package dependencies before verification.
   assert.equal(
     product.command,
-    'bash lazybuddy-plugin/scripts/lazybuddy-package-verify.sh',
+    'bash lazyqoder-plugin/scripts/lazyqoder-package-verify.sh',
   );
 });
 
@@ -219,9 +219,9 @@ test('refuses each required hostile candidate mutation', async (t) => {
     ['excluded receipt', 'EXCLUDED_PAYLOAD', ({ candidate }) => { candidate.payload_inventory[0].path = 'receipts/forged.json'; }],
     ['stale tree digest', 'TREE_DIGEST_MISMATCH', ({ candidate }) => { candidate.products[0].tree_sha256 = '0'.repeat(64); }],
     ['stale combined digest', 'COMBINED_DIGEST_MISMATCH', ({ candidate }) => { candidate.products[0].runtime = 'node-misleading-status-passed'; }],
-    ['tampered payload', 'FILE_DIGEST_MISMATCH', ({ root }) => { fs.appendFileSync(path.join(root, 'LazyBuddy/bin/run'), 'tamper'); }],
+    ['tampered payload', 'FILE_DIGEST_MISMATCH', ({ root }) => { fs.appendFileSync(path.join(root, 'LazyQoder/bin/run'), 'tamper'); }],
     ['existing output', 'DESTINATION_EXISTS', ({ root }) => { fs.mkdirSync(path.join(root, 'candidate-output')); }],
-    ['disallowed mode', 'FILE_MODE', ({ root }) => { fs.chmodSync(path.join(root, 'LazyBuddy/bin/run'), 0o700); }],
+    ['disallowed mode', 'FILE_MODE', ({ root }) => { fs.chmodSync(path.join(root, 'LazyQoder/bin/run'), 0o700); }],
   ];
   for (const [name, code, mutate] of cases) {
     await t.test(name, () => {
@@ -243,12 +243,12 @@ test('refuses linked and nonregular staged inventory entries', async (t) => {
     await t.test(kind, () => {
       // Given a valid candidate whose staged tree is altered with a linked/nonregular path.
       const subject = fixture();
-      const target = path.join(subject.root, 'LazyBuddy/bin/run');
+      const target = path.join(subject.root, 'LazyQoder/bin/run');
       if (kind === 'symlink') {
         fs.unlinkSync(target);
         fs.symlinkSync('/dev/null', target);
       } else if (kind === 'hardlink') {
-        fs.linkSync(target, path.join(subject.root, 'LazyBuddy/bin/run-link'));
+        fs.linkSync(target, path.join(subject.root, 'LazyQoder/bin/run-link'));
       } else {
         fs.unlinkSync(target);
         require('node:child_process').spawnSync('mkfifo', [target], { stdio: 'inherit' });

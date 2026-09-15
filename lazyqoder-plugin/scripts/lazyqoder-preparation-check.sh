@@ -5,14 +5,14 @@ usage() {
     cat <<'EOF'
 Usage: bash lazyqoder-plugin/scripts/lazyqoder-qoder-preparation-check.sh --project-dir <absolute-project-root>
 
-Read-only check for the package inputs used by the observed Qoder build's
-cache-preparation route. This command never changes Qoder host state.
+Read-only check for the package inputs used by the observed Qoder IDE build's
+cache-preparation route. This command never changes Qoder IDE host state.
 EOF
 }
 
 refuse_apply() {
     printf '%s\n' \
-        "ERROR: --apply is unsupported: the observed Qoder build's installed_plugins.json uses a private, unverified schema; no host state was changed." >&2
+        "ERROR: --apply is unsupported: the observed Qoder IDE build's installed_plugins.json uses a private, unverified schema; no host state was changed." >&2
     exit 2
 }
 
@@ -78,14 +78,14 @@ fi
 
 if [ ! -f "$PLUGIN_ROOT/.qoder-plugin/plugin.json" ] \
     || [ ! -f "$PLUGIN_ROOT/.mcp.json" ] \
-    || [ ! -f "$RELEASE_ROOT/.qoder-plugin/marketplace.json" ]; then
+    || [ ! -f "$RELEASE_ROOT/.qodercli-plugin/marketplace.json" ]; then
     printf '%s\n' \
         'ERROR: LazyQoder plugin root is unavailable; keep this script under the v1.2.3 lazyqoder-plugin/scripts directory.' >&2
     exit 1
 fi
 
 if [ -z "${HOME:-}" ]; then
-    printf 'ERROR: HOME must identify the Qoder user profile for this read-only plan\n' >&2
+    printf 'ERROR: HOME must identify the Qoder IDE user profile for this read-only plan\n' >&2
     exit 2
 fi
 case "$HOME" in
@@ -135,13 +135,13 @@ def load_object(path: Path, label: str):
 try:
     work_manifest = load_object(
         plugin_root / ".qoder-plugin" / "plugin.json",
-        "Qoder manifest",
+        "Qoder IDE manifest",
     )
     if work_manifest.get("name") != "lazyqoder" or work_manifest.get("version") != version:
-        raise ValueError("Qoder manifest must identify lazyqoder version 1.2.3")
+        raise ValueError("Qoder IDE manifest must identify lazyqoder version 1.2.3")
 
     marketplace = load_object(
-        release_root / ".qoder-plugin" / "marketplace.json",
+        release_root / ".qodercli-plugin" / "marketplace.json",
         "release marketplace",
     )
     entries = marketplace.get("plugins")

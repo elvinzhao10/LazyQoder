@@ -2,6 +2,23 @@
 
 > **Historical/non-operational record.** This dated change history is retained for context only. In a repository checkout, current guidance is in `README.md`, `AGENTS.md`, and `lazyqoder-plugin/README.md`; a copied package should use its local `README.md`.
 
+## v1.2.3 — Platform compatibility patch (2026-09-14)
+
+- Host MCP declarations are validated before use: stdio servers require
+  a non-empty executable name or path (spaces are supported), string arguments,
+  and resolvable bundled launcher paths. HTTP transports require a URL.
+  Violations report a typed error naming the server and the remediation, and
+  stock declarations continue to pass.
+- Setup and status output is actionable. The load check prints the remaining
+  step per host and states that enabling a project-scoped MCP surface is a host
+  setting rather than an observed connection. Package readiness and host
+  readiness remain separate authorities.
+- Plan parsing accepts both `## TODOs` and the legacy `## Todos` heading. A
+  non-empty plan that parses zero tasks now fails with an actionable error, and
+  missing or duplicate task identifiers are reported instead of guessed.
+- Workflow and decision-memory features are deferred to v1.3.0 and are not part
+  of this patch.
+
 ## v1.2.2 — Streamlined adaptive context (2026-09-05)
 
 - Automatic workflow selection now chooses the smallest sufficient existing
@@ -35,7 +52,7 @@
 - Required fresh revision-bound completion evidence, atomic recoverable run
   state, task-owned leases, bounded cost telemetry, and deterministic
   risk-scaled verification.
-- Bound Qoder and Qoder adapters/status to current executable,
+- Bound Qoder CLI and Qoder IDE adapters/status to current executable,
   capability, build, and session fingerprints.
 - Hardened Python preflight, network, MCP, filesystem, dirty-tree, and
   lifecycle ownership boundaries while preserving user-modified state.
@@ -50,8 +67,8 @@
 This documentation-only release is the current human-facing status guide. It
 does not change package manifests, publish a marketplace artifact, or claim a
 live host loaded LazyQoder. It names `qodercli-cli`, `qodercli-ide`, and
-`qoder`; keeps marketplace as the default full-plugin route for Qoder
-IDE and Qoder; and keeps Skills/manual MCP recovery-only and mutually
+`qoder`; keeps marketplace as the default full-plugin route for Qoder CLI
+IDE and Qoder IDE; and keeps Skills/manual MCP recovery-only and mutually
 exclusive with the full-plugin route.
 
 v2 status language distinguishes native modes `invoke-documented`,
@@ -73,7 +90,7 @@ The durable route requires **Node.js LTS 20 or newer** and **Git**, accepts only
 `node "<install-root>/LazyQoder/launcher.js"` works after source deletion.
 Same-version ref movement requires `--confirm-revision <full-sha>`; runtime
 replacement uses scoped offboard/re-onboard. Package success leaves **HOST
-READINESS: PENDING**. Historical Qoder feedback is observed behavior, not
+READINESS: PENDING**. Historical Qoder IDE feedback is observed behavior, not
 an endorsement of installation through private host state.
 
 ### Added
@@ -103,7 +120,7 @@ an endorsement of installation through private host state.
   after which a blocked-state record is produced.
 - Authority-safe capability fallback with substitution reporting through
   existing status surfaces.
-- Full-plugin Qoder and Qoder adaptive mappings; the Skills/MCP-only
+- Full-plugin Qoder CLI and Qoder IDE adaptive mappings; the Skills/MCP-only
   route remains an explicitly degraded fallback, not the product target.
 - Adaptive explanation through existing status/capability surfaces (mode,
   selected stages, responsibilities, capabilities, not-selected, approval
@@ -134,7 +151,7 @@ an endorsement of installation through private host state.
 
 ### Known Gap (host-only)
 
-- Live-host QA: Qoder and Qoder live-host verification PENDING (no
+- Live-host QA: Qoder IDE and Qoder CLI live-host verification PENDING (no
   live host available in the release session). Package evidence and full
   fixture parity do not substitute for live-host evidence.
 
@@ -159,18 +176,18 @@ an endorsement of installation through private host state.
 ## v1.0.2 — Current-message onboarding intent (2026-07-18)
 
 - Added the local-first onboarding hotfix: the copied package and local
-  Qoder marketplace metadata can be checked from a permanent folder
+  Qoder CLI marketplace metadata can be checked from a permanent folder
   without implying a live host installation.
 - Made onboarding scan the complete current message and honor the rightmost
   conflicting explicit route while preserving compatible details.
-- Routed the exact mixed InitDeep/Qoder UI request to the later Qoder
+- Routed the exact mixed InitDeep/Qoder IDE UI request to the later Qoder IDE
   UI intent without expanding host-setting or installation authority.
 - Aligned active manifests, tooling packages, MCP identities, hook/verifier
   banners, documentation clients, and public install guidance with v1.0.2.
-- Made the release-root local marketplace the documented Qoder CLI route:
+- Made the release-root local marketplace the documented Qoder CLI CLI route:
   add the absolute local root, install `lazyqoder@lazyqoder`, then start a fresh
   session as three separate actions. `--plugin-dir` remains development-only.
-- Qualified Qoder IDE and Qoder plugin behavior as observed-build
+- Qualified Qoder CLI IDE and Qoder IDE plugin behavior as observed-build
   routes, retained Skills plus six manual MCP connectors as the supported
   fallback, and documented collision-free migration between the two.
 - Clarified `.qodercli/settings.json` versus ignored
@@ -179,11 +196,11 @@ an endorsement of installation through private host state.
 
 ### Post-prerelease host-route correction (2026-07-19)
 
-- Made the release-root Qoder marketplace commands the preferred full-plugin
-  route for Qoder IDE whenever its CLI is available; the supplied IDE GUI
+- Made the release-root Qoder CLI marketplace commands the preferred full-plugin
+  route for Qoder CLI IDE whenever its CLI is available; the supplied IDE GUI
   Add local directory flow failed, so the UI path is now explicitly
   observed-build-only.
-- Recorded the supplied Qoder v5.2.6 macOS build's durable route: after
+- Recorded the supplied Qoder IDE v5.2.6 macOS build's durable route: after
   explicit user approval, current host-schema inspection, and a validated
   additive merge plan preserving existing registry entries, prepare the cache
   with absolute MCP launchers and explicit project context, then perform one
@@ -198,7 +215,7 @@ an endorsement of installation through private host state.
 ### Verification boundary
 
 - Package checks establish local package readiness only; host readiness still
-  requires a fresh Qoder or Qoder session, one real Skill/command, and
+  requires a fresh Qoder CLI or Qoder IDE session, one real Skill/command, and
   observed state for all six MCP connections. Otherwise host readiness remains
   pending.
 
@@ -233,7 +250,7 @@ an endorsement of installation through private host state.
 
 ## v0.18.0 — Release identity alignment (2026-07-16)
 
-- Aligned Qoder and Qoder manifests, marketplace metadata, MCP server
+- Aligned Qoder CLI and Qoder IDE manifests, marketplace metadata, MCP server
   metadata, hook/banner text, documentation User-Agent, and package-owned
   tooling metadata with the v0.18.0 release identity.
 - Kept the `v017` capability-readiness records as historical fixtures and
@@ -261,8 +278,8 @@ an endorsement of installation through private host state.
 
 ## v0.15.0-alpha.2 — Host Contract and Release Metadata Audit (2026-07-11)
 
-- Clarified Qoder plugin loading, Qoder marketplace/session verification, and the verified local Skill-import/manual-MCP fallback.
-- Corrected Qoder command namespace examples to `/lazyqoder:lazy-<command>`.
+- Clarified Qoder CLI plugin loading, Qoder IDE marketplace/session verification, and the verified local Skill-import/manual-MCP fallback.
+- Corrected Qoder CLI command namespace examples to `/lazyqoder:lazy-<command>`.
 - Updated manifest, marketplace, MCP server, and release metadata to `0.15.0-alpha.2`.
 
 ## v0.15.0-alpha.1 — Fresh Workspace Load Check (2026-07-11)
@@ -275,7 +292,7 @@ an endorsement of installation through private host state.
 - **Added** final release docs package: root README, quickstart, and final parity report.
 - **Recorded** non-trivial v0.12 dogfood replay evidence under `.lazyqoder/runs/dogfood-v0.12/` and `.omo/evidence/task-5-diagnosis-v0-12-lazyqoder.txt`.
 - **Verified** release gates in Todo 6: doctor 50/50, aggregate verify `all_pass:true`, MCP smoke 22/22, hook pipeline 16/16, docs check passing, and plugin metadata version `0.12.0`.
-- **Documented** honest parity posture: context tooling is a Qoder host substitution, not full LazyCodex codegraph/LSP/Context7 semantic parity.
+- **Documented** honest parity posture: context tooling is a Qoder IDE host substitution, not full LazyCodex codegraph/LSP/Context7 semantic parity.
 - **Bumped** installable plugin metadata to `0.12.0`.
 
 ## v0.11.0 — Dogfood Run (2026-07-09)
@@ -310,7 +327,7 @@ an endorsement of installation through private host state.
 - **Implemented** 5 MCP servers (30 tools): `run-ledger`, `parity`, `verification`, `source-map`, `status-dashboard`
 - **Populated** `.mcp.json` with all 5 servers (bash command, `required: false`)
 - **Created** 5 MCP prompt commands + dashboard mockup + 4 MCP docs
-- Note: these servers are Qoder-native (run state, parity, verification) — NOT LazyCodex's context servers (context7/codegraph/lsp/git_bash/grep_app). Context-tooling parity is a tracked gap (G-003, P2).
+- Note: these servers are Qoder IDE-native (run state, parity, verification) — NOT LazyCodex's context servers (context7/codegraph/lsp/git_bash/grep_app). Context-tooling parity is a tracked gap (G-003, P2).
 
 ## v0.7.0 — State Ledger & Autonomous Loop (2026-07-09)
 
@@ -329,20 +346,20 @@ an endorsement of installation through private host state.
 
 ## v0.5.0 — Subagents & Orchestration (2026-07-09)
 
-- **Created** 13 agent role definitions (8 LazyCodex-mapped + 5 Qoder-native)
+- **Created** 13 agent role definitions (8 LazyCodex-mapped + 5 Qoder IDE-native)
 - Valid YAML frontmatter (model, effort, maxTurns, tools, disallowedTools, isolation) on all agents
 - Read-only enforcement on verifier/reviewer/gate-reviewer/security-auditor; `disallowedTools:[Agent]` on implementer
 - Created 4 orchestration docs (agent-inventory, agent-orchestration, handoff-protocol, parallelism-policy)
 
 ## v0.4.0 — Skills & Commands (2026-07-09)
 
-- **Ported** 14 skills from LazyCodex with full Qoder-native adaptation (init-deep, ulw-plan, start-work, ulw-loop, ultrawork, review-work, programming, remove-ai-slops, git-master, debugging, verifier, reviewer, librarian, migration-planner)
+- **Ported** 14 skills from LazyCodex with full Qoder IDE-native adaptation (init-deep, ulw-plan, start-work, ulw-loop, ultrawork, review-work, programming, remove-ai-slops, git-master, debugging, verifier, reviewer, librarian, migration-planner)
 - **Wrote** 8 command files replacing v0.3 placeholders
 - Tool translation applied across all files (multi_agent_v1 → Agent tool, .omo/ → .lazyqoder/, ${PLUGIN_ROOT} → ${QODER_PLUGIN_ROOT}, AGENTS.md → qoder.md)
 
 ## v0.3.0 — Plugin Scaffold (2026-07-09)
 
-- **Created** plugin structure: `.qoder-plugin/plugin.json`, component directories
+- **Created** plugin structure: `.qodercli-plugin/plugin.json`, component directories
 - **Created** 8 placeholder commands + 8 placeholder skills (stubs for v0.4)
 - **Created** hooks scaffold (`hooks/hooks.json`) — 12 event types (populated with real commands in v0.6)
 - **Created** MCP scaffold (`.mcp.json`) — `mcpServers` populated with 5 servers in v0.8

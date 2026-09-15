@@ -1,14 +1,14 @@
 # AGENTS.md — LazyQoder setup and removal guide
 
-LazyQoder supports Qoder IDE (JetBrains/VS Code extensions) and the Qoder IDE CLI. It is verified
+LazyQoder supports Qoder CLI IDE, Qoder CLI CLI, and Qoder IDE. It is verified
 on macOS only. Package files, host settings, credentials, marketplace state,
 and live sessions remain separate authorities.
 
-## Current documentation release: v1.2.2
+## Current documentation release: v1.2.3
 
-This v1.2.2 guide names current human-facing boundaries only. It does not
+This v1.2.3 guide names current human-facing boundaries only. It does not
 publish a package or promote package evidence to host proof. The route IDs are
-`codebuddy-cli`, `codebuddy-ide`, and `workbuddy`. v2 native modes are
+`qodercli-cli`, `qodercli-ide`, and `qoder`. v2 native modes are
 `invoke-documented`, `observe-only`, `descriptor-only`, and `unavailable`;
 public labels are `documented-tested`, `documented-untested`,
 `observed-build-specific`, and `unavailable`; evidence scopes are `package`,
@@ -59,8 +59,8 @@ route; when explicit current-message routes conflict, the rightmost conflicting
 route wins.
 
 If the host or operation is still ambiguous, ask one focused question and take
-no action. The supported choices are **CodeBuddy IDE**, **CodeBuddy CLI**, and
-**WorkBuddy**. Keep host authority and proof boundaries unchanged.
+no action. The supported choices are **Qoder CLI IDE**, **Qoder CLI CLI**, and
+**Qoder IDE**. Keep host authority and proof boundaries unchanged.
 
 ## `onboard` protocol
 
@@ -98,43 +98,43 @@ When the user types `onboard`:
    readiness; without observation, **HOST READINESS: PENDING** remains the only
    honest result.
 
-Route status is explicit: the local marketplace is the **documented CodeBuddy
-CLI route and the preferred CodeBuddy IDE route whenever the CodeBuddy CLI is
-available**. WorkBuddy uses the nested `.qoder-plugin/plugin.json` as its
+Route status is explicit: the local marketplace is the **documented Qoder CLI
+CLI route and the preferred Qoder CLI IDE route whenever the Qoder CLI CLI is
+available**. Qoder IDE uses the nested `.qoder-plugin/plugin.json` as its
 default marketplace full-plugin route. The `manual-skills-mcp-fallback` is a
 recovery-only route. None of those labels proves the current build:
 without current observation, **HOST READINESS: PENDING**.
 
-The supplied macOS QA dated 2026-07-18 observed CodeBuddy IDE full-plugin
+The supplied macOS QA dated 2026-07-18 observed Qoder CLI IDE full-plugin
 loading through the CLI-backed user-scope marketplace route. It inspected
-WorkBuddy v5.2.6 on macOS and recorded full-plugin loading only after
+Qoder IDE v5.2.6 on macOS and recorded full-plugin loading only after
 undocumented host-internal changes. That is historical observed behavior, not
 an installation route. The GUI Add local directory/Install flows failed in
-that tested build; the CodeBuddy exact host version/build was not recorded.
+that tested build; the Qoder CLI exact host version/build was not recorded.
 
 ## Host artifact boundary
 
 | Host | Safe package artifact | Host action and expected observation |
 | --- | --- | --- |
-| **CodeBuddy IDE** | When the CLI is available (`codebuddy`), use the same user-scope release-root marketplace route as CodeBuddy CLI. The desktop GUI route is only an observed-build alternative; the supplied GUI add-local-directory flow failed. | Use the CLI marketplace handoff below, then inspect the IDE's fresh session. If the CLI is unavailable, record that limitation and use the Skills/manual-MCP fallback. |
-| **CodeBuddy CLI** | The release-root `.qoder-plugin/marketplace.json` and package checks. Use the exact local marketplace commands below; `--plugin-dir` is development/testing only and never persistent. | Use the three separate CodeBuddy handoff actions below. After installation and a fresh session inspect one real Skill/command and all six MCP connections. |
-| **WorkBuddy full plugin** | The active release's `lazyqoder-plugin/.qoder-plugin/plugin.json`, declaring Skills, commands, agents, hooks, and `.mcp.json`. | Use the marketplace/plugin surface exposed by the current build. Keep readiness pending until a current receipt confirms one loaded Skill, command, agent, hook, and all six MCP servers in the same build/session. |
-| **WorkBuddy recovery fallback** | Skills import/copy from `lazyqoder-plugin/skills/` only, plus six individual manual local MCP connectors. | Use only after the full-plugin route is removed with receipt-scoped ownership. Observe one imported Skill and all six connector statuses; commands, agents, and hooks remain excluded. |
+| **Qoder CLI IDE** | When the CLI is available (`qodercli`), use the same user-scope release-root marketplace route as Qoder CLI CLI. The desktop GUI route is only an observed-build alternative; the supplied GUI add-local-directory flow failed. | Use the CLI marketplace handoff below, then inspect the IDE's fresh session. If the CLI is unavailable, record that limitation and use the Skills/manual-MCP fallback. |
+| **Qoder CLI CLI** | The release-root `.qodercli-plugin/marketplace.json` and package checks. Use the exact local marketplace commands below; `--plugin-dir` is development/testing only and never persistent. | Use the three separate Qoder CLI handoff actions below. After installation and a fresh session inspect one real Skill/command and all six MCP connections. |
+| **Qoder IDE full plugin** | The active release's `lazyqoder-plugin/.qoder-plugin/plugin.json`, declaring Skills, commands, agents, hooks, and `.mcp.json`. | Use the marketplace/plugin surface exposed by the current build. Keep readiness pending until a current receipt confirms one loaded Skill, command, agent, hook, and all six MCP servers in the same build/session. |
+| **Qoder IDE recovery fallback** | Skills import/copy from `lazyqoder-plugin/skills/` only, plus six individual manual local MCP connectors. | Use only after the full-plugin route is removed with receipt-scoped ownership. Observe one imported Skill and all six connector statuses; commands, agents, and hooks remain excluded. |
 
-## CodeBuddy local marketplace handoff
+## Qoder CLI local marketplace handoff
 
 The supported local route uses the **release root** (the directory containing
-`.qoder-plugin/marketplace.json`) printed by durable
-`status --route codebuddy-marketplace`, not a source checkout or the nested
+`.qodercli-plugin/marketplace.json`) printed by durable
+`status --route qodercli-marketplace`, not a source checkout or the nested
 `lazyqoder-plugin/` directory:
 
 ```text
-codebuddy plugin marketplace add "<active-durable-release-root>"
-codebuddy plugin install lazyqoder@lazyqoder
+qodercli plugin marketplace add "<active-durable-release-root>"
+qodercli plugin install lazyqoder@lazyqoder
 ```
 
 Run these terminal commands against the absolute release root. Inside a
-CodeBuddy session, the interactive `/plugin` menu is equivalent; do not use the
+Qoder CLI session, the interactive `/plugin` menu is equivalent; do not use the
 slash forms as terminal commands. Do not automate marketplace trust or
 installation, and do not treat `--plugin-dir <absolute-release-root>`
 as persistence.
@@ -142,33 +142,33 @@ as persistence.
 These are three separate future user actions:
 
 1. **Action 1 — discover:** after approval, add the absolute release root with
-   `codebuddy plugin marketplace add "<active-durable-release-root>"` (or the
-   equivalent interactive `/plugin` menu inside CodeBuddy), then wait while the
+   `qodercli plugin marketplace add "<active-durable-release-root>"` (or the
+   equivalent interactive `/plugin` menu inside Qoder CLI), then wait while the
    agent uses Computer Use to observe that
    `lazyqoder@lazyqoder` is discovered. Do not install yet.
 2. **Action 2 — install:** after a separate approval, enter
-   `codebuddy plugin install lazyqoder@lazyqoder`, then wait while the agent
+   `qodercli plugin install lazyqoder@lazyqoder`, then wait while the agent
    observes the install result. Do not restart in the same action.
 3. **Action 3 — restart and observe:** as a later action, start a fresh
-   CodeBuddy session, then let the agent inspect one real Skill/command plus all
+   Qoder CLI session, then let the agent inspect one real Skill/command plus all
    six MCP connections.
 
 Do not combine these actions, pre-approve trust, or claim host readiness from
 the marketplace JSON alone. Repeating safe package checks preserves existing
 project configuration.
 
-## CodeBuddy IDE GUI alternative (observed-build only)
+## Qoder CLI IDE GUI alternative (observed-build only)
 
-Use this only when the current CodeBuddy IDE visibly offers a local-directory
-marketplace **and the CodeBuddy CLI route is unavailable**. The supplied build's
+Use this only when the current Qoder CLI IDE visibly offers a local-directory
+marketplace **and the Qoder CLI CLI route is unavailable**. The supplied build's
 GUI Add local directory flow failed, so do not send users here by default. Each
 numbered item is a separate action:
 
 1. After approval, use the host's **Plugins / Marketplace → Add local
    directory** GUI to select the absolute release root containing
-   `.qoder-plugin/marketplace.json`; then wait for inspection.
+   `.qodercli-plugin/marketplace.json`; then wait for inspection.
 2. Observe the version the current marketplace actually displays. Do not infer
-   v1.2.2 publication from this documentation boundary. Do not install in the
+   v1.2.3 publication from this documentation boundary. Do not install in the
    discovery action. If discovery is unavailable, record the
    host version/build and exact error, keep **HOST READINESS: PENDING**, and use
    the fallback below only after selecting it explicitly.
@@ -181,36 +181,36 @@ numbered item is a separate action:
    calls to all six MCP servers. Files, cache entries, and connector counts are
    not substitutes for those calls.
 
-## WorkBuddy marketplace full-plugin boundary
+## Qoder IDE marketplace full-plugin boundary
 
 The nested `.qoder-plugin/plugin.json` remains the default installation
 source even when a public manifest schema is unavailable. Do not mutate or
-inspect WorkBuddy's private registries to reproduce installation. Use only the
+inspect Qoder IDE's private registries to reproduce installation. Use only the
 marketplace/plugin action exposed by the current host build, one approved host
 action at a time.
 
-The agent may render/check package inputs without changing WorkBuddy:
+The agent may render/check package inputs without changing Qoder IDE:
 
 ```bash
-bash lazyqoder-plugin/scripts/lazyqoder-workbuddy-preparation-check.sh \
+bash lazyqoder-plugin/scripts/lazyqoder-qoder-preparation-check.sh \
   --project-dir "<absolute-project-root>"
 ```
 
 This preflight is read-only and prints `HOST_PREPARATION=not-applied`,
 `HOST_MUTATION=none`, and `HOST_READINESS=pending`; `--apply` refuses. It is a
 package check, not an installer and not host proof. Durable `status --host
-workbuddy` emits the exact marketplace receipt template. Only a receipt bound
+qoder` emits the exact marketplace receipt template. Only a receipt bound
 to the active source/version and current build/session, with one loaded Skill,
 command, agent, hook, and all six MCP connections, may report host ready.
 
-## CodeBuddy project-local configuration
+## Qoder CLI project-local configuration
 
-`.codebuddy/settings.json` may hold shareable, non-secret project defaults.
-`.codebuddy/settings.local.json` is local/machine scope and must remain ignored
+`.qodercli/settings.json` may hold shareable, non-secret project defaults.
+`.qodercli/settings.local.json` is local/machine scope and must remain ignored
 and unstaged; secrets must never be committed. Package checks and repeated safe
 setup preserve both files and do not write host configuration.
 
-## CodeBuddy IDE / WorkBuddy Skills/manual-MCP fallback
+## Qoder CLI IDE / Qoder IDE Skills/manual-MCP fallback
 
 Import only `lazyqoder-plugin/skills/` through the selected host's Skills UI or
 its documented local import. Add each compatible local MCP connector manually in
@@ -222,13 +222,13 @@ loaded session, record that observation before relying on any broader surface.
 This fallback explicitly excludes commands, Agents, and hooks.
 
 Before changing host settings, prepare the connector values without mutation
-from `lazyqoder-plugin/.mcp.json`: replace `${CODEBUDDY_PLUGIN_ROOT}` with the
-absolute `<release-root>/lazyqoder-plugin` and `${CODEBUDDY_PROJECT_DIR}` with
+from `lazyqoder-plugin/.mcp.json`: replace `${QODER_PLUGIN_ROOT}` with the
+absolute `<release-root>/lazyqoder-plugin` and `${QODER_PROJECT_DIR}` with
 the absolute `<project-root>`. Every entry must use `command: bash`, one
 absolute `args` path
 `<release-root>/lazyqoder-plugin/mcp/<server>/server.sh`, `cwd: <project-root>`,
 and environment values `CWD=<project-root>` and
-`CODEBUDDY_PROJECT_DIR=<project-root>`. The six `<server>` values are exactly
+`QODER_PROJECT_DIR=<project-root>`. The six `<server>` values are exactly
 `run-ledger`, `verification`, `status-dashboard`, `context-graph`,
 `code-intel`, and `docs`. Do not edit the shipped `.mcp.json`. The paste-ready
 six-entry template is in [Host routes](docs/reference/host-routes.md#manual-connector-specification).
@@ -254,8 +254,8 @@ does not replace the local marketplace route.
 
 ## `offboard` protocol
 
-When the user types `offboard`, ask which host and whether CodeBuddy plugin
-installation or WorkBuddy Skills/manual connectors are being removed. Run
+When the user types `offboard`, ask which host and whether Qoder CLI plugin
+installation or Qoder IDE Skills/manual connectors are being removed. Run
 durable `offboard` without `--yes`, present the exact product-root plan, and
 repeat with `--yes` only after confirmation. Inspect
 the selected package receipt first, remove only exact receipt-owned local

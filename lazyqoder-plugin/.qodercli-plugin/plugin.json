@@ -1,6 +1,6 @@
 {
   "name": "lazyqoder",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "LazyQoder workflows for Qoder and Qoder.",
   "commands": [
     "./commands/"

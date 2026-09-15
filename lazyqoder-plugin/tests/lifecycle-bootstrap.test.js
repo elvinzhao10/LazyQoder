@@ -31,12 +31,12 @@ function git(cwd, args) {
 function writeFixtureFiles(root, selfTest = "process.stdout.write('self-test-ok\\n');\n") {
   const packageRoot = path.join(root, 'lazyqoder-plugin');
   const contracts = path.join(packageRoot, 'contracts');
-  fs.mkdirSync(path.join(packageRoot, '.qoder-plugin'), { recursive: true });
+  fs.mkdirSync(path.join(packageRoot, '.qodercli-plugin'), { recursive: true });
   fs.mkdirSync(path.join(packageRoot, '.qoder-plugin'), { recursive: true });
   fs.mkdirSync(path.join(packageRoot, 'scripts'), { recursive: true });
   fs.mkdirSync(contracts, { recursive: true });
-  fs.writeFileSync(path.join(packageRoot, '.qoder-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.2.2"}\n');
-  fs.writeFileSync(path.join(packageRoot, '.qoder-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.2.2"}\n');
+  fs.writeFileSync(path.join(packageRoot, '.qodercli-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.2.3"}\n');
+  fs.writeFileSync(path.join(packageRoot, '.qoder-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.2.3"}\n');
   fs.writeFileSync(path.join(packageRoot, 'scripts', 'lazyqoder-lifecycle.js'), "console.log('fixture-launch-ok')\n");
   fs.writeFileSync(path.join(packageRoot, 'scripts', 'lifecycle-self-test.js'), selfTest);
   for (const name of ['lazy-harness-lifecycle.v1.schema.json', 'lazy-harness-lifecycle.v1.example.json']) {
@@ -61,7 +61,7 @@ function fixture() {
   git(source, ['add', 'lazyqoder-plugin']);
   git(source, ['commit', '-m', 'fixture v1']);
   git(source, ['branch', '-M', 'main']);
-  git(source, ['tag', 'v1.2.2']);
+  git(source, ['tag', 'v1.2.3']);
   git(sandbox, ['clone', '--bare', source, remote]);
   return {
     paths: prepareProductRoot({ installRoot: path.join(sandbox, 'durable root'), product: 'LazyQoder' }),
@@ -125,14 +125,14 @@ function treeSnapshot(root) {
 
 test('parses only canonical official HTTPS source forms for the selected product', () => {
   const accepted = [
-    ['https://github.com/elvinzhao10/LazyQoder', 'v1.2.2'],
-    ['https://github.com/elvinzhao10/LazyQoder.git', 'v1.2.2'],
-    ['https://github.com/elvinzhao10/LazyQoder/tree/release/v1.2.2', 'release/v1.2.2'],
+    ['https://github.com/elvinzhao10/LazyQoder', 'v1.2.3'],
+    ['https://github.com/elvinzhao10/LazyQoder.git', 'v1.2.3'],
+    ['https://github.com/elvinzhao10/LazyQoder/tree/release/v1.2.3', 'release/v1.2.3'],
   ];
   const rejected = [
     'http://github.com/elvinzhao10/LazyQoder',
     'https://github.com/elvinzhao10/LazyQoder/',
-    'https://github.com/elvinzhao10/LazyQoder?ref=v1.2.2',
+    'https://github.com/elvinzhao10/LazyQoder?ref=v1.2.3',
     'https://github.com/elvinzhao10/LazyQoder#readme',
     'https://user@github.com/elvinzhao10/LazyQoder',
     'https://github.com:443/elvinzhao10/LazyQoder',
@@ -172,7 +172,7 @@ test('resolves, verifies, self-tests, and promotes a local fixture under an offi
     commit_sha: expectedSha,
     status: 'ready',
     test_status: 'passed',
-    version: '1.2.2',
+    version: '1.2.3',
   });
   assert.equal(launched.status, 0, launched.stderr);
   assert.equal(launched.stdout.trim(), 'fixture-launch-ok');
@@ -183,7 +183,7 @@ test('resolves, verifies, self-tests, and promotes a local fixture under an offi
 test('repo, tag, branch, and full-SHA sources resolve through Git to the same immutable commit', () => {
   const sources = [
     'https://github.com/elvinzhao10/LazyQoder',
-    'https://github.com/elvinzhao10/LazyQoder/tree/v1.2.2',
+    'https://github.com/elvinzhao10/LazyQoder/tree/v1.2.3',
     'https://github.com/elvinzhao10/LazyQoder/tree/main',
   ];
   for (const sourceUrl of sources) {
@@ -220,7 +220,7 @@ test('same version at a different SHA requires an exact revision confirmation', 
 
 test('manifest, checksum, self-test, prerequisite, and clone failures preserve active state', async (t) => {
   for (const scenario of [
-    ['missing manifest', (f) => fs.rmSync(path.join(f.source, 'lazyqoder-plugin/.qoder-plugin/plugin.json')), 'INVALID_MANIFEST'],
+    ['missing manifest', (f) => fs.rmSync(path.join(f.source, 'lazyqoder-plugin/.qodercli-plugin/plugin.json')), 'INVALID_MANIFEST'],
     ['host manifest mismatch', (f) => fs.writeFileSync(path.join(f.source, 'lazyqoder-plugin/.qoder-plugin/plugin.json'), '{"name":"lazyqoder","version":"1.0.2"}\n'), 'INVALID_MANIFEST'],
     ['bad checksum', (f) => fs.writeFileSync(path.join(f.source, 'lazyqoder-plugin/contracts/lazy-harness-lifecycle.v1.schema.json.sha256'), `${'0'.repeat(64)}  lazy-harness-lifecycle.v1.schema.json\n`), 'CHECKSUM_MISMATCH'],
     ['misleading self-test success', (f) => fs.writeFileSync(path.join(f.source, 'lazyqoder-plugin/scripts/lifecycle-self-test.js'), "console.log('PASS'); process.exit(7);\n"), 'SELF_TEST_FAILED'],

@@ -14,20 +14,20 @@ trap cleanup EXIT
 pass() { printf 'PASS %s\n' "$1"; PASS=$((PASS + 1)); }
 fail() { printf 'FAIL %s\n' "$1" >&2; FAIL=$((FAIL + 1)); }
 
-if [ ! -f "$PACKAGE_SOURCE_ROOT/.qoder-plugin/marketplace.json" ]; then
+if [ ! -f "$PACKAGE_SOURCE_ROOT/.qodercli-plugin/marketplace.json" ]; then
     PACKAGE_SOURCE_ROOT="$TMP/source release"
-    mkdir -p "$PACKAGE_SOURCE_ROOT/.qoder-plugin"
+    mkdir -p "$PACKAGE_SOURCE_ROOT/.qodercli-plugin"
     cp -R "$PLUGIN_ROOT" "$PACKAGE_SOURCE_ROOT/lazyqoder-plugin"
     printf '%s\n' \
         '{' \
         '  "name": "lazyqoder",' \
         '  "plugins": [' \
-        '    {"name": "lazyqoder", "source": "./lazyqoder-plugin", "version": "1.2.2"}' \
+        '    {"name": "lazyqoder", "source": "./lazyqoder-plugin", "version": "1.2.3"}' \
         '  ]' \
-        '}' > "$PACKAGE_SOURCE_ROOT/.qoder-plugin/marketplace.json"
+        '}' > "$PACKAGE_SOURCE_ROOT/.qodercli-plugin/marketplace.json"
 fi
 
-SPACE_RELEASE="$TMP/package copies/Lazy Buddy v1.2.2"
+SPACE_RELEASE="$TMP/package copies/Lazy Buddy v1.2.3"
 PROJECT_ROOT="$TMP/consumer projects/Project With Spaces"$'\nHOST_READINESS=ready'
 FIXTURE_HOME="$TMP/Home With Spaces"
 mkdir -p "$(dirname -- "$SPACE_RELEASE")" "$PROJECT_ROOT" "$FIXTURE_HOME/.qoder/plugins"

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "LazyQoder Qoder Marketplace Full-Plugin Receipt",
+  "title": "LazyQoder Qoder IDE Marketplace Full-Plugin Receipt",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "type", "source", "host", "build", "session_id", "observed_at", "capabilities"],
@@ -17,7 +17,7 @@
         "manifest": { "const": "lazyqoder-plugin/.qoder-plugin/plugin.json" },
         "manifest_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "plugin": { "const": "lazyqoder" },
-        "version": { "const": "1.2.2" }
+        "version": { "const": "1.2.3" }
       }
     },
     "host": { "const": "qoder" },

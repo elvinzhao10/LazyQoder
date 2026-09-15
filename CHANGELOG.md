@@ -1,17 +1,26 @@
 # Changelog
 
-## v1.2.2 — Full family parity port (2026-09-14)
+## v1.2.3 — Platform compatibility patch port (2026-09-15)
 
-- Brought LazyQoder to feature parity with LazyBuddy/LazyTrae v1.2.2
+- Ported the LazyBuddy/LazyTrae v1.2.3 platform compatibility wave:
+  MCP declaration validation (typed errors, spaces supported), actionable
+  setup/load-check output, plan-format compatibility (`## TODOs` and legacy
+  `## Todos`), zero-task plan failure with actionable errors, and the
+  v1.2.3 supported-route documentation boundary.
+- All package versions, contracts, and schemas bumped to 1.2.3.
+
+## v1.2.2 — Full family parity port (2026-09-14, historical)
+
+- Historical: brought LazyQoder to feature parity with LazyBuddy/LazyTrae v1.2.2
   (both released 2026-09-05): 44 contracts + 64 fixtures, 25-hook surface
   with lifecycle-event.js, 6-server MCP manifest with profile gating,
   113-script lifecycle/ subsystem, adaptive tooling family, v1.2.x docs
   (migration guides, supported routes, release notes), and the compact
   TASK/DELTA/REFS/VERIFY dispatch semantics in start-work/review-work.
 - Manifest migrated to the officially documented `.qoder-plugin/plugin.json`
-  location; version 1.2.2.
+  location; previous version 1.2.2.
 - Commands 14 → 17 (ported Trae's handoff, ralph-loop, stop-continuation).
-- 3 agents gained v1.2.2 fields (model/effort/maxTurns/memory/isolation).
+- 3 agents gained the previous v1.2.2 fields (model/effort/maxTurns/memory/isolation).
 - qoder-ide-surface adapters renamed for the documented Qoder CLI
   (`qodercli`); host-gated and not executed at package-check time.
 - Package readiness only: host registration, runtime loading, and MCP

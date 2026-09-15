@@ -110,7 +110,7 @@ function createTemplate(options) {
     host: 'qoder-ide',
     status: 'pending',
     generated_at: options.generatedAt,
-    installation_route: 'qoder-marketplace',
+    installation_route: 'qodercli-marketplace',
     marketplace,
     workspace,
     surfaces: SURFACES.map(surface_id => ({ surface_id, status: 'pending', host_authority: 'host' })),
@@ -165,7 +165,7 @@ function ingestObservation(options) {
   exact(template, ['generated_at', 'host', 'host_readiness', 'installation_route', 'marketplace', 'promotion', 'record_type', 'schema_version', 'status', 'surfaces', 'template_id', 'workspace'], 'template');
   if (template.schema_version !== 1 || template.record_type !== 'qoder-ide-native-template'
     || template.host !== 'qoder-ide' || template.status !== 'pending'
-    || template.installation_route !== 'qoder-marketplace' || template.promotion !== 'prohibited'
+    || template.installation_route !== 'qodercli-marketplace' || template.promotion !== 'prohibited'
     || JSON.stringify(template.host_readiness) !== JSON.stringify({ status: 'pending' })) {
     fail('NATIVE_TEMPLATE_INVALID', 'template cannot establish host readiness');
   }

@@ -5,6 +5,8 @@ PLUGIN_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STATE_DIR="$PLUGIN_ROOT/scripts/state"
 LOOP_DIR="$PLUGIN_ROOT/scripts/loop"
 HOOK="$PLUGIN_ROOT/scripts/hooks/pre-tool-use.sh"
+MATRIX="$PLUGIN_ROOT/tests/fixtures/security-acceptance-matrix.v1.json"
+PYTHON_BIN="${LAZYQODER_TEST_PYTHON:-python3}"
 TMP="$(mktemp -d)"
 
 cleanup() {
@@ -17,13 +19,46 @@ fail() {
     exit 1
 }
 
+"$PYTHON_BIN" - "$MATRIX" <<'PYEOF'
+import json
+import sys
+
+matrix = json.load(open(sys.argv[1], encoding="utf-8"))
+assert matrix["schema_version"] == "lazyqoder-security-acceptance.v1", matrix
+expected = {
+    "ipv4-mapped-ipv6": ("allow", "reject"),
+    "redirect-hop-revalidation": ("allow", "reject"),
+    "mcp-invalid-arguments": ("result", "jsonrpc_invalid_params"),
+    "evidence-redaction": ("preserved", "redacted"),
+    "residual-risk-receipt": ("recorded", "reject"),
+}
+cases = {case["id"]: case for case in matrix["cases"]}
+assert set(cases) == set(expected), cases
+for case_id, outcomes in expected.items():
+    case = cases[case_id]
+    assert set(case) == {"id", "positive", "negative"}, case
+    assert case["positive"]["outcome"] == outcomes[0], case
+    assert case["negative"]["outcome"] == outcomes[1], case
+residual = cases["residual-risk-receipt"]
+receipt = residual["positive"]["receipt"]
+assert receipt == {
+    "kind": "residual-risk",
+    "scope": "security-acceptance",
+    "revision": "todo-14",
+    "authoritative_for_completion": False,
+}, receipt
+negative_receipt = residual["negative"]["receipt"]
+assert set(negative_receipt) == {"kind", "authoritative_for_completion"}, negative_receipt
+assert negative_receipt["authoritative_for_completion"] is True, negative_receipt
+PYEOF
+
 expect_rejected() {
     local label="$1"
     shift
     if "$@" >"$TMP/output" 2>&1; then
         fail "$label was accepted"
     fi
-    grep -qE 'invalid run_id|must not be.*symlink' "$TMP/output" || fail "$label did not report a boundary rejection"
+    grep -q 'invalid run_id\|must not be.*symlink' "$TMP/output" || fail "$label did not report a boundary rejection"
 }
 
 make_run() {
@@ -102,7 +137,7 @@ state['tasks'] = [{'id': 'T1', 'title': 'task', 'description': 'd', 'owner': 'te
 json.dump(state, open(state_file, 'w'))
 PYEOF
 
-printf '%s\n' '- [ ] task' > "$TMP/work/.lazyqoder/runs/safe.run-1/plan.md"
+printf '%s\n' '## TODOs' '- [ ] T1: task' > "$TMP/work/.lazyqoder/runs/safe.run-1/plan.md"
 CWD="$TMP/work" bash "$STATE_DIR/update-task.sh" 'safe.run-1' T1 done 'changed_files=["state"]'
 CWD="$TMP/work" bash "$STATE_DIR/update-plan-checkbox.sh" 'safe.run-1' task
 python3 - "$TMP/work/.lazyqoder/runs/safe.run-1/state.json" <<'PYEOF'
@@ -112,6 +147,23 @@ import sys
 task = json.load(open(sys.argv[1]))['tasks'][0]
 assert task['status'] == 'done'
 assert task['changed_files'] == ['state']
+PYEOF
+
+fixture_secret="s""k-$(printf 'A%.0s' {1..24})"
+CWD="$TMP/work" bash "$STATE_DIR/append-event.sh" 'safe.run-1' audit "{\"password\":\"$fixture_secret\"}" >/dev/null
+"$PYTHON_BIN" - "$TMP/work/.lazyqoder/runs/safe.run-1/events.jsonl" "$fixture_secret" <<'PYEOF'
+import json
+import pathlib
+import sys
+
+events_path = pathlib.Path(sys.argv[1])
+secret = sys.argv[2]
+serialized = events_path.read_text(encoding="utf-8")
+events = [json.loads(line) for line in serialized.splitlines()]
+assert any(event["event"] == "run_created" for event in events), events
+audit = next(event for event in events if event["event"] == "audit")
+assert audit["password"] == "***REDACTED***", audit
+assert secret not in serialized
 PYEOF
 
 make_run loop-next
@@ -207,10 +259,10 @@ state['review_status'] = 'accepted'
 json.dump(state, open(state_file, 'w'))
 PYEOF
 outside_plan="$TMP/outside-plan.md"
-printf '%s\n' '- [ ] outside task' > "$outside_plan"
+printf '%s\n' '## TODOs' '- [ ] T1: outside task' > "$outside_plan"
 ln -s "$outside_plan" "$TMP/work/.lazyqoder/runs/loop-plan-link/plan.md"
 expect_rejected 'symlinked plan file (finalize-run)' run_loop finalize-run loop-plan-link
-grep -q -- '- \[ \] outside task' "$outside_plan" || fail 'symlinked plan file was modified outside the run'
+grep -q -- '- \[ \] T1: outside task' "$outside_plan" || fail 'symlinked plan file was modified outside the run'
 
 for script in next-task run-cycle finalize-run create-repair-task classify-failure; do
     run_id="loop-run-link-$script"
@@ -236,7 +288,7 @@ for script in load-run summarize-run validate-state update-task update-plan-chec
     run_id="state-file-link-$script"
     make_run "$run_id"
     set_single_task "$run_id" queued
-    printf '%s\n' '- [ ] task' > "$TMP/work/.lazyqoder/runs/$run_id/plan.md"
+    printf '%s\n' '## TODOs' '- [ ] T1: task' > "$TMP/work/.lazyqoder/runs/$run_id/plan.md"
     if [ "$script" = sync-plan-state ]; then
         set_plan_reference "$run_id"
     fi
@@ -261,7 +313,7 @@ for script in append-event update-task update-plan-checkbox checkpoint recover-r
     run_id="events-file-link-$script"
     make_run "$run_id"
     set_single_task "$run_id" queued
-    printf '%s\n' '- [ ] task' > "$TMP/work/.lazyqoder/runs/$run_id/plan.md"
+    printf '%s\n' '## TODOs' '- [ ] T1: task' > "$TMP/work/.lazyqoder/runs/$run_id/plan.md"
     if [ "$script" = sync-plan-state ]; then
         set_plan_reference "$run_id"
     fi
@@ -285,15 +337,15 @@ test "$(cksum "$outside_create_events")" = "$before" || fail 'events artifact es
 make_run state-plan-link
 set_single_task state-plan-link queued
 outside_plan="$TMP/state-outside-plan.md"
-printf '%s\n' '- [ ] task' > "$outside_plan"
+printf '%s\n' '## TODOs' '- [ ] T1: task' > "$outside_plan"
 ln -s "$outside_plan" "$TMP/work/.lazyqoder/runs/state-plan-link/plan.md"
 expect_rejected 'symlinked state plan artifact (update-plan-checkbox)' run_state_script update-plan-checkbox state-plan-link
-grep -q -- '- \[ \] task' "$outside_plan" || fail 'state plan artifact escaped through update-plan-checkbox'
+grep -q -- '- \[ \] T1: task' "$outside_plan" || fail 'state plan artifact escaped through update-plan-checkbox'
 
 make_run state-sync-plan-link
 set_single_task state-sync-plan-link queued
 outside_sync_plan="$TMP/state-outside-sync-plan.md"
-printf '%s\n' '- [ ] task' > "$outside_sync_plan"
+printf '%s\n' '## TODOs' '- [ ] T1: task' > "$outside_sync_plan"
 ln -s "$outside_sync_plan" "$TMP/work/.lazyqoder/runs/state-sync-plan-link/plan.md"
 set_plan_reference state-sync-plan-link
 expect_rejected 'symlinked state plan artifact (sync-plan-state)' run_state_script sync-plan-state state-sync-plan-link
@@ -358,4 +410,4 @@ PYEOF
 allow_output=$(printf '%s' '{"tool_name":"Bash","tool_input":{"command":"ls -la /"}}' | bash "$HOOK")
 test -z "$allow_output" || fail 'safe command was not allowed'
 
-echo 'v0.15 security regression: PASS'
+echo 'PASS: security matrix keeps mapped-address and residual-risk controls frozen; audit evidence redacts fixture secrets'

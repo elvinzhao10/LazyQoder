@@ -59,7 +59,7 @@ function parseArgs(argv) {
     if (flag === ROUTE_FLAG) {
       const route = argv[index + 1];
       if (!route || route.startsWith('--')) throw new LifecycleError('INVALID_ARGUMENT', '--route requires a value');
-      if (!['qoder-marketplace', 'qoder-full-plugin', 'manual-skills-mcp-fallback'].includes(route)) {
+      if (!['qodercli-marketplace', 'qoder-full-plugin', 'manual-skills-mcp-fallback'].includes(route)) {
         throw new LifecycleError('INVALID_ARGUMENT', `unsupported host route: ${route}`);
       }
       if (options.routes.includes(route)) throw new LifecycleError('INVALID_ARGUMENT', '--route may not repeat a route');
@@ -92,7 +92,7 @@ function parseArgs(argv) {
   if ((options.routes.length > 0 || options.observationReceipt || options.hostBuild || options.hostSession) && command !== 'status') {
     throw new LifecycleError('INVALID_ARGUMENT', '--host, --route, and --observation-receipt apply only to status');
   }
-  if (options.host && !['qoder-ide', 'qoder'].includes(options.host)) {
+  if (options.host && !['qodercli-ide', 'qoder'].includes(options.host)) {
     throw new LifecycleError('INVALID_ARGUMENT', `unsupported marketplace host: ${options.host}`);
   }
   if (options.host && command !== 'status') {

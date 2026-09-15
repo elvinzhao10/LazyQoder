@@ -2,12 +2,9 @@
 name: lazy-ulw-plan
 version: 1.0.0
 description: "Strategic planning consultant for Qoder IDE. Produces one decision-complete work plan from vague or large requests. Explore-first, asks only genuine owner-decisions. Maps to Qoder IDE Quest mode (auto tech-design/spec)."
-user-invocable: true
 ---
 
 # ulw-plan
-
-> **Maps to Qoder IDE:** Quest mode (auto tech-design/spec).
 
 > **earlier host implementation source:** `local project documentation`
 
@@ -15,14 +12,14 @@ user-invocable: true
 
 Turn a vague or large request into ONE **decision-complete** work plan a downstream worker executes with zero further interview. This is the Prometheus strategic planner — it reads, searches, runs read-only analysis, and writes ONLY plan artifacts under `.lazyqoder/plans/`. It is a PLANNER — it never edits product code and never implements.
 
-**Plan mode is sticky.** "do X" / "fix X" / "build X" / "just do it" all mean "plan X". Execution begins only when the user explicitly starts it with `/qoder-start-work`.
+**Plan mode is sticky.** "do X" / "fix X" / "build X" / "just do it" all mean "plan X". Execution begins only when the user explicitly starts it with `/lazy-start-work`.
 
 ## Trigger Conditions
 
 - User says "plan", "ulw-plan", "design", "figure out how to build"
 - Task involves 5+ steps, multiple files, or architecture decisions
 - Task is ambiguous ("make auth better", "just make it good")
-- User explicitly invokes `/qoder-ulw-plan "description"`
+- User explicitly invokes `/lazy-ulw-plan "description"`
 
 ## Required Context
 
@@ -71,14 +68,14 @@ Write to `.lazyqoder/plans/<slug>.md` with:
 
 Brief summary of what this plan builds and why.
 
-## Todos
+## TODOs
 
-- [ ] Task 1
+- [ ] T1: Task 1
   - Acceptance: ...
   - QA: ...
   - Commit: ...
 
-- [ ] Task 2
+- [ ] T2: Task 2
   - Acceptance: ...
   - QA: ...
   - Commit: ...
@@ -89,6 +86,16 @@ Brief summary of what this plan builds and why.
 - [ ] All tests pass
 - [ ] Type check / lint clean
 ```
+
+### Plan formatting rules (canonical)
+
+- The task section heading MUST be `## TODOs` (canonical). Legacy plans may use
+  `## Todos` — both are parsed; any other casing (e.g. `## todos`, `## TodOs`)
+  is NOT recognised and will make the plan parse as zero tasks (a hard error).
+- Each task checkbox SHOULD carry a canonical `T<n>:` id prefix, e.g. `- [ ] T1: ...`.
+  Legacy `A<n>.` id prefixes are also accepted. The `Final Verification Wave`
+  section may use id-less checkboxes.
+- The verification section heading MUST be `## Final Verification Wave`.
 
 The plan must be **decision-complete** — the executor needs ZERO judgment calls.
 
@@ -104,7 +111,7 @@ Record `status: awaiting-approval`, present a short brief, then **wait for the u
 
 ## Verification Gates
 
-1. Plan file exists and has all required sections (TL;DR, Todos, Final Verification Wave)
+1. Plan file exists and has all required sections (TL;DR, TODOs, Final Verification Wave)
 2. Every todo has references + acceptance + QA + commit
 3. No ambiguous instructions — implementer needs zero interviews
 4. Approval gate recorded and presented
@@ -123,7 +130,7 @@ When the plan is approved:
 Plan ready: .lazyqoder/plans/<slug>.md
   - Todos: N checkboxes
   - Parallel lanes: M independent groups
-  - Next: run /qoder-start-work <slug> to execute
+  - Next: run /lazy-start-work <slug> to execute
 ```
 
 ## Qoder IDE-Native Features
