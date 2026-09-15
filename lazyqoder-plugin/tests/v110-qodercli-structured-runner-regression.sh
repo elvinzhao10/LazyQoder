@@ -97,7 +97,7 @@ elif mode == "nonzero":
 elif mode == "hang":
     time.sleep(10)
 elif mode == "escaped-descendant":
-    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(3)"], start_new_session=True)
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(10)"], start_new_session=True)
     pathlib.Path(os.environ["ESCAPED_PID_FILE"]).write_text(str(child.pid), encoding="utf-8")
     time.sleep(10)
 elif mode == "spoof":
@@ -501,7 +501,7 @@ pid=int(pathlib.Path(sys.argv[2]).read_text())
 assert result['status']=='unavailable' and result['reason']=='process_cleanup_failed', result
 assert result['bounded']['cleanup']['status']=='verified-remaining', result
 assert result['bounded']['cleanup']['supervisor_teardown']=='verified-absent', result
-deadline=time.monotonic()+5
+deadline=time.monotonic()+15
 while time.monotonic()<deadline:
     observed=subprocess.run(['/bin/ps','-p',str(pid),'-o','stat='],check=False,capture_output=True,text=True).stdout.strip()
     if not observed or observed.startswith('Z'):
