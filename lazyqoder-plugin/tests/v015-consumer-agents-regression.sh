@@ -23,15 +23,15 @@ expect_rejected() {
     if "$@" >"$TMP/output" 2>&1; then
         fail "$label was accepted"
     fi
-    grep -q 'must not be.*symlink\|must be.*regular\|must be set\|unavailable' "$TMP/output" || fail "$label did not report a boundary rejection"
+    grep -qE 'must not be.*symlink|must be.*regular|must be set|unavailable' "$TMP/output" || fail "$label did not report a boundary rejection"
 }
 
 test -x "$HELPER" || fail "consumer AGENTS helper is missing: $HELPER"
 test -f "$TEMPLATE" || fail "consumer AGENTS template is missing"
 
 grep -qi 'explicit user instructions' "$TEMPLATE" || fail 'template does not prioritize user instructions'
-grep -q 'root.*qoder.md\|qoder.md.*root' "$TEMPLATE" || fail 'template does not direct consumers to root qoder.md'
-grep -q 'child.*qoder.md\|qoder.md.*child' "$TEMPLATE" || fail 'template does not direct consumers to child qoder.md'
+grep -qE 'root.*qoder.md|qoder.md.*root' "$TEMPLATE" || fail 'template does not direct consumers to root qoder.md'
+grep -qE 'child.*qoder.md|qoder.md.*child' "$TEMPLATE" || fail 'template does not direct consumers to child qoder.md'
 
 mkdir -p "$TMP/absent"
 env CWD="$TMP/absent" QODER_PLUGIN_ROOT="$PLUGIN_ROOT" bash "$HELPER" >"$TMP/absent-output"

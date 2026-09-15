@@ -23,7 +23,7 @@ expect_rejected() {
     if "$@" >"$TMP/output" 2>&1; then
         fail "$label was accepted"
     fi
-    grep -q 'invalid run_id\|must not be.*symlink' "$TMP/output" || fail "$label did not report a boundary rejection"
+    grep -qE 'invalid run_id|must not be.*symlink' "$TMP/output" || fail "$label did not report a boundary rejection"
 }
 
 make_run() {

@@ -109,7 +109,7 @@ expect_plan_rejected() {
     if CWD="$NORMAL_CWD" bash "$STATE_DIR/sync-plan-state.sh" plan-ref >"$TMP/$label.out" 2>"$TMP/$label.err"; then
         fail "$label plan_reference was accepted"
     fi
-    grep -qi 'plan_reference\|plan file\|relative\|boundary' "$TMP/$label.err" || fail "$label did not report a plan boundary rejection"
+    grep -qiE 'plan_reference|plan file|relative|boundary' "$TMP/$label.err" || fail "$label did not report a plan boundary rejection"
 }
 
 expect_plan_rejected absolute "$OUTSIDE_PLAN"
@@ -123,7 +123,7 @@ expect_checkpoint_rejected() {
     if CWD="$NORMAL_CWD" bash "$STATE_DIR/checkpoint.sh" plan-ref >"$TMP/checkpoint-$label.out" 2>"$TMP/checkpoint-$label.err"; then
         fail "$label checkpoint plan_reference was accepted"
     fi
-    grep -qi 'plan_reference\|plan file\|relative\|boundary' "$TMP/checkpoint-$label.err" || fail "$label checkpoint did not report a plan boundary rejection"
+    grep -qiE 'plan_reference|plan file|relative|boundary' "$TMP/checkpoint-$label.err" || fail "$label checkpoint did not report a plan boundary rejection"
 }
 
 expect_checkpoint_rejected absolute "$OUTSIDE_PLAN"
