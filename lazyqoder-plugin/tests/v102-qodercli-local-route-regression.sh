@@ -140,7 +140,7 @@ if (
         LAZYQODER_MARKETPLACE_FILE="$RELEASE_ROOT/.qoder-plugin/marketplace.json" \
         bash "$RELEASE_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh"
 ) >"$TMP/default-discovery.out" 2>&1 \
-    && grep -Fq 'PASS skills: 14/14' "$TMP/default-discovery.out" \
+    && grep -Fq 'PASS skills: 19/19' "$TMP/default-discovery.out" \
     && grep -Fq 'PACKAGE_READINESS=full' "$TMP/default-discovery.out"; then
     pass 'spaced release load-check passes from an unrelated CWD with intact default skills'
 else
@@ -156,7 +156,7 @@ if env QODER_PLUGIN_ROOT="$BROKEN_DEFAULT_ROOT/lazyqoder-plugin" \
     bash "$BROKEN_DEFAULT_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh" \
     >"$TMP/broken-default.out" 2>&1; then
     fail 'broken default skills tree is rejected'
-elif grep -Fq 'FAIL Qoder default skills' "$TMP/broken-default.out"; then
+elif grep -Fq 'FAIL Qoder CLI default skills' "$TMP/broken-default.out"; then
     pass 'broken default skills tree is rejected'
 else
     fail 'broken default skills tree is rejected with an actionable skill error'
@@ -166,7 +166,7 @@ CUSTOM_SKILLS_ROOT="$TMP/custom-skills/Lazy Buddy"
 mkdir -p "$(dirname "$CUSTOM_SKILLS_ROOT")"
 cp -R "$RELEASE_ROOT" "$CUSTOM_SKILLS_ROOT"
 cp -R "$CUSTOM_SKILLS_ROOT/lazyqoder-plugin/skills" "$CUSTOM_SKILLS_ROOT/lazyqoder-plugin/custom-skills"
-python3 - "$CUSTOM_SKILLS_ROOT/lazyqoder-plugin/.qoder-plugin/plugin.json" <<'PY'
+python3 - "$CUSTOM_SKILLS_ROOT/lazyqoder-plugin/.qodercli-plugin/plugin.json" <<'PY'
 import json
 import sys
 
