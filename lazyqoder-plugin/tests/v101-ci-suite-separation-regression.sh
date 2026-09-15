@@ -104,6 +104,8 @@ if grep -Fq 'continue-on-error:' "$WORKFLOW"; then
     printf 'FAIL CI must not mask blocking lifecycle failures\n' >&2
     exit 1
 fi
-grep -Fq 'LAZYQODER_VERIFY_SUITE: all' "$REPOSITORY_ROOT/.github/workflows/release.yml"
+grep -Fq 'LAZYQODER_VERIFY_SUITE: core' "$REPOSITORY_ROOT/.github/workflows/release.yml"
+grep -Fq 'LAZYQODER_VERIFY_SUITE: lifecycle' "$REPOSITORY_ROOT/.github/workflows/release.yml"
+grep -Fq 'needs: [verify, verify-lifecycle]' "$REPOSITORY_ROOT/.github/workflows/release.yml"
 
 printf 'PASS CI separates deterministic and lifecycle regression suites\n'

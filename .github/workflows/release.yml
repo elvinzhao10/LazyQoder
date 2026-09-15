@@ -72,8 +72,36 @@ jobs:
           path: lazyqoder-${{ env.RELEASE_TAG }}.tar.gz
           if-no-files-found: error
 
+  verify-lifecycle:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+      LAZYQODER_VERIFY_SUITE: lifecycle
+      LAZYQODER_VERIFY_TIMEOUT_SECONDS: 360
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          persist-credentials: false
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.13"
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "22"
+
+      - name: Install locked tooling dependencies
+        working-directory: lazyqoder-plugin/tooling
+        run: npm ci --ignore-scripts --no-audit --fund=false
+
+      - name: Run timing-sensitive lifecycle regressions
+        run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
+
   publish:
-    needs: verify
+    needs: [verify, verify-lifecycle]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
