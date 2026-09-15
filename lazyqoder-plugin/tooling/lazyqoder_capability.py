@@ -97,13 +97,18 @@ def lsp_provider(workspace: Path, toolpack: Path) -> str:
         if candidate.is_file() and os.access(candidate, os.X_OK):
             return str(candidate)
     provider_root = toolpack / "providers"
-    provider_root.mkdir(mode=0o700, exist_ok=True)
+    try:
+        provider_root.mkdir(mode=0o700, exist_ok=True)
+    except (FileExistsError, PermissionError):
+        # PermissionError covers sandboxed mkdir brokers that report EEXIST as EACCES.
+        pass
     if provider_root.is_symlink() or not provider_root.is_dir():
         fail("AUTOMATIC_TOOLING_PERMISSION_DENIED", "provider root must be a real private directory")
     lsp_root = provider_root / "lsp"
     try:
         lsp_root.mkdir(mode=0o700, exist_ok=True)
-    except FileExistsError:
+    except (FileExistsError, PermissionError):
+        # PermissionError covers sandboxed mkdir brokers that report EEXIST as EACCES.
         fail("AUTOMATIC_TOOLING_PERMISSION_DENIED", "LSP root must be a real private directory")
     if lsp_root.is_symlink() or not lsp_root.is_dir():
         fail("AUTOMATIC_TOOLING_PERMISSION_DENIED", "LSP root must be a real private directory")
