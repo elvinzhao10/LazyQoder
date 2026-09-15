@@ -199,7 +199,7 @@ records = json.load(open(sys.argv[1], encoding="utf-8"))["records"]
 assert {record["internal_status"] for record in records} == {"failed-optional"}
 assert {record["reason_code"] for record in records} == {"CONTRACT_INTEGRITY_INVALID"}
 PY
-if CODEBUDDY_PLUGIN_ROOT="$DISPOSABLE_PLUGIN" bash "$DISPOSABLE_LOAD_CHECK" > "$TMP/stale-digest-load-check.out" 2>&1; then
+if QODER_PLUGIN_ROOT="$DISPOSABLE_PLUGIN" bash "$DISPOSABLE_LOAD_CHECK" > "$TMP/stale-digest-load-check.out" 2>&1; then
     fail 'load-check reported full readiness despite invalid readiness contract integrity'
 fi
 grep -Fq 'FAIL canonical capability readiness:' "$TMP/stale-digest-load-check.out" || fail 'invalid readiness integrity was not surfaced by load-check'
@@ -230,7 +230,7 @@ records = json.load(open(sys.argv[1], encoding="utf-8"))["records"]
 assert "CONTRACT_INTEGRITY_INVALID" not in {record["reason_code"] for record in records}
 assert {record["internal_status"] for record in records} != {"failed-optional"}
 PY
-CODEBUDDY_PLUGIN_ROOT="$DISPOSABLE_PLUGIN" bash "$DISPOSABLE_LOAD_CHECK" > "$TMP/regenerated-digest-load-check.out"
+QODER_PLUGIN_ROOT="$DISPOSABLE_PLUGIN" bash "$DISPOSABLE_LOAD_CHECK" > "$TMP/regenerated-digest-load-check.out"
 grep -Fqx 'PACKAGE_READINESS=full' "$TMP/regenerated-digest-load-check.out" || fail 'load-check did not return full after readiness contract regeneration'
 pass 'invalid readiness integrity fails load-check and regenerated integrity restores readiness'
 

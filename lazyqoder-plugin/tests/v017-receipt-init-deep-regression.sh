@@ -159,7 +159,7 @@ import sys
 path = pathlib.Path(sys.argv[1])
 path.write_text(path.read_text(encoding="utf-8").replace("  readiness_result: {load-check result}\n", "", 1), encoding="utf-8")
 PY
-if CODEBUDDY_PLUGIN_ROOT="$DOCS_FIXTURE" bash "$DOCS_FIXTURE/scripts/lazyqoder-docs-check.sh" > "$TMP/docs-missing-key.json" 2>&1; then
+if QODER_PLUGIN_ROOT="$DOCS_FIXTURE" bash "$DOCS_FIXTURE/scripts/lazyqoder-docs-check.sh" > "$TMP/docs-missing-key.json" 2>&1; then
     fail 'documentation checker accepted a missing InitDeep evidence key'
 fi
 grep -Fq 'readiness_result' "$TMP/docs-missing-key.json" || fail 'documentation checker did not identify the missing evidence key'
