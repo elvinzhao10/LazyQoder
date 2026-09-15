@@ -141,7 +141,7 @@ def start(args: argparse.Namespace, root: Path, name: str) -> CommandResult:
     if kind is not ServiceKind.SERVE and args.ephemeral:
         raise AdapterError("ephemeral_mode_unsupported", status="unsupported")
     if kind is ServiceKind.PREWARM:
-        socket_path = root / "sockets" / f"qoder-prewarm-{name}.sock"
+        socket_path = root / "sockets" / f"qodercli-prewarm-{name}.sock"
         if socket_path.exists() or socket_path.is_symlink():
             raise AdapterError("stale_socket", exit_code=1)
         endpoint = Endpoint(EndpointTransport.UNIX, str(socket_path))

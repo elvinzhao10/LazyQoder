@@ -17,7 +17,10 @@ SEMANTIC_METHODS = frozenset({
 
 def provider_environment(command: str) -> dict[str, str]:
     environment = os.environ.copy()
-    runtime_root = Path(command).parent.parents[3] / ".lazyqoder-lsp-npm-runtime"
+    command_parent = Path(command).parent
+    if len(command_parent.parents) <= 3:
+        return environment
+    runtime_root = command_parent.parents[3] / ".lazyqoder-lsp-npm-runtime"
     if not all((runtime_root / name).is_dir() and not (runtime_root / name).is_symlink() for name in ("home", "cache", "config", "tmp")):
         return environment
     for name in tuple(environment):

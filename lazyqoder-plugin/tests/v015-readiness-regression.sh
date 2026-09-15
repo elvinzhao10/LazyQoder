@@ -51,15 +51,17 @@ expect_contains() {
     fi
 }
 
-cp -R "$PLUGIN_ROOT" "$TMP/installed-plugin"
-INSTALLED_PLUGIN="$(cd "$TMP/installed-plugin" && pwd)"
+cp -R "$PROJECT_ROOT/.qoder-plugin" "$TMP/.qoder-plugin"
+cp -R "$PROJECT_ROOT/.qodercli-plugin" "$TMP/.qodercli-plugin"
+cp -R "$PLUGIN_ROOT" "$TMP/lazyqoder-plugin"
+INSTALLED_PLUGIN="$(cd "$TMP/lazyqoder-plugin" && pwd)"
 
 expect_status full-package-readiness 0 env QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-load-check.sh"
 expect_contains full-package-readiness '^PACKAGE_READINESS=full$'
-expect_contains full-package-readiness '^PASS commands: 14/14$'
+expect_contains full-package-readiness '^PASS commands: 17/17$'
 expect_contains full-package-readiness '^PASS MCP servers: 6/6$'
 expect_status full-package-doctor 0 env QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-plugin-doctor.sh"
-expect_contains full-package-doctor '^  \[PASS\] Command definitions \(14\)$'
+expect_contains full-package-doctor '^  \[PASS\] Command definitions \(17\)$'
 
 expect_status self-contained-package-contract 0 python3 - "$INSTALLED_PLUGIN" <<'PY'
 import json
@@ -134,6 +136,8 @@ if [ "${LAZYQODER_READINESS_PARENT_COPY_DEPTH:-0}" -eq 0 ]; then
     PARENT_COPY="$TMP/poisoned-parent/lazyqoder-plugin"
     mkdir -p "$TMP/poisoned-parent/docs"
     printf '# poisoned parent handoff\n' > "$TMP/poisoned-parent/docs/handoff.md"
+    cp -R "$PROJECT_ROOT/.qoder-plugin" "$TMP/poisoned-parent/.qoder-plugin"
+    cp -R "$PROJECT_ROOT/.qodercli-plugin" "$TMP/poisoned-parent/.qodercli-plugin"
     cp -R "$PLUGIN_ROOT" "$PARENT_COPY"
     expect_status copied-plugin-ignores-parent-docs 0 env \
         LAZYQODER_READINESS_PARENT_COPY_DEPTH=1 \
@@ -150,8 +154,8 @@ expect_contains doctor-catches-invalid-qoder-manifest 'Qoder IDE manifest is val
 cp "$PLUGIN_ROOT/.qoder-plugin/plugin.json" "$INSTALLED_PLUGIN/.qoder-plugin/plugin.json"
 printf '{invalid json\n' > "$INSTALLED_PLUGIN/.qoder-plugin/plugin.json"
 expect_status doctor-catches-validator-failure 1 env QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-plugin-doctor.sh"
-if command -v qoder >/dev/null 2>&1; then
-    expect_contains doctor-catches-validator-failure 'Qoder IDE manifest validator'
+if command -v qodercli >/dev/null 2>&1; then
+    expect_contains doctor-catches-validator-failure 'Qoder CLI manifest validator'
 fi
 cp "$PLUGIN_ROOT/.qoder-plugin/plugin.json" "$INSTALLED_PLUGIN/.qoder-plugin/plugin.json"
 
@@ -167,30 +171,30 @@ with open(path, "w", encoding="utf-8") as handle:
     json.dump(manifest, handle)
 PY
 expect_status doctor-catches-validator-text-failure 1 env QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-plugin-doctor.sh"
-expect_contains doctor-catches-validator-text-failure 'Qoder IDE manifest validator'
+expect_contains doctor-catches-validator-text-failure 'Qoder CLI manifest validator'
 cp "$PLUGIN_ROOT/.qoder-plugin/plugin.json" "$INSTALLED_PLUGIN/.qoder-plugin/plugin.json"
 
 mkdir -p "$TMP/fake-qoder"
-printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "Request failed with status code 500"' 'exit 0' > "$TMP/fake-qoder/qoder"
-chmod +x "$TMP/fake-qoder/qoder"
-expect_status doctor-catches-validator-exit-zero-server-error 1 env PATH="$TMP/fake-qoder:$PATH" QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-plugin-doctor.sh"
-expect_contains doctor-catches-validator-exit-zero-server-error 'Qoder IDE manifest validator'
+printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "Request failed with status code 500"' 'exit 0' > "$TMP/fake-qoder/qodercli"
+chmod +x "$TMP/fake-qoder/qodercli"
+expect_status doctor-catches-validator-exit-zero-server-error 1 env PATH="$TMP/fake-qoder:$PATH" QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-plugin-doctor.sh" --host-validator "$TMP/fake-qoder/qodercli"
+expect_contains doctor-catches-validator-exit-zero-server-error 'Qoder CLI manifest validator'
 
-printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "Validation successful: 0 errors"' 'exit 0' > "$TMP/fake-qoder/qoder"
-expect_status doctor-accepts-validator-zero-errors 0 env PATH="$TMP/fake-qoder:$PATH" QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-plugin-doctor.sh"
-expect_contains doctor-accepts-validator-zero-errors '^  \[PASS\] Qoder IDE manifest validator$'
+printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "Validation successful: 0 errors"' 'exit 0' > "$TMP/fake-qoder/qodercli"
+expect_status doctor-accepts-validator-zero-errors 0 env PATH="$TMP/fake-qoder:$PATH" QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-plugin-doctor.sh" --host-validator "$TMP/fake-qoder/qodercli"
+expect_contains doctor-accepts-validator-zero-errors '^  \[PASS\] Qoder CLI manifest validator$'
 
-printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "Validation passed with no errors"' 'exit 0' > "$TMP/fake-qoder/qoder"
-expect_status doctor-accepts-validator-no-errors 0 env PATH="$TMP/fake-qoder:$PATH" QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-plugin-doctor.sh"
-expect_contains doctor-accepts-validator-no-errors '^  \[PASS\] Qoder IDE manifest validator$'
+printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "Validation passed with no errors"' 'exit 0' > "$TMP/fake-qoder/qodercli"
+expect_status doctor-accepts-validator-no-errors 0 env PATH="$TMP/fake-qoder:$PATH" QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-plugin-doctor.sh" --host-validator "$TMP/fake-qoder/qodercli"
+expect_contains doctor-accepts-validator-no-errors '^  \[PASS\] Qoder CLI manifest validator$'
 
 printf '%s\n' '{"plugins":[{"name":"lazyqoder","version":"0.0.0"}]}' > "$TMP/mismatched-marketplace.json"
 expect_status mismatched-marketplace-version 1 env LAZYQODER_MARKETPLACE_FILE="$TMP/mismatched-marketplace.json" bash "$PLUGIN_ROOT/scripts/lazyqoder-load-check.sh"
 expect_contains mismatched-marketplace-version '^FAIL marketplace version agreement:'
 
-mkdir -p "$TMP/manual-skills/skills/qoder-manual"
-printf '%s\n' '---' 'name: qoder-manual' '---' '# manual' > "$TMP/manual-skills/skills/qoder-manual/SKILL.md"
-expect_status manual-skill-only-readiness 0 env QODER_PLUGIN_ROOT="$TMP/manual-skills" bash "$PLUGIN_ROOT/scripts/lazyqoder-load-check.sh"
+mkdir -p "$TMP/manual-root/manual-skills/skills/lazy-qoder-manual"
+printf '%s\n' '---' 'name: lazy-qoder-manual' '---' '# manual' > "$TMP/manual-root/manual-skills/skills/lazy-qoder-manual/SKILL.md"
+expect_status manual-skill-only-readiness 0 env QODER_PLUGIN_ROOT="$TMP/manual-root/manual-skills" bash "$PLUGIN_ROOT/scripts/lazyqoder-load-check.sh"
 expect_contains manual-skill-only-readiness '^PACKAGE_READINESS=degraded$'
 expect_contains manual-skill-only-readiness '^UNCHECKED commands/hooks/MCP:'
 if grep -Fq 'FAIL package ' "$TMP/manual-skill-only-readiness.out"; then
@@ -199,9 +203,9 @@ else
     pass "manual-skill-only-readiness omits unavailable package legal checks"
 fi
 
-rm -rf "$TMP/installed-plugin"
-cp -R "$PLUGIN_ROOT" "$TMP/installed-plugin"
-INSTALLED_PLUGIN="$(cd "$TMP/installed-plugin" && pwd)"
+rm -rf "$TMP/lazyqoder-plugin"
+cp -R "$PLUGIN_ROOT" "$TMP/lazyqoder-plugin"
+INSTALLED_PLUGIN="$(cd "$TMP/lazyqoder-plugin" && pwd)"
 expect_status installed-root-mcp 0 env CWD="$PROJECT_ROOT" QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-mcp-test.sh"
 expect_contains installed-root-mcp "Plugin root: $INSTALLED_PLUGIN"
 expect_contains installed-root-mcp '^=== LazyQoder MCP integration test \(6 declared servers \+ optional LSP endpoint\) ===$'

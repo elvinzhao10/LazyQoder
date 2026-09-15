@@ -18,6 +18,7 @@ if [ ! -d "$PLUGIN_ROOT" ]; then
 fi
 HOOKS_DIR="$PLUGIN_ROOT/scripts/hooks"
 RUNNER="$PLUGIN_ROOT/scripts/lazyqoder-bounded-run.py"
+PYTHON_BIN="${LAZYQODER_PYTHON:-python3}"
 if [ ! -d "$HOOKS_DIR" ]; then
     echo "Hook pipeline test: FAIL (hooks directory is missing: $HOOKS_DIR)" >&2
     exit 1
@@ -43,12 +44,12 @@ test_hook() {
     local output result_file
     local status
     result_file="$(mktemp "${TMPDIR:-/tmp}/lazyqoder-hook-result.XXXXXX")"
-    if output=$(printf '%s\n' "$payload" | python3 "$RUNNER" --label "hook:${name}" --timeout "${LAZYQODER_VERIFY_TIMEOUT_SECONDS:-90}" --result-file "$result_file" -- bash "$HOOKS_DIR/$name"); then
+    if output=$(printf '%s\n' "$payload" | "$PYTHON_BIN" "$RUNNER" --label "hook:${name}" --timeout "${LAZYQODER_VERIFY_TIMEOUT_SECONDS:-90}" --result-file "$result_file" -- bash "$HOOKS_DIR/$name"); then
         status=0
     else
         status=$?
     fi
-    output="$(python3 - "$result_file" <<'PY'
+    output="$("$PYTHON_BIN" - "$result_file" <<'PY'
 import json
 import sys
 print(json.load(open(sys.argv[1], encoding="utf-8"))["tail"])

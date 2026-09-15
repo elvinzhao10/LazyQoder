@@ -16,6 +16,7 @@ if ! [[ "$PYTHON_MAJOR" =~ ^[0-9]+$ && "$PYTHON_MINOR" =~ ^[0-9]+$ ]] \
     exit 2
 fi
 export PYTHON_BIN
+export LAZYQODER_PYTHON="$PYTHON_BIN"
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/lazyqoder-verifier.XXXXXX")"
 PYTHON_SHIM_DIR="$TMP/python-bin"
 mkdir -p "$PYTHON_SHIM_DIR"
@@ -33,7 +34,9 @@ fail() { printf 'FAIL %s\n' "$1" >&2; FAIL=$((FAIL + 1)); }
 
 mkdir "$TMP/lazyqoder-plugin"
 mkdir -p "$TMP/.qodercli-plugin"
+mkdir -p "$TMP/.qoder-plugin"
 cp "$PLUGIN_ROOT/../.qodercli-plugin/marketplace.json" "$TMP/.qodercli-plugin/marketplace.json"
+cp "$PLUGIN_ROOT/../.qoder-plugin/marketplace.json" "$TMP/.qoder-plugin/marketplace.json"
 # Given the former streaming fixture copy, when its consumer exits after one
 # byte, then pipefail exposes tar's real write-side EPIPE failure.  The
 # controlled early close makes this independent of archive size and host I/O.
@@ -240,7 +243,7 @@ grep -Fq 'LAZYQODER_VERIFY_TIMEOUT_SECONDS:-90' "$FIXTURE/scripts/hook-pipeline-
 
 HOOK_PIPELINE_PYTHON="$PYTHON_BIN"
 if "$HOOK_PIPELINE_PYTHON" -c 'import sys; raise SystemExit(sys.version_info < (3, 10))' 2>/dev/null; then
-    mkdir -p "$TMP/hook-pipeline-python-bin"
+    mkdir -p "$TMP/hook-pipeline-project" "$TMP/hook-pipeline-python-bin"
     printf '%s\n' '#!/usr/bin/env bash' \
         'if [[ "${1:-}" == */lazyqoder-bounded-run.py ]]; then' \
         '    printf "PATH_PYTHON3_WAS_USED_FOR_BOUNDED_RUNNER\\n" >&2' \
@@ -815,7 +818,7 @@ with open(path, "w", encoding="utf-8") as handle:
     json.dump(manifest, handle)
 PY
 if LAZYQODER_DOCTOR_HOST=qoder QODER_PLUGIN_ROOT="$TMP/custom-skills-plugin" bash "$TMP/custom-skills-plugin/scripts/lazyqoder-plugin-doctor.sh" >"$TMP/doctor-custom-skills.out" 2>"$TMP/doctor-custom-skills.err" \
-    && grep -q '\[INFO\] Qoder CLI skills: declared: 14 skill(s)' "$TMP/doctor-custom-skills.out"; then
+    && grep -q '\[INFO\] Qoder CLI skills: declared: 19 skill(s)' "$TMP/doctor-custom-skills.out"; then
     pass "doctor accepts a valid declared Qoder CLI skills directory"
 else
     fail "doctor valid declared Qoder CLI skills classification"
