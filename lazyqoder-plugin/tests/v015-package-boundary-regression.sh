@@ -55,10 +55,11 @@ expect_status() {
     shift 2
     local output rc
     if output=$(python3 - "$@" <<'PYEOF'
+import os
 import subprocess
 import sys
 
-result = subprocess.run(sys.argv[1:], capture_output=True, text=True, timeout=180, check=False)
+result = subprocess.run(sys.argv[1:], capture_output=True, text=True, timeout=int(os.environ.get("LAZYQODER_TEST_SUBPROCESS_TIMEOUT", "180")), check=False)
 print(result.stdout, end="")
 print(result.stderr, end="", file=sys.stderr)
 raise SystemExit(result.returncode)
@@ -112,6 +113,8 @@ PYEOF
 
 mkdir -p "$PARENT"
 cp -R "$PLUGIN_ROOT" "$INSTALLED_PLUGIN"
+mkdir -p "$PARENT/.qoder-plugin"
+cp "$PLUGIN_ROOT/../.qoder-plugin/marketplace.json" "$PARENT/.qoder-plugin/marketplace.json"
 printf 'PARENT LICENSE POISON\n' > "$PARENT/LICENSE"
 printf 'PARENT NOTICE POISON\n' > "$PARENT/NOTICE"
 mkdir -p "$PARENT/docs"
