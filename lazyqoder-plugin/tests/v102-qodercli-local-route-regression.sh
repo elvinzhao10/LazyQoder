@@ -39,9 +39,10 @@ else
 fi
 
 RELEASE_ROOT="$TMP/Lazy Buddy"
-mkdir -p "$RELEASE_ROOT/.qodercli-plugin"
+mkdir -p "$RELEASE_ROOT/.qodercli-plugin" "$RELEASE_ROOT/.qoder-plugin"
 cp -R "$REPOSITORY_ROOT/lazyqoder-plugin" "$RELEASE_ROOT/lazyqoder-plugin"
 cp "$REPOSITORY_ROOT/.qodercli-plugin/marketplace.json" "$RELEASE_ROOT/.qodercli-plugin/marketplace.json"
+cp "$REPOSITORY_ROOT/.qoder-plugin/marketplace.json" "$RELEASE_ROOT/.qoder-plugin/marketplace.json"
 if python3 - "$RELEASE_ROOT" <<'PY'
 from pathlib import Path
 import json
@@ -86,7 +87,7 @@ marketplace["plugins"][0]["source"] = "./lazyqoder-plugin/.qodercli-plugin"
 with open(path, "w", encoding="utf-8") as handle:
     json.dump(marketplace, handle)
 PY
-if HOME="$TMP/home" bash "$NESTED_SOURCE_ROOT/lazyqoder-plugin/scripts/lazyqoder-qoder-preparation-check.sh" \
+if HOME="$TMP/home" bash "$NESTED_SOURCE_ROOT/lazyqoder-plugin/scripts/lazyqoder-preparation-check.sh" \
     --project-dir "$PROJECT_ROOT" >"$TMP/nested-source.out" 2>&1; then
     fail 'nested plugin metadata is rejected as a marketplace source'
 elif grep -Fq 'release marketplace must contain lazyqoder 1.2.3 from ./lazyqoder-plugin' "$TMP/nested-source.out"; then
@@ -140,7 +141,7 @@ if (
         LAZYQODER_MARKETPLACE_FILE="$RELEASE_ROOT/.qodercli-plugin/marketplace.json" \
         bash "$RELEASE_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh"
 ) >"$TMP/default-discovery.out" 2>&1 \
-    && grep -Fq 'PASS skills: 14/14' "$TMP/default-discovery.out" \
+    && grep -Fq 'PASS skills: 19/19' "$TMP/default-discovery.out" \
     && grep -Fq 'PACKAGE_READINESS=full' "$TMP/default-discovery.out"; then
     pass 'spaced release load-check passes from an unrelated CWD with intact default skills'
 else

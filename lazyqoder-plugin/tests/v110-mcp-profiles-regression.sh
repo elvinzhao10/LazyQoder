@@ -49,7 +49,7 @@ from pathlib import Path
 import sys
 
 root = Path(sys.argv[1])
-code = json.loads((root / ".qoder-plugin/plugin.json").read_text(encoding="utf-8"))
+code = json.loads((root / ".qodercli-plugin/plugin.json").read_text(encoding="utf-8"))
 work = json.loads((root / ".qoder-plugin/plugin.json").read_text(encoding="utf-8"))
 descriptor = code["userConfig"]["mcp_mode"]
 assert set(descriptor) == {"description", "sensitive"}
@@ -57,7 +57,7 @@ assert descriptor["sensitive"] is False
 assert "userConfig" not in work
 assert "lspServers" not in work
 PY
-then pass_case 'Qoder userConfig is safe and Qoder excludes Qoder-only metadata'; else fail_case 'Qoder userConfig is safe and Qoder excludes Qoder-only metadata'; fi
+then pass_case 'Qoder CLI userConfig is safe and Qoder IDE excludes CLI-only metadata'; else fail_case 'Qoder CLI userConfig is safe and Qoder IDE excludes CLI-only metadata'; fi
 
 if [ -x "$PROFILE" ]; then
     pass_case 'profile CLI exists and is executable'

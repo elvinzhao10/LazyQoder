@@ -49,8 +49,9 @@ mkdir -p "$WORKSPACE" "$SIBLING_PARENT" "$TMP/scripts" "$SIBLING_PARENT/scripts"
 cp -R "$PLUGIN_ROOT" "$SIBLING_PLUGIN"
 find "$SIBLING_PLUGIN" -type d -name __pycache__ -prune -exec rm -rf {} +
 find "$SIBLING_PLUGIN" -type f -name '*.pyc' -delete
-mkdir -p "$SIBLING_PARENT/.codebuddy-plugin"
-cp "$PLUGIN_ROOT/../.codebuddy-plugin/marketplace.json" "$SIBLING_PARENT/.codebuddy-plugin/marketplace.json"
+mkdir -p "$SIBLING_PARENT/.qodercli-plugin" "$SIBLING_PARENT/.qoder-plugin"
+cp "$PLUGIN_ROOT/../.qodercli-plugin/marketplace.json" "$SIBLING_PARENT/.qodercli-plugin/marketplace.json"
+cp "$PLUGIN_ROOT/../.qoder-plugin/marketplace.json" "$SIBLING_PARENT/.qoder-plugin/marketplace.json"
 
 for poison in "$TMP/scripts/lazyqoder-load-check.sh" "$SIBLING_PARENT/scripts/lazyqoder-load-check.sh"; do
     cat > "$poison" <<EOF
