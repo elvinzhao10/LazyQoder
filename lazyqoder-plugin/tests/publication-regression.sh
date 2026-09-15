@@ -134,8 +134,9 @@ copy_publication_fixture() {
     mkdir -p "$fixture_root/lazyqoder-plugin"
     cp -R "$REPOSITORY_ROOT/docs" "$fixture_root/docs"
     cp "$REPOSITORY_ROOT/README.md" "$REPOSITORY_ROOT/AGENTS.md" "$REPOSITORY_ROOT/CONTRIBUTING.md" \
-        "$REPOSITORY_ROOT/SECURITY.md" "$REPOSITORY_ROOT/lazyqoder-evaluation.md" "$fixture_root/"
-    cp "$REPOSITORY_ROOT/LICENSE" "$REPOSITORY_ROOT/NOTICE" "$REPOSITORY_ROOT/lazyqoder-banner.jpg" "$fixture_root/"
+        "$REPOSITORY_ROOT/SECURITY.md" "$REPOSITORY_ROOT/RELEASE_NOTES.md" \
+        "$REPOSITORY_ROOT/lazyqoder-evaluation.md" "$fixture_root/"
+    cp "$REPOSITORY_ROOT/LICENSE" "$REPOSITORY_ROOT/NOTICE" "$REPOSITORY_ROOT/lazyqoder-banner.svg" "$fixture_root/"
     cp "$REPOSITORY_ROOT/lazyqoder-plugin/README.md" "$fixture_root/lazyqoder-plugin/README.md"
 }
 
