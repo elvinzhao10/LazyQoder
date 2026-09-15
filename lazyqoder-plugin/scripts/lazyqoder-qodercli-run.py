@@ -239,8 +239,17 @@ def main() -> int:
         write_result(args.result_file, {"status": "fail", "reason": reason})
         return 2
     schema_text = json.dumps(schema, sort_keys=True, separators=(",", ":")) if schema is not None else None; bounded = Path(__file__).resolve().parent / "lazyqoder-bounded-run.py"
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location("lazyqoder_bounded_run", bounded)
+    _brm = _ilu.module_from_spec(_spec)
+    _spec.loader.exec_module(_brm)
+    _normalize = _brm.normalize_macos_temp_alias
+    for _attr in ("result_file", "stdout_file", "stderr_file", "cancel_file", "cwd"):
+        _value = getattr(args, _attr, None)
+        if _value is not None:
+            setattr(args, _attr, _normalize(_value))
     with tempfile.TemporaryDirectory(prefix="lazyqoder-qoder-") as temporary:
-        root = Path(temporary)
+        root = _normalize(Path(temporary))
         stdin_file = args.input_file if args.input_format == "stream-json" else root / "stdin"
         if args.input_format == "text": stdin_file.write_bytes(b"")
         bounded_result = root / "bounded.json"
