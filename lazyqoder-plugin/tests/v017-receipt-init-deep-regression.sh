@@ -3,8 +3,8 @@ set -euo pipefail
 
 PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
 LIFECYCLE="$PLUGIN_ROOT/scripts/lazyqoder-tooling.sh"
-SKILL="$PLUGIN_ROOT/skills/qoder-init-deep/SKILL.md"
-COMMAND="$PLUGIN_ROOT/commands/qoder-init-deep.md"
+SKILL="$PLUGIN_ROOT/skills/lazy-init-deep/SKILL.md"
+COMMAND="$PLUGIN_ROOT/commands/lazy-init-deep.md"
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/lazyqoder-receipt-init-deep.XXXXXX")"
 TMP="$(cd "$TMP" && pwd -P)"
 INSTALL_BIN="$TMP/install-bin"
@@ -17,8 +17,8 @@ set -euo pipefail
 # This receipt matrix verifies ownership and preservation. Its package fixture
 # must be deterministic and must not contact a registry.
 [ "${1:-}" = ci ] || { printf 'unexpected fixture npm command: %s\n' "$*" >&2; exit 64; }
-[ -n "${LAZYQODER_RECEIPT_FAKE_NPM_LOG:-}" ] || { printf 'missing receipt fixture npm log\n' >&2; exit 64; }
-printf '%s\n' "$PWD" >> "$LAZYQODER_RECEIPT_FAKE_NPM_LOG"
+[ -n "${LAZYBUDDY_RECEIPT_FAKE_NPM_LOG:-}" ] || { printf 'missing receipt fixture npm log\n' >&2; exit 64; }
+printf '%s\n' "$PWD" >> "$LAZYBUDDY_RECEIPT_FAKE_NPM_LOG"
 case "$(uname -s)-$(uname -m)" in
     Darwin-arm64) codegraph_suffix=darwin-arm64 ;;
     Darwin-x86_64) codegraph_suffix=darwin-x64 ;;
@@ -98,7 +98,7 @@ expect_refusal() {
 install_owned() {
     local root="$1"
     mkdir "$root"
-    expect_status "install-$(basename "$root")" 0 env PATH="$INSTALL_PATH" LAZYQODER_RECEIPT_FAKE_NPM_LOG="$FAKE_NPM_LOG" bash "$LIFECYCLE" install --tooling-root "$root"
+    expect_status "install-$(basename "$root")" 0 env PATH="$INSTALL_PATH" LAZYBUDDY_RECEIPT_FAKE_NPM_LOG="$FAKE_NPM_LOG" bash "$LIFECYCLE" install --tooling-root "$root"
     [ -f "$root/.lazyqoder-tooling-receipt.json" ] || fail "$(basename "$root") did not receive a receipt"
 }
 
@@ -148,18 +148,18 @@ grep -Fq '"policy_violations":0' "$TMP/docs-check.json" || fail 'documentation r
 pass 'documentation checker enforces the InitDeep evidence contract'
 
 DOCS_FIXTURE="$TMP/docs-fixture"
-mkdir -p "$DOCS_FIXTURE/scripts" "$DOCS_FIXTURE/skills/qoder-init-deep" "$DOCS_FIXTURE/commands"
+mkdir -p "$DOCS_FIXTURE/scripts" "$DOCS_FIXTURE/skills/lazy-init-deep" "$DOCS_FIXTURE/commands"
 cp "$PLUGIN_ROOT/scripts/lazyqoder-docs-check.sh" "$DOCS_FIXTURE/scripts/"
-cp "$SKILL" "$DOCS_FIXTURE/skills/qoder-init-deep/SKILL.md"
-cp "$COMMAND" "$DOCS_FIXTURE/commands/qoder-init-deep.md"
-python3 - "$DOCS_FIXTURE/commands/qoder-init-deep.md" <<'PY'
+cp "$SKILL" "$DOCS_FIXTURE/skills/lazy-init-deep/SKILL.md"
+cp "$COMMAND" "$DOCS_FIXTURE/commands/lazy-init-deep.md"
+python3 - "$DOCS_FIXTURE/commands/lazy-init-deep.md" <<'PY'
 import pathlib
 import sys
 
 path = pathlib.Path(sys.argv[1])
 path.write_text(path.read_text(encoding="utf-8").replace("  readiness_result: {load-check result}\n", "", 1), encoding="utf-8")
 PY
-if QODER_PLUGIN_ROOT="$DOCS_FIXTURE" bash "$DOCS_FIXTURE/scripts/lazyqoder-docs-check.sh" > "$TMP/docs-missing-key.json" 2>&1; then
+if CODEBUDDY_PLUGIN_ROOT="$DOCS_FIXTURE" bash "$DOCS_FIXTURE/scripts/lazyqoder-docs-check.sh" > "$TMP/docs-missing-key.json" 2>&1; then
     fail 'documentation checker accepted a missing InitDeep evidence key'
 fi
 grep -Fq 'readiness_result' "$TMP/docs-missing-key.json" || fail 'documentation checker did not identify the missing evidence key'
@@ -230,11 +230,29 @@ grep -Fxq 'outside' "$SYMLINK_TARGET" || fail 'symlink target was changed'
 
 HARDLINK_ROOT="$TMP/hardlink-receipt"
 HARDLINK_TARGET="$TMP/hardlink-target.json"
+LINUX_STAT_BIN="$TMP/linux-stat-bin"
+mkdir "$LINUX_STAT_BIN"
+cat > "$LINUX_STAT_BIN/stat" <<'SH'
+#!/usr/bin/env bash
+if [ "${1:-}" = "-f" ]; then
+    printf '%s\n' 'linux filesystem metadata'
+    exit 0
+fi
+if [ "${1:-}" = "-c" ] && [ "${2:-}" = '%h' ]; then
+    printf '%s\n' 2
+    exit 0
+fi
+exec /usr/bin/stat "$@"
+SH
+chmod +x "$LINUX_STAT_BIN/stat"
 install_owned "$HARDLINK_ROOT"
 mv "$HARDLINK_ROOT/.lazyqoder-tooling-receipt.json" "$HARDLINK_TARGET"
 ln "$HARDLINK_TARGET" "$HARDLINK_ROOT/.lazyqoder-tooling-receipt.json"
 expect_refusal 'hardlink-receipt-refusal' "$HARDLINK_ROOT"
-[ "$(stat -f '%l' "$HARDLINK_TARGET" 2>/dev/null || stat -c '%h' "$HARDLINK_TARGET")" = 2 ] || fail 'hardlink receipt was changed'
+hardlink_count() {
+    stat -c '%h' "$1" 2>/dev/null || stat -f '%l' "$1"
+}
+[ "$(PATH="$LINUX_STAT_BIN:$PATH" hardlink_count "$HARDLINK_TARGET")" = 2 ] || fail 'hardlink receipt was changed'
 pass 'tampered, unknown, symlinked, and hardlinked roots are preserved'
 
 # Given a caller-owned pre-existing CodeGraph index and a matching receipt that

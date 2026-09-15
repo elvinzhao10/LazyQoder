@@ -2,8 +2,8 @@
 set -euo pipefail
 
 PLUGIN_ROOT="$(CDPATH= cd -P -- "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-SKILL="$PLUGIN_ROOT/skills/qoder-init-deep/SKILL.md"
-COMMAND="$PLUGIN_ROOT/commands/qoder-init-deep.md"
+SKILL="$PLUGIN_ROOT/skills/lazy-init-deep/SKILL.md"
+COMMAND="$PLUGIN_ROOT/commands/lazy-init-deep.md"
 HELPER="$PLUGIN_ROOT/scripts/ensure-consumer-agents.sh"
 TMP="$(CDPATH= cd -P -- "$(mktemp -d "${TMPDIR:-/tmp}/lazyqoder-init-deep-sibling.XXXXXX")" && pwd -P)"
 
@@ -47,6 +47,10 @@ SIBLING_PLUGIN="$SIBLING_PARENT/lazyqoder-plugin"
 MARKER="$TMP/poisoned-sentinel-ran"
 mkdir -p "$WORKSPACE" "$SIBLING_PARENT" "$TMP/scripts" "$SIBLING_PARENT/scripts"
 cp -R "$PLUGIN_ROOT" "$SIBLING_PLUGIN"
+find "$SIBLING_PLUGIN" -type d -name __pycache__ -prune -exec rm -rf {} +
+find "$SIBLING_PLUGIN" -type f -name '*.pyc' -delete
+mkdir -p "$SIBLING_PARENT/.codebuddy-plugin"
+cp "$PLUGIN_ROOT/../.codebuddy-plugin/marketplace.json" "$SIBLING_PARENT/.codebuddy-plugin/marketplace.json"
 
 for poison in "$TMP/scripts/lazyqoder-load-check.sh" "$SIBLING_PARENT/scripts/lazyqoder-load-check.sh"; do
     cat > "$poison" <<EOF
@@ -59,7 +63,7 @@ done
 
 (
     cd "$WORKSPACE"
-    QODER_PLUGIN_ROOT="$SIBLING_PLUGIN" bash "$SIBLING_PLUGIN/scripts/lazyqoder-load-check.sh"
+    CWD="$WORKSPACE" QODER_PLUGIN_ROOT="$SIBLING_PLUGIN" bash "$SIBLING_PLUGIN/scripts/lazyqoder-load-check.sh"
 ) > "$TMP/explicit-override.out" 2>&1 || fail 'explicit absolute sibling-plugin load check failed'
 grep -Fxq 'PACKAGE_READINESS=full' "$TMP/explicit-override.out" || fail 'explicit absolute sibling-plugin load check was not full'
 [ ! -e "$MARKER" ] || fail 'explicit override executed a poisoned parent or sibling sentinel'

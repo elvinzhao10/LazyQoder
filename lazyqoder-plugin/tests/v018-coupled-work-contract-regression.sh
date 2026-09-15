@@ -26,8 +26,8 @@ reject_bypass_instruction() {
     fi
 }
 
-SKILL="$PLUGIN/skills/qoder-start-work/SKILL.md"
-COMMAND="$PLUGIN/commands/qoder-start-work.md"
+SKILL="$PLUGIN/skills/lazy-start-work/SKILL.md"
+COMMAND="$PLUGIN/commands/lazy-start-work.md"
 ORCHESTRATOR="$PLUGIN/agents/lazyqoder-orchestrator.md"
 VERIFIER="$PLUGIN/agents/lazyqoder-verifier.md"
 
