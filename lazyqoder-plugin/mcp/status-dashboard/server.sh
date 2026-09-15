@@ -1,7 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
-CWD="${CWD:-.}"
-PLUGIN_ROOT="${QODER_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+die() {
+  printf 'LazyQoder MCP launcher: %s\n' "$1" >&2
+  exit 2
+}
+
+SOURCE_PATH="${BASH_SOURCE[0]}"
+case "$SOURCE_PATH" in
+  /*) ;;
+  *) SOURCE_PATH="$PWD/$SOURCE_PATH" ;;
+esac
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$SOURCE_PATH")" 2>/dev/null && pwd -P)" || die "cannot locate launcher"
+PLUGIN_ROOT="${QODER_PLUGIN_ROOT:-$(cd -P -- "$SCRIPT_DIR/../.." 2>/dev/null && pwd -P)}"
+case "$PLUGIN_ROOT" in
+  /*) ;;
+  *) die "plugin root must be absolute: $PLUGIN_ROOT" ;;
+esac
+[ -d "$PLUGIN_ROOT" ] || die "plugin root not found: $PLUGIN_ROOT"
+source "$PLUGIN_ROOT/mcp/profile-gate.sh"
+lazyqoder_require_mcp_profile "status-dashboard"
+RAW_CWD="${CWD:-${QODER_PROJECT_DIR:-}}"
+[ -n "$RAW_CWD" ] || die "project CWD is required: set CWD or QODER_PROJECT_DIR"
+case "$RAW_CWD" in
+  /*) ;;
+  *) RAW_CWD="$PWD/$RAW_CWD" ;;
+esac
+[ -d "$RAW_CWD" ] && [ ! -L "$RAW_CWD" ] || die "project CWD is unavailable: $RAW_CWD"
+CWD="$(cd -P -- "$RAW_CWD" 2>/dev/null && pwd -P)" || die "cannot resolve project CWD: $RAW_CWD"
+export CWD
 source "$PLUGIN_ROOT/scripts/state/state-paths.sh"
 NOTIFICATION=0
 
@@ -59,6 +85,7 @@ resolve_run() {
   local rid="${1:-$(CWD="$CWD" bash "$PLUGIN_ROOT/scripts/state/latest-run.sh" 2>/dev/null || echo "")}"
   [ -n "$rid" ] || return 1
   state_require_run_dir "$CWD" "$rid" || return 1
+  state_recover_transaction "$STATE_RUN_DIR" || return 1
   state_require_existing_run_file "$STATE_RUN_DIR/state.json" "state file" || return 1
   echo "$STATE_RUN_DIR/state.json"
 }
@@ -94,11 +121,31 @@ case "$METHOD" in
     ;;
   show_run_status)
     SF=$(resolve_run "$(param_raw "run_id")") || { err "invalid or unsafe run_id"; continue; }
-    RESULT=$(python3 - "$SF" <<'PYEOF'
-import json,sys
+    RESULT=$(PLUGIN_ROOT="$PLUGIN_ROOT" python3 - "$SF" <<'PYEOF'
+import json,sys,os,subprocess
 with open(sys.argv[1]) as f: s=json.load(f); t=s.get('tasks',[]); d=sum(1 for x in t if x.get('status')=='done')
 g=s.get('verification_gates',[]); gd=sum(1 for x in g if x.get('status')=='passed')
-r={'status':s.get('status',''),'objective':s.get('objective',''),'tasks_done':d,'tasks_total':len(t),'verification_gates':f'{gd}/{len(g)}','review_status':s.get('review_status',''),'iteration_count':s.get('iteration_count',0),'last_checkpoint':s.get('last_checkpoint',''),'run_id':s.get('run_id','')}; print(json.dumps(r))
+plugin_root=os.environ['PLUGIN_ROOT']
+project_root=os.environ['CWD']
+authority=os.path.relpath(os.path.join(os.path.dirname(sys.argv[1]), 'completion-authority.json'), project_root)
+version=json.load(open(os.path.join(plugin_root, 'tooling', 'package.json')))['version']
+completed=subprocess.run(['node', os.path.join(plugin_root, 'scripts', 'completion-assessment.js'), '--root', project_root, '--authority', authority, '--package-version', version, '--remediation', 'show_run_status'], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+assessment=json.loads(completed.stdout)
+r={'status':s.get('status',''),'persisted_status':s.get('status',''),'completion_assessment':assessment,'objective':s.get('objective',''),'tasks_done':d,'tasks_total':len(t),'verification_gates':f'{gd}/{len(g)}','review_status':s.get('review_status',''),'iteration_count':s.get('iteration_count',0),'last_checkpoint':s.get('last_checkpoint',''),'run_id':s.get('run_id','')}
+# v1.0.3 W3.5: append adaptive explanation when an adaptive block is present.
+adaptive = s.get('adaptive')
+if isinstance(adaptive, dict):
+    tooling_dir = os.path.join(os.environ.get('PLUGIN_ROOT',''), 'tooling')
+    if tooling_dir not in sys.path:
+        sys.path.insert(0, tooling_dir)
+    try:
+        from lazyqoder_adaptive_explanation import format_adaptive_explanation
+        r['adaptive_explanation'] = format_adaptive_explanation(s)
+        r['adaptive_mode'] = adaptive.get('mode','')
+        r['adaptive_escalation_count'] = adaptive.get('escalationCount', 0)
+    except Exception as e:
+        r['adaptive_explanation_error'] = str(e)
+print(json.dumps(r))
 PYEOF
 )
     reply "$RESULT"

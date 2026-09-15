@@ -1,294 +1,277 @@
 # AGENTS.md — LazyQoder setup and removal guide
 
-> **Agent:** use this guide to install, verify, and remove LazyQoder safely.
-> For workflow use after installation, read [README.md](README.md). For the
-> package's exact tooling commands, read [lazyqoder-plugin/README.md](lazyqoder-plugin/README.md).
+LazyQoder supports Qoder IDE (JetBrains/VS Code extensions) and the Qoder IDE CLI. It is verified
+on macOS only. Package files, host settings, credentials, marketplace state,
+and live sessions remain separate authorities.
 
-LazyQoder supports Qoder IDE through its IDE, the JetBrains and VS Code
-extensions, and the Qoder IDE CLI via their plugin flows. The Qoder IDE
-plugin entry point is `lazyqoder-plugin/.qoder/plugin.json`. LazyQoder is a
-learning project primarily inspired by LazyCodex. It is an independent
-implementation for Qoder IDE and does not require LazyCodex or OmO at runtime;
-[NOTICE](NOTICE) records the upstream attribution. Verification is on macOS
-only.
+## Current documentation release: v1.2.2
+
+This v1.2.2 guide names current human-facing boundaries only. It does not
+publish a package or promote package evidence to host proof. The route IDs are
+`codebuddy-cli`, `codebuddy-ide`, and `workbuddy`. v2 native modes are
+`invoke-documented`, `observe-only`, `descriptor-only`, and `unavailable`;
+public labels are `documented-tested`, `documented-untested`,
+`observed-build-specific`, and `unavailable`; evidence scopes are `package`,
+`probe`, and `current-session`.
+
+Automatic workflow selection uses existing risk and complexity signals to
+choose the smallest sufficient workflow. Until the selected host is observed,
+that result is selection-only: it does not claim native workflow loading or
+dispatch, and **HOST READINESS: PENDING** remains authoritative.
+
+For orchestrated package work, dispatch only the compact
+`TASK/DELTA/REFS/VERIFY` record: current identity, owned-path delta, artifact
+references, read-only pre-task provenance, and once-validated plan argv. Reject
+shell composition and destructive, remote, host-mutating, or approval-required
+argv before dispatch. Runtime criteria need a real entry artifact; stateful
+criteria also need a before/after transition. Recover a lost result only when a
+complete terminal report still matches the current run/task/revision/criteria
+and has readable artifacts. If run creation is interrupted before `state.json`,
+recover only its transaction material, preserve caller files, then retry.
+
+## Durable onboarding (start here)
+
+Require **Node.js LTS 20 or newer** and **Git**. Bootstrap `onboard` only from
+the verified official origin `https://github.com/elvinzhao10/LazyQoder.git`.
+The source checkout is transport only and may be deleted after promotion.
+
+The stable command is `node "<install-root>/LazyQoder/launcher.js"`. The
+default install root is `~/Library/Application Support/LazySeries` on macOS,
+`${XDG_DATA_HOME:-~/.local/share}/lazyseries` on Linux, and
+`%LOCALAPPDATA%\LazySeries` on Windows. The exact tree is
+`LazyQoder/{active.json,launcher.js,releases/,receipts/,rollback/,staging/,locks/}`.
+Never install into a temporary/cache directory or treat package state as proof
+that a host loaded it. Lifecycle commands are `onboard`, `update`, `status`,
+`offboard`, and `recover-bootstrap-lock`.
+
+If lifecycle state collides with an existing path, preserve the caller
+workspace. Only an explicitly verified lifecycle-owned sibling bootstrap lock
+or product `staging/`/`locks/` artifact is recoverable; never remove or replace
+caller workspace files.
+
+## Current-message routing contract
+
+Before taking onboarding action, scan the whole current user message,
+including every line. Route only explicit direct actions for this turn. Text
+presented as a quote, history, example, transcript, or instruction under
+discussion is not a new action. A compatible later detail refines the earlier
+route; when explicit current-message routes conflict, the rightmost conflicting
+route wins.
+
+If the host or operation is still ambiguous, ask one focused question and take
+no action. The supported choices are **CodeBuddy IDE**, **CodeBuddy CLI**, and
+**WorkBuddy**. Keep host authority and proof boundaries unchanged.
 
 ## `onboard` protocol
 
 When the user types `onboard`:
 
-1. **Ask which product** they want to set up:
-   - **Qoder IDE IDE** (standalone desktop IDE, formerly Tongyi Lingma)
-   - **QoderWork** (task-execution desktop app, qoderwork.com)
-   - **Qoder IDE CLI** (terminal, `qodercli`)
-   - **Qoder IDE JetBrains extension** (IntelliJ, PyCharm, etc.)
-   - **Qoder IDE VS Code extension**
-2. Follow only that product's setup path below. Run `bash lazyqoder-plugin/scripts/lazyqoder-load-check.sh`; after package readiness is full, invoke `lazy-init-deep` or accept the equivalent natural-language request.
-3. Report every completed safe repository/package action and its observed result. Call load-check **package readiness**: it proves copied files and declarations, not plugin loading, SessionStart, hooks, or an MCP connection.
-4. Stop before account, marketplace, host-settings, credential, remote-provider, browser, or architecture-tool actions. Give exact manual host directions and name the live host observation the user must make.
-5. Explain that optional tooling is unchanged: onboarding, doctor, and load-check do not enable providers, register MCP servers, install global tools, or write host configuration.
+1. Detect the selected host from the open app or ask the one focused host
+   question above. Do not run a host route while the answer is ambiguous.
+2. Run `status` through the durable `launcher.js`. If absent, use the verified
+   source entrypoint to run `onboard`; if blocked, preserve the state and report
+   the exact issue.
+3. When upgrading from v1.0.2, inventory receipt-owned versus modified/unknown
+   assets first. Preserve user changes and host settings until the new session
+   is observed. Never infer host readiness from a PATH entry, `--plugin-dir`,
+   file existence, or a load-check.
+4. Run only safe package checks and local filesystem/command setup. From the
+   release root, use `bash lazyqoder-plugin/scripts/lazyqoder-load-check.sh`
+   and `bash lazyqoder-plugin/scripts/lazyqoder-plugin-doctor.sh`; these validate
+   package manifests, Skills, declarations, and local contracts without
+   installing a host plugin, changing host settings, or contacting providers.
+5. Report **package readiness** separately. Package checks do not prove plugin
+   discovery, command/Skill loading, hooks, agents, SessionStart, or an MCP
+   connection.
+6. Before any host-managed mutation (marketplace trust/add, plugin install,
+   Settings connector, account, credential, or remote provider), ask for
+   explicit approval naming the exact action. Never automate trust or install.
+7. After approval, give exactly one concrete GUI/host action and wait. Do not
+   bundle discovery, installation, reload, and verification in one handoff.
+8. After the user responds, inspect the corresponding app with Computer Use and
+   record only what is visibly observed. If Computer Use is unavailable, a
+   user-pasted verbatim status or screenshot counts as observed evidence. If a
+   reload or new session is needed, issue the next single action, wait, and
+   inspect again.
+9. Verify one real Skill or command and every expected MCP connection for the
+   selected route. Report the observed host result separately from package
+   readiness; without observation, **HOST READINESS: PENDING** remains the only
+   honest result.
 
-### Qoder IDE IDE — full installation (verified 2026-07-19, macOS)
+Route status is explicit: the local marketplace is the **documented CodeBuddy
+CLI route and the preferred CodeBuddy IDE route whenever the CodeBuddy CLI is
+available**. WorkBuddy uses the nested `.qoder-plugin/plugin.json` as its
+default marketplace full-plugin route. The `manual-skills-mcp-fallback` is a
+recovery-only route. None of those labels proves the current build:
+without current observation, **HOST READINESS: PENDING**.
 
-The Qoder IDE IDE is the standalone AI-native coding environment. Plugin
-discovery uses `~/.qoder-cn/plugins/` (cache + registry) and
-`~/.qoder-cn/skills/` (global skill symlinks). MCP is configured per-workspace
-via `.mcp.json` at the workspace root.
+The supplied macOS QA dated 2026-07-18 observed CodeBuddy IDE full-plugin
+loading through the CLI-backed user-scope marketplace route. It inspected
+WorkBuddy v5.2.6 on macOS and recorded full-plugin loading only after
+undocumented host-internal changes. That is historical observed behavior, not
+an installation route. The GUI Add local directory/Install flows failed in
+that tested build; the CodeBuddy exact host version/build was not recorded.
 
-**1. Clone and verify package:**
+## Host artifact boundary
+
+| Host | Safe package artifact | Host action and expected observation |
+| --- | --- | --- |
+| **CodeBuddy IDE** | When the CLI is available (`codebuddy`), use the same user-scope release-root marketplace route as CodeBuddy CLI. The desktop GUI route is only an observed-build alternative; the supplied GUI add-local-directory flow failed. | Use the CLI marketplace handoff below, then inspect the IDE's fresh session. If the CLI is unavailable, record that limitation and use the Skills/manual-MCP fallback. |
+| **CodeBuddy CLI** | The release-root `.qoder-plugin/marketplace.json` and package checks. Use the exact local marketplace commands below; `--plugin-dir` is development/testing only and never persistent. | Use the three separate CodeBuddy handoff actions below. After installation and a fresh session inspect one real Skill/command and all six MCP connections. |
+| **WorkBuddy full plugin** | The active release's `lazyqoder-plugin/.qoder-plugin/plugin.json`, declaring Skills, commands, agents, hooks, and `.mcp.json`. | Use the marketplace/plugin surface exposed by the current build. Keep readiness pending until a current receipt confirms one loaded Skill, command, agent, hook, and all six MCP servers in the same build/session. |
+| **WorkBuddy recovery fallback** | Skills import/copy from `lazyqoder-plugin/skills/` only, plus six individual manual local MCP connectors. | Use only after the full-plugin route is removed with receipt-scoped ownership. Observe one imported Skill and all six connector statuses; commands, agents, and hooks remain excluded. |
+
+## CodeBuddy local marketplace handoff
+
+The supported local route uses the **release root** (the directory containing
+`.qoder-plugin/marketplace.json`) printed by durable
+`status --route codebuddy-marketplace`, not a source checkout or the nested
+`lazyqoder-plugin/` directory:
+
+```text
+codebuddy plugin marketplace add "<active-durable-release-root>"
+codebuddy plugin install lazyqoder@lazyqoder
+```
+
+Run these terminal commands against the absolute release root. Inside a
+CodeBuddy session, the interactive `/plugin` menu is equivalent; do not use the
+slash forms as terminal commands. Do not automate marketplace trust or
+installation, and do not treat `--plugin-dir <absolute-release-root>`
+as persistence.
+
+These are three separate future user actions:
+
+1. **Action 1 — discover:** after approval, add the absolute release root with
+   `codebuddy plugin marketplace add "<active-durable-release-root>"` (or the
+   equivalent interactive `/plugin` menu inside CodeBuddy), then wait while the
+   agent uses Computer Use to observe that
+   `lazyqoder@lazyqoder` is discovered. Do not install yet.
+2. **Action 2 — install:** after a separate approval, enter
+   `codebuddy plugin install lazyqoder@lazyqoder`, then wait while the agent
+   observes the install result. Do not restart in the same action.
+3. **Action 3 — restart and observe:** as a later action, start a fresh
+   CodeBuddy session, then let the agent inspect one real Skill/command plus all
+   six MCP connections.
+
+Do not combine these actions, pre-approve trust, or claim host readiness from
+the marketplace JSON alone. Repeating safe package checks preserves existing
+project configuration.
+
+## CodeBuddy IDE GUI alternative (observed-build only)
+
+Use this only when the current CodeBuddy IDE visibly offers a local-directory
+marketplace **and the CodeBuddy CLI route is unavailable**. The supplied build's
+GUI Add local directory flow failed, so do not send users here by default. Each
+numbered item is a separate action:
+
+1. After approval, use the host's **Plugins / Marketplace → Add local
+   directory** GUI to select the absolute release root containing
+   `.qoder-plugin/marketplace.json`; then wait for inspection.
+2. Observe the version the current marketplace actually displays. Do not infer
+   v1.2.2 publication from this documentation boundary. Do not install in the
+   discovery action. If discovery is unavailable, record the
+   host version/build and exact error, keep **HOST READINESS: PENDING**, and use
+   the fallback below only after selecting it explicitly.
+3. After separate approval, click the GUI **Install** action for
+   `lazyqoder@lazyqoder`; then wait for the install result.
+4. Fully quit the host; then wait.
+5. Reopen the host; then wait.
+6. Start a fresh project session; then wait for inspection.
+7. In the fresh session, inspect one real LazyQoder Skill or command and live
+   calls to all six MCP servers. Files, cache entries, and connector counts are
+   not substitutes for those calls.
+
+## WorkBuddy marketplace full-plugin boundary
+
+The nested `.qoder-plugin/plugin.json` remains the default installation
+source even when a public manifest schema is unavailable. Do not mutate or
+inspect WorkBuddy's private registries to reproduce installation. Use only the
+marketplace/plugin action exposed by the current host build, one approved host
+action at a time.
+
+The agent may render/check package inputs without changing WorkBuddy:
 
 ```bash
-git clone https://github.com/elvinzhao10/LazyQoder.git
-cd LazyQoder
-bash lazyqoder-plugin/scripts/lazyqoder-load-check.sh
-# Expected: PACKAGE_READINESS=full
+bash lazyqoder-plugin/scripts/lazyqoder-workbuddy-preparation-check.sh \
+  --project-dir "<absolute-project-root>"
 ```
 
-**2. Make scripts executable** (repo may ship without execute bits):
+This preflight is read-only and prints `HOST_PREPARATION=not-applied`,
+`HOST_MUTATION=none`, and `HOST_READINESS=pending`; `--apply` refuses. It is a
+package check, not an installer and not host proof. Durable `status --host
+workbuddy` emits the exact marketplace receipt template. Only a receipt bound
+to the active source/version and current build/session, with one loaded Skill,
+command, agent, hook, and all six MCP connections, may report host ready.
+
+## CodeBuddy project-local configuration
+
+`.codebuddy/settings.json` may hold shareable, non-secret project defaults.
+`.codebuddy/settings.local.json` is local/machine scope and must remain ignored
+and unstaged; secrets must never be committed. Package checks and repeated safe
+setup preserve both files and do not write host configuration.
+
+## CodeBuddy IDE / WorkBuddy Skills/manual-MCP fallback
+
+Import only `lazyqoder-plugin/skills/` through the selected host's Skills UI or
+its documented local import. Add each compatible local MCP connector manually in
+Settings: `run-ledger`, `verification`, `status-dashboard`, `context-graph`,
+`code-intel`, and `docs`. A package file, manifest, or `load-check` result is
+not a live host session and must never be described as loading commands,
+agents, hooks, or MCP. If the user supplies real full-plugin proof from a
+loaded session, record that observation before relying on any broader surface.
+This fallback explicitly excludes commands, Agents, and hooks.
+
+Before changing host settings, prepare the connector values without mutation
+from `lazyqoder-plugin/.mcp.json`: replace `${CODEBUDDY_PLUGIN_ROOT}` with the
+absolute `<release-root>/lazyqoder-plugin` and `${CODEBUDDY_PROJECT_DIR}` with
+the absolute `<project-root>`. Every entry must use `command: bash`, one
+absolute `args` path
+`<release-root>/lazyqoder-plugin/mcp/<server>/server.sh`, `cwd: <project-root>`,
+and environment values `CWD=<project-root>` and
+`CODEBUDDY_PROJECT_DIR=<project-root>`. The six `<server>` values are exactly
+`run-ledger`, `verification`, `status-dashboard`, `context-graph`,
+`code-intel`, and `docs`. Do not edit the shipped `.mcp.json`. The paste-ready
+six-entry template is in [Host routes](docs/reference/host-routes.md#manual-connector-specification).
+After approval, add one connector, handle any trust prompt as a separate
+action, wait for inspection, and only then continue to the next server.
+
+Do not run a full plugin route and the `manual-skills-mcp-fallback` together;
+coexistence is unsupported and may duplicate Skills or MCP processes. To
+switch, stop the session, remove only LazyQoder's old plugin/Skills entry and
+six connectors through the host UI, choose one route, start a fresh session,
+then verify that route. Each step is a separate approved action.
+
+## Safe package commands
 
 ```bash
-chmod +x lazyqoder-plugin/scripts/*.sh
-chmod +x lazyqoder-plugin/scripts/state/*.sh
-chmod +x lazyqoder-plugin/scripts/hooks/*.sh
-chmod +x lazyqoder-plugin/scripts/loop/*.sh
-chmod +x lazyqoder-plugin/mcp/*/server.sh
+# Run from the active durable release; these are package checks only.
+node "<install-root>/LazyQoder/launcher.js" status --project "<project-root>"
 ```
 
-**3. Configure MCP servers** — create `.mcp.json` at workspace root:
-
-```json
-{
-  "mcpServers": {
-    "lazyqoder-run-ledger": {
-      "command": "bash",
-      "args": ["/abs/path/to/lazyqoder-plugin/mcp/run-ledger/server.sh"],
-      "env": {
-        "QODER_PLUGIN_ROOT": "/abs/path/to/lazyqoder-plugin",
-        "CWD": "/abs/path/to/workspace"
-      }
-    }
-  }
-}
-```
-
-Repeat for all 8 servers: `run-ledger`, `verification`, `status-dashboard`,
-`context-graph`, `code-intel`, `docs`, `codegraph`, `lsp`. Each follows the
-same pattern with its own `mcp/<name>/server.sh` path. `CWD` must point to the
-writable workspace root (where `.lazyqoder/runs/` is created).
-
-**4. Install plugin (skills, agents, commands, hooks):**
-
-The plugin is the single source of truth for all components. No separate
-global skill installation is needed.
-
-```bash
-# Option A: CLI (recommended)
-qoderclicn plugins install /abs/path/to/lazyqoder-plugin
-
-# Option B: Manual cache registration
-PLUGIN_CACHE="$HOME/.qoder-cn/plugins/cache/local/lazyqoder"
-mkdir -p "$PLUGIN_CACHE"
-cp -R lazyqoder-plugin/* "$PLUGIN_CACHE/"
-cp -R lazyqoder-plugin/.qoder "$PLUGIN_CACHE/"
-chmod +x "$PLUGIN_CACHE"/scripts/hooks/*.sh
-chmod +x "$PLUGIN_CACHE"/scripts/state/*.sh
-chmod +x "$PLUGIN_CACHE"/scripts/loop/*.sh
-```
-
-Then register in `~/.qoder-cn/plugins/installed_plugins_v2.json`:
-
-```json
-"lazyqoder@local": [{
-  "scope": "user",
-  "installPath": "~/.qoder-cn/plugins/cache/local/lazyqoder",
-  "version": "0.0.1",
-  "source": "local",
-  "enabled": true
-}]
-```
-
-**5. Reload** — `Cmd+Shift+P` → "Reload Window".
-
-**6. Verify in session:**
-
-| Component | Count | How to confirm |
-|-----------|------:|----------------|
-| Skills (`lazy-*`) | 19 | Type `/` in chat → see `lazy-init-deep`, `lazy-start-work`, etc. |
-| Agents (`lazyqoder-*`) | 13 | Available as subagent types (orchestrator, implementer, explorer, etc.) |
-| MCP servers | 8 | Visible in MCP status panel |
-| Hooks | 12 | Registered lifecycle events (SessionStart, PreToolUse, etc.) |
-| Commands | 14 | `/lazyqoder:lazy-<command>` namespace |
-
-### QoderWork — skill-based installation (verified 2026-07-20, macOS)
-
-QoderWork is a task-execution desktop app (qoderwork.com), not an IDE. It
-discovers skills by scanning `~/.qoderworkcn/skills/` — any directory containing
-a valid `SKILL.md` is immediately available (no restart, no registry file).
-LazyQoder integrates as a single unified skill that provides all five core
-workflows (init-deep, ulw-plan, start-work, review-work, ulw-loop) via natural
-language triggers.
-
-**1. Clone and verify package:**
-
-```bash
-git clone --branch v1.0.1 --depth 1 https://github.com/elvinzhao10/LazyQoder.git
-cd LazyQoder
-bash lazyqoder-plugin/scripts/lazyqoder-load-check.sh
-# Expected: PACKAGE_READINESS=full
-```
-
-**2. Make scripts executable** (repo may ship without execute bits):
-
-```bash
-chmod +x lazyqoder-plugin/scripts/*.sh
-chmod +x lazyqoder-plugin/scripts/state/*.sh
-chmod +x lazyqoder-plugin/scripts/hooks/*.sh
-chmod +x lazyqoder-plugin/scripts/loop/*.sh
-chmod +x lazyqoder-plugin/mcp/*/server.sh
-```
-
-**3. Install the QoderWork skill:**
-
-```bash
-# Option A: Symlink (recommended — stays in sync with the repo)
-ln -sfn "$(pwd)/lazyqoder-plugin/qoderwork" "$HOME/.qoderworkcn/skills/lazyqoder"
-
-# Option B: Copy (standalone, does not track repo updates)
-mkdir -p "$HOME/.qoderworkcn/skills/lazyqoder"
-cp lazyqoder-plugin/qoderwork/SKILL.md "$HOME/.qoderworkcn/skills/lazyqoder/SKILL.md"
-```
-
-No registry file, plugin manifest, or restart is required. QoderWork performs a
-real-time disk scan on every skill invocation.
-
-**4. (Optional) Register MCP servers for enhanced state management:**
-
-All workflows function with file-based state (`.lazyqoder/`) alone. To use the
-bundled MCP servers (run-ledger, verification, status-dashboard, context-graph,
-code-intel, docs, codegraph, lsp), add them in QoderWork's MCP settings:
-
-- Open QoderWork → Settings → MCP Servers
-- Add each server with command `bash`, args pointing to the absolute path of
-  `lazyqoder-plugin/mcp/<name>/server.sh`
-- Set env vars: `QODER_PLUGIN_ROOT` = absolute path to `lazyqoder-plugin/`,
-  `CWD` = writable workspace root (where `.lazyqoder/runs/` is created)
-
-This step is entirely optional and does not affect core workflow operation.
-
-**5. Verify in a new QoderWork session:**
-
-| Component | How to confirm |
-|-----------|----------------|
-| Skill discovered | Ask QoderWork "what skills do you have?" — `lazyqoder` appears in the list |
-| init-deep | Say "understand this codebase" or "init-deep" with a folder selected |
-| ulw-plan | Say "plan how to build X" — produces `.lazyqoder/plans/<slug>.md` |
-| start-work | Say "execute the plan" — orchestrates subagents |
-| review-work | Say "review my work" — launches 5 parallel review agents |
-| ulw-loop | Say "keep working until verified" — goal-driven completion loop |
-
-**QoderWork adaptation notes:**
-
-| Qoder IDE concept | QoderWork equivalent |
-|---|---|
-| Plugin manifest + `installed_plugins_v2.json` | Disk scan of `~/.qoderworkcn/skills/lazyqoder/` |
-| Slash commands (`/lazyqoder:lazy-*`) | Natural language triggers |
-| Agent subagents with `isolation: true` | Agent tool with `subagent_type` parameter |
-| Hooks (12 lifecycle events) | Encoded in skill procedure steps |
-| MCP run-ledger / verification | File-based state in `.lazyqoder/` (MCP optional) |
-| Model selector (GLM/DeepSeek/Kimi/MiniMax) | QoderWork automatic model routing |
-| 19 separate skills + 14 commands + 13 agents | Single unified `lazyqoder` skill |
-
-The skill source lives at `lazyqoder-plugin/qoderwork/SKILL.md` in the
-repository. The full plugin (skills, agents, hooks, MCP, scripts) remains the
-canonical reference for workflow logic; the QoderWork skill is the host adapter.
-
-### Qoder IDE CLI
-
-```bash
-git clone https://github.com/elvinzhao10/LazyQoder.git
-cd LazyQoder
-qoder plugin validate lazyqoder-plugin
-bash lazyqoder-plugin/scripts/lazyqoder-load-check.sh
-bash lazyqoder-plugin/scripts/lazyqoder-plugin-doctor.sh
-```
-
-Use Qoder IDE's current plugin discovery flow to locate LazyQoder. Confirm the
-publisher and review the exact immutable revision or release reference before
-running the host-generated install command.
-
-### Qoder IDE JetBrains / VS Code extension
-
-Use the host plugin/marketplace flow to install the copied package. Restart
-the IDE or reload the window if prompted. Confirm a `/lazyqoder:lazy-<command>`
-entry and MCP status in a new session.
-
-### Troubleshooting
-
-| Symptom | Fix |
-|---------|-----|
-| Skills not appearing (Qoder IDE) | Plugin must be registered; check `installed_plugins_v2.json` and reload |
-| Skill not appearing (QoderWork) | Check symlink: `ls -la ~/.qoderworkcn/skills/lazyqoder`; ensure `SKILL.md` exists inside; start a new chat session |
-| MCP "Read-only file system" | Set `CWD` env var to writable workspace root in `.mcp.json` |
-| MCP "script not found" | Run `chmod +x` on all scripts (step 2) |
-| Verification "cannot unmarshal array" | Update to latest (`discover_checks` returns `{"checks": [...]}`) |
-| Agents/hooks not loading (Qoder IDE) | Plugin must be in `installed_plugins_v2.json`; try full app restart |
-| QoderWork skill symlink broken | Re-run `ln -sfn` from the cloned repo directory; verify with `readlink` |
+Do not enable optional remote, browser, or architecture capabilities during
+onboarding. `--plugin-dir` is development/testing only, never persistent, and
+does not replace the local marketplace route.
 
 ## `offboard` protocol
 
-When the user types `offboard`:
+When the user types `offboard`, ask which host and whether CodeBuddy plugin
+installation or WorkBuddy Skills/manual connectors are being removed. Run
+durable `offboard` without `--yes`, present the exact product-root plan, and
+repeat with `--yes` only after confirmation. Inspect
+the selected package receipt first, remove only exact receipt-owned local
+assets, and preserve unknown, modified, linked, caller-owned, project, and
+host-managed paths. Use the host's own plugin/Skills removal flow for host
+state. Report package result separately from the user-observed host result in a
+new session; never scan or guess host directories and never remove another
+host's settings. An upgrade rollback must likewise remove only the selected
+release's receipt-owned assets after approval; never overwrite user-modified
+prior-release assets.
+Recovery is limited to an explicitly verified lifecycle-owned sibling bootstrap
+lock or product `staging/`/`locks/` artifact; the caller workspace is always
+preserved.
 
-1. Ask which host was used (Qoder IDE IDE, QoderWork, JetBrains extension, VS Code extension, or CLI) and whether the installation was a host plugin/marketplace install.
-2. Inspect and report the selected package-owned removal path before changing anything. Remove only an exact, unmodified receipt-owned tooling root through its documented package command; preserve unknown, modified, linked, caller-owned, project, and host-managed assets.
-3. Use the selected host's own removal flow. For the Qoder IDE IDE/JetBrains/VS Code extension, remove LazyQoder through the host plugin UI/extension manager and then remove or disable only LazyQoder MCP registrations the user personally added. For QoderWork, remove the symlink or copied directory at `~/.qoderworkcn/skills/lazyqoder/` (verify with `readlink` or `ls` before removing; do not remove other skills). For the Qoder IDE CLI, use the host's plugin removal command and then disable manually registered MCP servers.
-4. Never guess paths, scan host directories, delete `.qoder`, `.qoder-plugin`, shared MCP metadata, or remove another host's configuration. Never enable optional tooling while removing it.
-5. Report **package result** separately from the **user-observed host result**. The package can prove receipt-safe local removal; only the user can confirm plugin and MCP removal in a new host session. Keep or delete the copied repository only after that observation.
-
-## Host paths
-
-| Host | Safe setup path | Required host proof |
-|---|---|---|
-| **Qoder IDE IDE** | Install the copied package with the plugin UI; reload if offered. | A `lazy-*` skill and MCP status in a new session. |
-| **QoderWork** | Symlink or copy `lazyqoder-plugin/qoderwork/` to `~/.qoderworkcn/skills/lazyqoder/`. | `lazyqoder` skill appears in a new QoderWork session; natural-language workflow triggers respond. |
-| **Qoder IDE JetBrains extension** | Use the host plugin/marketplace flow to install the copied package; restart the IDE if prompted. | A `/lazyqoder:lazy-<command>` entry and MCP status in a new session. |
-| **Qoder IDE VS Code extension** | Use the host plugin/marketplace flow to install the copied package; reload the window if prompted. | A `/lazyqoder:lazy-<command>` entry and MCP status in a new session. |
-| **Qoder IDE CLI** | Use the host plugin validate + install flow, confirm the publisher and an immutable revision or release reference, then begin a new session. | Plugin/MCP activation in that session. |
-
-## MCP and capability boundaries
-
-The package declares eight local MCP servers: `run-ledger`, `verification`,
-`status-dashboard`, `context-graph`, `code-intel`, `docs`, `codegraph`, and
-`lsp`. A Qoder IDE session or settings page (Agent-mode MCP) must confirm
-connection. `context-graph` is heuristic search, not CodeGraph; filesystem and
-Playwright are outside this bundled inventory. These map to the **Qoder IDE
-Agent-mode MCP** feature.
-
-LazyQoder can select local `rg`, `sg`, supported JS/TS or Python LSP, and
-repository-native checks for a task without persisting a host change. Any
-fallback is installed only in an explicit receipt-owned tooling root. CodeGraph
-is an explicit `install`/`init`/`enable` lifecycle. Context7 and experimental
-`grep_app` need explicit selection and manual export/merge; remote requests can
-egress data or cost money. Playwright needs explicit browser approval. Normal
-onboarding, doctor, and status never activate, start, index, register, or
-contact optional providers.
-
-Model routing for any workflow uses the **Qoder IDE Model selector** (GLM /
-DeepSeek / Kimi / MiniMax per task), mirroring the OmO quota discipline; the
-package does not itself reconfigure the selector.
-
-## Verify
-
-```bash
-bash lazyqoder-plugin/scripts/lazyqoder-load-check.sh
-bash lazyqoder-plugin/scripts/lazyqoder-plugin-doctor.sh
-bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
-```
-
-Package readiness is not a host-readiness claim. Perform the applicable host
-proof from the table before relying on integration behavior.
-
-## References
-
-- [Public usage guide](README.md)
-- [Package commands and safe tooling lifecycle](lazyqoder-plugin/README.md)
-- [Public verification evidence](lazyqoder-evaluation.md)
-- [Qoder IDE capability mapping](qoder-ide-integration.md)
+If `status` reports `STALE_RUNTIME`, do not edit `active.json` or receipts.
+Use a fresh checkout from the verified GitHub origin for scoped offboard and
+re-onboard with the current Node.js LTS runtime. Treat `rollback/` as retained
+recovery evidence, not a hand-edit surface. A moved same-version ref likewise
+requires the printed full SHA and explicit `--confirm-revision <full-sha>`.

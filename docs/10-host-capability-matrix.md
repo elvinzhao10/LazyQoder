@@ -1,48 +1,133 @@
 # Host capability matrix
 
-LazyQoder retargets the LazySeries harness to a single host, Qoder IDE (Alibaba's
-successor to Tongyi Lingma). The safety model is unchanged, but each LazySeries
-workflow is carried by a native Qoder IDE feature rather than by a separate host
-adapter. The same package may be present on two surfaces without both hosts
-exposing the same loading or registration behavior.
+LazyQoder deliberately aligns policy and package safety across hosts while keeping host adapters distinct. The same package may be present on two surfaces without both hosts exposing the same loading or registration behavior.
 
-## What each workflow maps to
+## Onboarding baseline
 
-| LazySeries workflow | Qoder IDE native feature | How the workflow is carried |
-| --- | --- | --- |
-| `init-deep` (hierarchical memory) | **RepoWiki** | Auto, Git-synced code wiki; `qoder-init-deep` adds the curated memory layer on top. |
-| `ulw-plan` (decision-complete plan) | **Quest 2.0** | Independent-window spec; auto-decomposes complex tasks before any edit. |
-| `ulw-loop` (durable execution + checkpoints) | **Agent mode + Subagents** | Long-running, usage unlimited; the loop checkpoint file is the durable state the Agent session resumes from. |
-| `start-work` (subagent orchestration) | **Agent mode + Subagents** | Subagent fan-out under Agent mode; orchestrator never implements directly. |
-| `ultrawork` (high-precision binding loop) | **Agent mode + Subagents** + **Expert teams** | Durable execution with a binding Expert-team review gate. |
-| `review-work` (parallel review) | **Expert teams** | Composed of domain experts (planning / research / coding / review / testing); custom experts supported. |
-| `reviewer` (independent review) | **Expert teams** | Owned by the matching domain expert role. |
-| `verifier` (independent verification) | **Expert teams** | Owned by the matching domain expert role. |
-| `librarian` (project memory upkeep) | **RepoWiki** | Curated memory upkeep layered on the auto-synced wiki. |
-| `migration-planner` (host-adapter port plan) | **Quest 2.0** | Generates the plan for porting prior host semantics to Qoder IDE. |
-| Model routing (omO quota discipline) | **Model selector** | GLM-5.1 / DeepSeek / Kimi-K2.6 / MiniMax per task; package recommends, does not reconfigure. |
-| MCP servers (run-ledger, verification, …) | **Agent-mode MCP** | Eight local servers bridged over stdio under Agent mode. |
+## Current v1.2.2 evidence boundary
+
+This documentation release covers `qodercli-cli`, `qodercli-ide`, and
+`qoder`; it does not publish a v1.2.2 package or claim a host has loaded
+one. Marketplace is the default full-plugin route for Qoder CLI IDE and
+Qoder IDE. The Skills/manual-MCP route is recovery-only and mutually exclusive
+with a full-plugin route in the same project.
+
+| v2 field | Allowed values and boundary |
+| --- | --- |
+| Native mode | `invoke-documented`, `observe-only`, `descriptor-only`, or `unavailable`. |
+| Public label | `documented-tested`, `documented-untested`, `observed-build-specific`, or `unavailable`. |
+| Evidence scope | `package`, `probe`, or `current-session`; `package` does not prove a live host. |
+
+Require **Node.js LTS 20 or newer** and **Git**. Bootstrap `onboard` only from
+`https://github.com/elvinzhao10/LazyQoder.git`; then run `update`, `status`,
+and plan-first `offboard` with
+`node "<install-root>/LazyQoder/launcher.js"`. The durable tree is
+`LazyQoder/{active.json,launcher.js,releases/,receipts/,rollback/,staging/,locks/}`
+and survives source deletion. Moving a same-version ref requires full-SHA
+confirmation; stale runtime recovery is scoped offboard/re-onboard. None of
+this proves a host: **HOST READINESS: PENDING** until observation.
+
+Automatic selection chooses the smallest sufficient existing workflow from task
+risk and complexity. It remains selection-only until host readiness is observed;
+selection never proves native workflow loading or host dispatch.
+
+Open or link the durable release selected by `status` in the selected host, give the agent
+`https://github.com/elvinzhao10/LazyQoder`, and type `onboard`. The agent
+detects or asks for Qoder CLI IDE, Qoder CLI CLI, or Qoder IDE, runs safe
+package checks, and reports package readiness separately from host readiness.
+Before a host-managed change it asks for approval, gives one exact action, and
+waits. It then uses Computer Use or a user-pasted status/screenshot; reload or
+new session is a later action. Verify one real Skill/command and all six MCP
+connections. Without observation, **HOST READINESS: PENDING**.
+
+Route status is explicit: the local marketplace is the **documented Qoder CLI
+CLI route and the preferred Qoder CLI IDE route whenever the Qoder CLI CLI is
+available**. Qoder IDE uses `.qoder-plugin/plugin.json` as its default
+marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
+only.
+
+## What each host needs
+
+| Host | Local route | Supported fallback | Required host proof |
+| --- | --- | --- | --- |
+| **Qoder CLI IDE** | When the CLI is available (`qodercli`), use the user-scope release-root marketplace route shared with Qoder CLI CLI. The GUI route is only an observed-build alternative; the supplied GUI Add local directory flow failed. | Public Skills import plus manual MCP JSON when the CLI is unavailable. It excludes commands, agents, and hooks. | New-session Skill/command appropriate to the chosen route and all six MCP connections. |
+| **Qoder CLI CLI** | Run durable `status --route qodercli-marketplace`, then use its active durable release root with `qodercli plugin marketplace add "<active-durable-release-root>"`; wait before `qodercli plugin install lazyqoder@lazyqoder`. | Inside a Qoder CLI session, the interactive `/plugin` menu provides the same route. `--plugin-dir` is development/testing only, never persistent. | Fresh-session Skill/command and all six MCP connections. |
+| **Qoder IDE** | The active release's `.qoder-plugin/plugin.json` marketplace source, declaring Skills, commands, agents, hooks, and six MCP servers. | Recovery-only Skills import plus six manual local MCP connectors. It excludes commands, agents, and hooks. | A current source/version/build/session receipt with one loaded Skill, command, agent, hook, and all six MCP connections. |
+
+The supplied macOS QA dated 2026-07-18 inspected Qoder IDE v5.2.6 on macOS
+with a historical LazyQoder package; the Qoder CLI exact host version/build was not recorded.
+For Qoder CLI IDE,
+prefer the CLI marketplace route whenever available; the GUI local-directory
+marketplace is only a fallback observed-build alternative. In Qoder IDE, use
+only the marketplace/plugin action exposed by the current build and never
+inspect or mutate private registries. Missing public schema documentation does
+not demote the manifest route. Fully restart and
+verify a fresh session as later actions. If the required control is unavailable, record the exact
+limitation and retain **HOST READINESS: PENDING**. The fallback's absolute
+six-launcher JSON and explicit project context are in [Host routes](reference/host-routes.md#manual-connector-specification).
+
+Before requesting that host mutation, run this read-only preflight from the
+release root:
+
+```bash
+bash lazyqoder-plugin/scripts/lazyqoder-qoder-preparation-check.sh \
+  --project-dir "<absolute-project-root>"
+```
+
+It prints `HOST_PREPARATION=not-applied`, `HOST_MUTATION=none`, and
+`HOST_READINESS=pending`; `--apply` refuses. It is not an installer and never
+proves host readiness.
+
+For the Qoder CLI IDE GUI alternative, wait for marketplace discovery, install
+as a separate action, then fully restart before inspecting a fresh session.
+
+`.qodercli/settings.json` is shareable non-secret project scope.
+`.qodercli/settings.local.json` is ignored local/machine scope and remains
+unstaged; secrets must never be committed. Package checks preserve both.
 
 ## Structural differences
 
-The Qoder IDE surface differs, but the safety model does not:
+The host adapter differs, but the safety model does not:
 
-- **Host integration:** Qoder IDE decides plugin discovery, connector registration, session lifetime, and event delivery.
+- **Host integration:** Qoder CLI and Qoder IDE decide plugin discovery, connector registration, session lifetime, and event delivery.
 - **State/path:** package run state and receipt-owned tooling roots are local; marketplace directories, `.qoder` data, credentials, and connector state remain host/user-owned.
-- **Inventory:** eight local MCP servers are packaged. Optional remote exports and browser work remain separate explicit decisions.
+- **Inventory:** six local MCP servers are packaged. Optional remote exports and browser work remain separate explicit decisions.
 
 ## Package-built versus host-native behavior
 
-| Behavior | LazyQoder contribution | Raw host (Qoder IDE) contribution | Learner takeaway |
+| Behavior | LazyQoder contribution | Raw host contribution | Learner takeaway |
 | --- | --- | --- | --- |
 | Workflow guidance | Ships skills, commands, and agent role text. | Decides whether/how those assets are discovered and exposed. | A Markdown command definition is not a running command. |
 | Hook policy | Ships event mapping and scripts that validate supported input. | Delivers an event and decides the host lifecycle semantics. | A passing hook test does not prove a host delivered the event. |
-| Local MCP | Ships eight launchers and server programs. | Starts the process (Agent-mode MCP), negotiates connection, and shows tool availability. | A declaration is not a connection. |
+| Local MCP | Ships six launchers and server programs. | Starts the process, negotiates connection, and shows tool availability. | A declaration is not a connection. |
 | Run/evidence state | Implements package-local scripts and boundaries. | Supplies session context and user-visible integration. | Local records describe package work, not host state. |
 | Optional providers | Implements policy, receipts, and export fragments. | Stores credentials and applies connector/network policy. | Selection/receipt status is not provider authorization or connection. |
 
 The complete dependency classification is in [Dependency and host boundary reference](reference/dependency-and-host-boundaries.md).
 
+## Readiness and fallback claims
+
+The package contract uses four explicit evidence scopes: `package-ready`,
+`observed-build-route`, `manual-skills-mcp-fallback`, and `live-host-proof`.
+Load-check, doctor, and capability reports emit only `package-ready`; they do
+not claim that a host loaded a plugin or connected an MCP process. A route seen
+in one build is an `observed-build-route`, not universal host support.
+
+The Qoder IDE fallback is Skills plus six manually configured local MCP
+connectors. It explicitly excludes agents, commands, and hooks. It must not be
+run alongside a full plugin route for the same project: coexistence is
+unsupported and may duplicate Skills or MCP processes. Stop the session,
+remove only the old LazyQoder entries in the host UI, choose one route, restart,
+and verify that route before making a live-host-proof claim.
+
 ## macOS-only scope
 
-The package evidence is verified on macOS only. It does not claim equivalent host loading, marketplace behavior, hook execution, or MCP connection on other operating systems. Those are observed per Qoder IDE session.
+The package evidence is verified on macOS only. It does not claim equivalent host loading, marketplace behavior, hook execution, or MCP connection on other operating systems. Those are observed per host session.
+
+## Migration and removal
+
+To change routes, stop the active session, remove only LazyQoder's
+receipt-scoped plugin/Skills entry and connectors that the user added through
+the host UI, choose one route, and verify it in a fresh session. Preserve
+other plugins, connectors, credentials, project settings, and host-managed
+paths. Package removal remains separate from observed host removal.
