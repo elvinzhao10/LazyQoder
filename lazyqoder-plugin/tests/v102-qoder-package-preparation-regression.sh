@@ -22,12 +22,12 @@ if [ ! -f "$PACKAGE_SOURCE_ROOT/.qodercli-plugin/marketplace.json" ]; then
         '{' \
         '  "name": "lazyqoder",' \
         '  "plugins": [' \
-        '    {"name": "lazyqoder", "source": "./lazyqoder-plugin", "version": "1.2.3"}' \
+        '    {"name": "lazyqoder", "source": "./lazyqoder-plugin", "version": "1.3.0"}' \
         '  ]' \
         '}' > "$PACKAGE_SOURCE_ROOT/.qodercli-plugin/marketplace.json"
 fi
 
-SPACE_RELEASE="$TMP/package copies/Lazy Buddy v1.2.3"
+SPACE_RELEASE="$TMP/package copies/Lazy Buddy v1.3.0"
 PROJECT_ROOT="$TMP/consumer projects/Project With Spaces"$'\nHOST_READINESS=ready'
 FIXTURE_HOME="$TMP/Home With Spaces"
 mkdir -p "$(dirname -- "$SPACE_RELEASE")" "$PROJECT_ROOT" "$FIXTURE_HOME/.qoder/plugins"

@@ -4,9 +4,9 @@ LazyQoder supports Qoder CLI, the Qoder IDE extensions, and the Qoder IDE app. I
 on macOS only. Package files, host settings, credentials, marketplace state,
 and live sessions remain separate authorities.
 
-## Current documentation release: v1.2.3
+## Current documentation release: v1.3.0
 
-This v1.2.3 guide names current human-facing boundaries only. It does not
+This v1.3.0 guide names current human-facing boundaries only. It does not
 publish a package or promote package evidence to host proof. The route IDs are
 `qodercli-cli`, `qodercli-ide`, and `qoder`. v2 native modes are
 `invoke-documented`, `observe-only`, `descriptor-only`, and `unavailable`;
@@ -168,7 +168,7 @@ numbered item is a separate action:
    directory** GUI to select the absolute release root containing
    `.qodercli-plugin/marketplace.json`; then wait for inspection.
 2. Observe the version the current marketplace actually displays. Do not infer
-   v1.2.3 publication from this documentation boundary. Do not install in the
+   v1.3.0 publication from this documentation boundary. Do not install in the
    discovery action. If discovery is unavailable, record the
    host version/build and exact error, keep **HOST READINESS: PENDING**, and use
    the fallback below only after selecting it explicitly.

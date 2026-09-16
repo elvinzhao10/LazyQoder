@@ -234,6 +234,21 @@ Treat child status as a progress signal, not a timeout counter. Track spawned ag
 7. HEAVY tier: reviewer approved unconditionally
 8. Iteration count ≤ 500
 
+## Verification Tiers (v1.3.0)
+
+Scale ceremony to the changed boundary and risk. Select the lowest sufficient tier
+once; reuse a green receipt while its declared inputs and covered behavior stay
+unchanged (do not rerun an identical green command solely because a new phase or
+agent started). These tiers are the shared LazySeries contract (plan behavior 9),
+consumed by Buddy, Trae, and Qoder — do not fork them per host.
+
+- **V0 inspect** — documentation, metadata, formatting, or inert fixture changes. Run syntax/schema/static checks only when applicable; no new test required by default.
+- **V1 focused** — localized reversible behavior. Run the smallest existing test or direct user-surface scenario covering the changed boundary.
+- **V2 integrated** — cross-module, state, parser, migration, lifecycle, or host-routing behavior. Run focused checks plus one real consumer/integration scenario.
+- **V3 comprehensive** — security/trust boundaries, release packaging, shared contract/schema changes, broad infrastructure changes, or an unexplained focused failure. Run the repository's comprehensive gate once, normally in protected CI.
+
+Selection rules: default to the lowest sufficient tier. Test count, file count, plan size, agent count, or a request being called "complex" can NEVER promote verification. Promote only for the changed boundary or observed risk. A failing focused check triggers diagnosis and reruns only itself plus the directly affected integration — it does not trigger every suite.
+
 ## Failure Behavior
 
 - If a criterion's RED proof fails for the wrong reason (syntax error, missing import): fix the proof setup, re-capture, record the fix in `## Findings`

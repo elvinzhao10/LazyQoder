@@ -4,9 +4,9 @@ This document records public, present-tense evidence for the LazyQoder package.
 It is not evidence that a specific Qoder CLI or Qoder IDE session has loaded a
 plugin. Verification is on macOS only.
 
-## Current documentation status: v1.2.3
+## Current documentation status: v1.3.0
 
-The v1.2.3 documentation boundary covers `qodercli-cli`, `qodercli-ide`, and
+The v1.3.0 documentation boundary covers `qodercli-cli`, `qodercli-ide`, and
 `qoder`; it does not publish or alter a package. For Qoder CLI and
 Qoder IDE, marketplace is the default full-plugin route. The manual
 Skills/MCP route is recovery-only and mutually exclusive with the full-plugin
