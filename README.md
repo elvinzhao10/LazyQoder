@@ -4,10 +4,10 @@ LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, *
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
-The current release package is v1.2.3. It is prepared for publication; package
+The current release package is v1.3.0. It is prepared for publication; package
 checks do not by themselves publish a tag or prove a host loaded it.
 
-## v1.2.3 platform compatibility
+## v1.3.0 platform compatibility
 
 - Host MCP declarations are validated before they are trusted: stdio servers
   must use a non-empty executable name or path (spaces are supported), with
@@ -55,7 +55,7 @@ You do not need to manually work through every setup detail. Open an AI coding
 assistant in your project and paste this:
 
 > Help me install LazyQoder from https://github.com/elvinzhao10/LazyQoder for
-> this project. Use the v1.2.3 route. Run safe package checks first,
+> this project. Use the v1.3.0 route. Run safe package checks first,
 > explain each step plainly, and ask me before changing marketplace, plugin,
 > Skills, MCP, account, credential, or trust settings.
 
@@ -153,7 +153,7 @@ runtime.
 ## Learn more
 
 - [Install and verify a host](docs/03-install-and-host-verification.md)
-- [Supported v1.2.3 route](docs/v1.2.3-supported-route.md)
+- [Supported v1.3.0 route](docs/v1.3.0-supported-route.md)
 - [Host routes and recovery](docs/reference/host-routes.md)
 - [Release notes](RELEASE_NOTES.md)
 - [Documentation index](docs/README.md)
