@@ -24,7 +24,7 @@
       ".mcp.json"
     ],
     "file_count": 69,
-    "inventory_sha256": "5412b15beccfcb5c9a28ae5c8dce26b9d2330586c14393ea63a81c671d325997"
+    "inventory_sha256": "a784bc5db3cb379575e27b8e3306c318a78b37abcb8e512b4a4e633bbd4aeeaf"
   },
   "default_routes": {
     "qodercli-ide": "qodercli-marketplace",
