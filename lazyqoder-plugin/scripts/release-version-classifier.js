@@ -46,7 +46,7 @@ function walk(root, directory = root) {
 }
 
 function previousVersionClassification(relativePath, line) {
-  if (relativePath.startsWith('docs/v1.2.') && relativePath !== 'docs/v1.2.3-supported-route.md') return 'historical-release-document';
+  if (relativePath.startsWith('docs/v1.2.')) return 'historical-release-document';
   if (relativePath === 'README.md' && /efficiency improvements/i.test(line)) return 'historical-release-summary';
   if (relativePath === 'lazyqoder-plugin/CHANGELOG.md') return 'historical-release-history';
   if (relativePath.includes('/contracts/fixtures/') || relativePath.includes('/tests/fixtures/')) return 'historical-or-adversarial-fixture';
