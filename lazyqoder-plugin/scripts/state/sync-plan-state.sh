@@ -12,6 +12,45 @@
 # Without --fix: prints a drift report and exits 0 (no writes).
 set -euo pipefail
 
+# T3: progressive-milestone graph validation mode (v1.3.0). Validates a parent
+# plan JSON for cycles, missing IDs, dangling child links, provisional
+# non-dispatch, and canonical decision-gate shape. Additive; does not affect the
+# checkbox-sync behaviour below.
+if [ "${1:-}" = "--validate-milestones" ]; then
+    PLAN_JSON="${2:-}"
+    if [ -z "$PLAN_JSON" ] || [ ! -f "$PLAN_JSON" ]; then
+        echo "Error: --validate-milestones requires a plan JSON file" >&2
+        exit 2
+    fi
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    PLUGIN_ROOT="$(cd -P -- "$SCRIPT_DIR/../.." && pwd -P)"
+    python3 - "$PLAN_JSON" <<'PYEOF'
+import json, sys
+sys.path.insert(0, str(__import__('pathlib').Path(sys.argv[0]).resolve().parent.parent / "tooling"))
+from lazyqoder_adaptive_planning import (
+    validate_plan_graph, validate_decision_gate, next_dispatchable_milestone,
+)
+plan_file = sys.argv[1]
+try:
+    plan = json.load(open(plan_file, encoding="utf-8"))
+except (OSError, ValueError) as exc:
+    print("Error: invalid plan JSON: %s" % exc, file=sys.stderr)
+    sys.exit(2)
+errors = validate_plan_graph(plan)
+print("=== milestone graph validation for %s ===" % plan_file)
+if errors:
+    print("INVALID (%d):" % len(errors))
+    for e in errors:
+        print("  - " + e)
+    sys.exit(1)
+nxt = next_dispatchable_milestone(plan)
+print("VALID — graph is acyclic with resolvable links and scoped gates.")
+print("next dispatchable milestone: %s" % (nxt["id"] if nxt else "none"))
+sys.exit(0)
+PYEOF
+    exit $?
+fi
+
 RUN_ID="${1:-}"
 FIX="${2:-}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
