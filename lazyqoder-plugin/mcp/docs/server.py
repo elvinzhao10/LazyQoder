@@ -39,7 +39,7 @@ def fetch(url, timeout=20):
     if not CURL:
         return None, "curl not available"
     try:
-        r = subprocess.run([CURL, "-sS", "--proto", "=https", "--proto-redir", "=https", "--max-redirs", "0", "--max-time", str(timeout), "-A", "lazyqoder-docs/1.2.3", url],
+        r = subprocess.run([CURL, "-sS", "--proto", "=https", "--proto-redir", "=https", "--max-redirs", "0", "--max-time", str(timeout), "-A", "lazyqoder-docs/1.3.0", url],
                            capture_output=True, text=True, timeout=timeout + 5)
         if r.returncode == 0 and r.stdout:
             return r.stdout, None

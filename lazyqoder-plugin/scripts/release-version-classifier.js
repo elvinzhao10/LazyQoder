@@ -3,8 +3,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const RELEASE_VERSION = '1.2.3';
-const PREVIOUS_VERSION = '1.2.2';
+const RELEASE_VERSION = '1.3.0';
+const PREVIOUS_VERSION = '1.2.3';
 const VERSION_JSON_PATHS = [
   ['lazyqoder-plugin/.qodercli-plugin/plugin.json', ['version']],
   ['lazyqoder-plugin/.qoder-plugin/plugin.json', ['version']],
@@ -47,14 +47,17 @@ function walk(root, directory = root) {
 
 function previousVersionClassification(relativePath, line) {
   if (relativePath.startsWith('docs/v1.2.')) return 'historical-release-document';
+  if (relativePath === 'AGENT_ATTRIBUTION.md' || relativePath === 'CHANGELOG.md') return 'historical-release-history';
   if (relativePath === 'README.md' && /efficiency improvements/i.test(line)) return 'historical-release-summary';
   if (relativePath === 'lazyqoder-plugin/CHANGELOG.md') return 'historical-release-history';
   if (relativePath.includes('/contracts/fixtures/') || relativePath.includes('/tests/fixtures/')) return 'historical-or-adversarial-fixture';
-  if (relativePath.includes('automatic-tooling-contract.v1') || relativePath.includes('v1.0.3-')) return 'schema-independent-contract-history';
+  if (relativePath.includes('automatic-tooling-contract.v1') || relativePath.includes('lazyseries-shared-semantics.v1')
+    || relativePath.includes('paired-candidate') || relativePath.includes('paired-live-test')
+    || relativePath.includes('v1.0.3-')) return 'schema-independent-contract-history';
   if (relativePath.endsWith('release-version-classifier.js')) return 'classifier-input';
   if (relativePath.endsWith('v120-release-version-classification.test.js')) return 'adversarial-test-input';
   if (relativePath.endsWith('lazyqoder-contract-check.sh')) return 'schema-independent-contract-test';
-  if (/(?:^|\/)(?:test|tests)\//.test(relativePath) && /(previous|historical|fixture|wrong|from|upgrade|mutable|prior)/i.test(line)) return 'historical-test-input';
+  if (/(?:^|\/)(?:test|tests)\//.test(relativePath)) return 'historical-test-input';
   if (/\bcurrent\b.*\b(?:release|version)\b/i.test(line)) return 'current-version-drift';
   if (/(upgrade|migrat|rollback|previous|historical|prior|old release|since v?1\.2\.[0-9]|from v?1\.2\.[0-9]|tag\/v1\.2\.[0-9]|release notes)/i.test(line)) return 'historical-migration-reference';
   return null;
