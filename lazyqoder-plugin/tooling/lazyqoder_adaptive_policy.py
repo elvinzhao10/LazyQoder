@@ -140,6 +140,7 @@ class PolicySelection(NamedTuple):
     responsibilities: list[str]
     stages: list[str]
     verification_level: str
+    execution_intent: str = "plan_only"
 
 
 @lru_cache(maxsize=1)
@@ -289,7 +290,11 @@ def _selected_mode(text: str, context: dict) -> tuple[str, str | None]:
     return "direct", None
 
 
-def select_policy(text: str, context: dict) -> PolicySelection:
+def select_policy(
+    text: str,
+    context: dict,
+    execution_intent: str | None = None,
+) -> PolicySelection:
     mode, selected_workflow = _selected_mode(text, context)
     stale_material = context.get("stale_material", context.get("material_change"))
     if (
@@ -306,15 +311,25 @@ def select_policy(text: str, context: dict) -> PolicySelection:
     capabilities = list(config["capabilities"])
     verification_level = config["verification_level"]
     explicit = explicit_workflow(text) or _context_workflow(context)
-    plan_only = (
+    plan_only_explicit = (
         explicit is not None
         and explicit[0] == "lazy-ulw-plan"
     )
+    # T2: persisted execution_intent (plan_only|execute) is authoritative for the
+    # plan-only invariant and is distinct from workflow_mode / stage.
+    resolved_intent = (
+        execution_intent
+        if execution_intent in ("plan_only", "execute")
+        else ("plan_only" if plan_only_explicit else None)
+    )
+    plan_only = plan_only_explicit or resolved_intent == "plan_only"
     if plan_only:
         stages = ["understand", "plan"]
         responsibilities = ["exploration", "planning"]
         capabilities = [capability for capability in capabilities if capability != "execution"]
         verification_level = "targeted"
+        if resolved_intent is None:
+            resolved_intent = "plan_only"
     security, release, _ = _risk_signals(text, context)
     if mode == "orchestrated":
         review_responsibilities = []
@@ -342,6 +357,7 @@ def select_policy(text: str, context: dict) -> PolicySelection:
         responsibilities=responsibilities,
         stages=stages,
         verification_level=verification_level,
+        execution_intent=resolved_intent or "plan_only",
     )
 
 

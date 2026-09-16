@@ -407,6 +407,7 @@ def build_directive(hook_input: HookInput) -> dict:
         "decision": {
             "approval": decision["approval"],
             "explicitWorkflow": decision["explicitWorkflow"],
+            "executionIntent": decision["execution_intent"],
             "mode": decision["mode"],
             "responsibilities": decision["responsibilities"],
             "stages": decision["stages"],
@@ -419,6 +420,23 @@ def build_directive(hook_input: HookInput) -> dict:
         "selection": {"workflowSurfaces": _workflow_selection(decision)},
         "snapshot": snapshot,
     }
+    # T2: missing host hook / unobserved host -> never claim activation. Surface an
+    # accurate (pending, not PASS) status and offer the explicit entry route.
+    if confirmed:
+        directive["hostHookSupport"] = "available"
+        directive["entryRoute"] = "automatic"
+    else:
+        directive["hostHookSupport"] = "unavailable"
+        directive["entryRoute"] = "explicit-start-work"
+        directive["hostReadiness"] = "pending"
+    # T2: a re-delivered host prompt event must never create a second dispatch.
+    # The persisted run is selected once; flag the re-delivery instead.
+    duplicate_event = False
+    if target is not None:
+        prior = target.state.get("adaptive")
+        if isinstance(prior, dict) and prior.get("requestDigest") == snapshot["requestDigest"]:
+            duplicate_event = prior.get("decisionId") == snapshot["decisionId"]
+    directive["duplicateEvent"] = duplicate_event
     if target is not None:
         directive["explanation"] = adaptive_explanation_fields(snapshot)
     if dispatched == "inactive:revision-unavailable":
