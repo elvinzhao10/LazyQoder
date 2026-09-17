@@ -1,5 +1,7 @@
 # LazyQoder
 
+![LazyQoder](lazyqoder-banner.png)
+
 LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, **Qoder IDE**, and the **Qoder IDE app**. It prepares local package assets
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
@@ -18,8 +20,8 @@ Two entry routes converge on the same execution authority and gates:
 
 - **Natural language**: describe the work plainly — "Fix the typo in the
   welcome label" — and the smallest sufficient workflow is selected and run.
-- **Explicit command**: the start-work command for known plans, or the planner
-  command for new ones. Same authority, same gates.
+- **Explicit commands**: `/lazy-ulw-plan <idea>` builds a new plan, and
+  `/lazy-start-work <plan>` executes a known plan. Same authority, same gates.
 
 No command is required for a clear implementation request. Conversely, asking
 to *explain*, quoting a command, or saying "plan only" never touches your
