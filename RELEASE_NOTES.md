@@ -1,32 +1,42 @@
-# LazyQoder v1.2.3 — platform compatibility patch
+# LazyQoder v1.3.0 — adaptive workflow experience
 
-This release prepares the v1.2.3 package. It does not publish a tag,
+This release prepares the v1.3.0 package. It does not publish a tag,
 marketplace entry, or host installation. Package readiness and current host
 observation remain separate authorities.
 
-This is a patch release. It changes host-facing validation, setup output, and
-plan parsing. Workflow and decision-memory features are **not** part of this
-release; they are scheduled for v1.3.0.
+This is a feature release. It adds dual activation, progressive milestones
+with scoped decision gates, human plan-edit reconciliation, a cross-plan
+decision ledger, and verification-tier selection with receipt reuse. Qoder
+CLI, Qoder IDE, and qoder-app route boundaries are unchanged: package
+selection never proves host activation, and host readiness stays explicit
+pending without fresh-session evidence.
 
 ## Eval-driven fixes
 
-- Host MCP declarations are validated before they are trusted. Stdio servers
-  require a non-empty executable name or path (spaces are supported), string
-  arguments, and resolvable bundled launcher paths. HTTP transports require a URL. A violation reports a typed error naming the
-  server and the remediation instead of failing silently or loading anyway.
-- An empty or malformed `mcpServers` object is rejected explicitly rather than
-  passing validation with no servers checked.
-- Setup output is actionable. The load check and the status report print the
-  remaining step for each host and name the failing component with its detail,
-  so a reader does not have to infer the next action.
-- Enabling a project-scoped MCP surface is reported as a host setting, never as
-  an observed connection. Package readiness is not promoted to host readiness.
-- Plan parsing accepts the canonical `## TODOs` heading and the legacy
-  `## Todos` form. A non-empty plan that parses zero tasks now fails with an
-  actionable error rather than reporting success, and missing or duplicate task
-  identifiers are reported instead of matched by guesswork.
-- A checkbox label that matches more than one task is refused with the full
-  list of matches rather than updating an arbitrary first match.
+- Explicit start-work and plain natural-language implementation requests
+  converge on the same execution authority and gates. Explanation,
+  quoted-command, and explicit plan-only requests never mutate product files,
+  and an ambiguous approval with several pending questions never grants
+  execution authority.
+- `execution_intent` (plan_only|execute) is persisted separately from workflow
+  mode and current stage, defaulting to plan_only. Duplicate host events do
+  not duplicate dispatch; resume selects the single compatible run or asks
+  only when genuinely ambiguous.
+- Complex work uses one parent plan with milestones. Provisional milestones
+  never dispatch; dependency cycles, missing IDs, and dangling child links are
+  rejected. Decision gates carry the canonical shape; a recommendation never
+  becomes owner approval and only transitive dependents block.
+- Human plan edits are reconciled at execution boundaries: cosmetic edits
+  preserve all evidence, semantic edits invalidate only the affected task and
+  its transitive dependents, a human checked box is a completion assertion
+  never a verified result, and stale results cannot update newer plan state.
+- Cross-plan decision memory is durable (`decisions/ledger.jsonl`): immutable
+  versioned events, replay-derived active view, scoped corrections, and
+  visible failure on malformed records.
+- Verification is selected once from the changed boundary and risk on the
+  V0-V3 tier ladder, then a green receipt is reused while its declared inputs
+  and covered behavior are unchanged. Counts never promote a tier; a failing
+  focused check reruns only itself plus directly affected integration checks.
 
 ## Measured efficiency
 
@@ -41,8 +51,8 @@ unchanged at 13/13 and 57/57 assertions. No new efficiency claim is made here.
 | Host | Package route | Readiness requirement |
 | --- | --- | --- |
 | Qoder CLI | Release-root local marketplace | Fresh session with one loaded Skill or command and all six MCP connections. |
-| Qoder CLI | CLI-backed marketplace when available; observed-build GUI or recovery fallback otherwise | Fresh IDE session with the same loaded surface and six live MCP connections. |
-| Qoder IDE | `.qoder-plugin/plugin.json` through the host's visible marketplace/plugin flow | Current-build receipt for a Skill, command, agent, hook, and all six MCP connections. |
+| Qoder IDE | CLI-backed marketplace when available; observed-build GUI or recovery fallback otherwise | Fresh IDE session with the same loaded surface and six live MCP connections. |
+| Qoder app | `.qoder-plugin/plugin.json` through the host's visible marketplace/plugin flow | Current-build receipt for a Skill, command, agent, hook, and all six MCP connections. |
 
 Package checks are package evidence only. Every host remains **pending host
 proof** until it is observed in a fresh session; this release does not claim
@@ -50,7 +60,7 @@ that any host loaded, enabled, or connected anything.
 
 ## Migration and upgrade
 
-Use the durable launcher to update from v1.2.2 after inventorying
+Use the durable launcher to update from v1.2.3 after inventorying
 receipt-owned, modified, and unknown assets. Preserve user changes and
 host-managed settings. Run package checks, then start a fresh host session and
 observe the selected route before reporting host readiness. Existing
@@ -75,7 +85,7 @@ valid declarations, including executable paths containing spaces, need no change
 ## Rollback
 
 Stop the host session and run durable `offboard` plan-first. After approval,
-remove only unmodified v1.2.3 receipt-owned assets, preserve modified, unknown,
+remove only unmodified v1.3.0 receipt-owned assets, preserve modified, unknown,
 linked, caller-owned, and host-managed state, then reactivate the intended
 immutable prior release. Start a fresh session and re-observe the selected host
 route; never edit receipts, `active.json`, or private host registries by hand.

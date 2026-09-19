@@ -17,7 +17,9 @@ from lazyqoder_adaptive_policy import (
     PolicySelection,
     approval_classes,
     escalation_history,
+    explicit_workflow,
     select_policy,
+    _context_workflow,
 )
 from lazyqoder_adaptive_snapshot import validate_adaptive_snapshot
 from lazyqoder_adaptive_snapshot_semantics import (
@@ -30,9 +32,26 @@ from lazyqoder_adaptive_selection_explanation import (
     not_selected,
     user_explanation,
 )
+from lazyqoder_adaptive_intent import derive_execution_intent, is_plan_only
 
 
 SHA256_PATTERN = re.compile(r"^sha256:[0-9a-f]{64}$")
+
+
+def _resolve_execution_intent(request: str, context: dict) -> str:
+    """T2: both explicit start-work and NL requests converge on one authority.
+
+    An explicit execution workflow (e.g. ``/lazy-start-work``) is an execution
+    instruction -> ``execute``. The explicit plan-only workflow
+    (``/lazy-ulw-plan``) -> ``plan_only``. Otherwise derive from the request.
+    """
+    named = explicit_workflow(request)
+    if named is not None:
+        return "plan_only" if named[0] == "lazy-ulw-plan" else "execute"
+    ctx = _context_workflow(context)
+    if ctx is not None and ctx[0] == "lazy-ulw-plan":
+        return "plan_only"
+    return derive_execution_intent(request, context)
 
 
 def _digest_or_default(value: object, material: dict) -> str:
@@ -137,10 +156,15 @@ def classify_adaptive_decision(request: str, context: dict | None = None) -> dic
     context_values = dict(context) if isinstance(context, dict) else {}
     fingerprints = _fingerprints(request, context_values)
     prior = context_values.get("snapshot")
+    # T2: resolve the persisted execution intent (plan_only | execute) separately
+    # from workflow mode / stage. Default plan_only when nothing authoritative.
+    execution_intent = _resolve_execution_intent(request, context_values)
     stale_material = _stale_material(context_values, prior, fingerprints)
     policy_context = dict(context_values)
     policy_context["stale_material"] = stale_material
-    current_policy = select_policy(request, policy_context)
+    current_policy = select_policy(
+        request, policy_context, execution_intent=execution_intent
+    )
     prior_policy = (
         _snapshot_policy(prior, current_policy)
         if isinstance(prior, dict) and not stale_material
@@ -174,7 +198,9 @@ def classify_adaptive_decision(request: str, context: dict | None = None) -> dic
     if isinstance(prior, dict) and not stale_material and not compatible:
         stale_material = ["decisionSemantics"]
         policy_context["stale_material"] = stale_material
-        current_policy = select_policy(request, policy_context)
+        current_policy = select_policy(
+            request, policy_context, execution_intent=execution_intent
+        )
     policy = prior_policy or current_policy
     reasons = decision_reasons(
         request,
@@ -213,6 +239,7 @@ def classify_adaptive_decision(request: str, context: dict | None = None) -> dic
         "decisionId": decision_id,
         "escalationCount": len(history),
         "escalationHistory": history,
+        "executionIntent": policy.execution_intent,
         "hostFingerprint": fingerprints["hostFingerprint"],
         "mode": policy.mode,
         "nextAction": selected_next_action,
@@ -240,6 +267,7 @@ def classify_adaptive_decision(request: str, context: dict | None = None) -> dic
         "capabilities": policy.capabilities,
         "contractVersion": 1,
         "escalation_triggers": [item["trigger"] for item in history],
+        "execution_intent": policy.execution_intent,
         "explicitWorkflow": policy.explicit_workflow,
         "fallback_policy": substitutions,
         "mode": policy.mode,

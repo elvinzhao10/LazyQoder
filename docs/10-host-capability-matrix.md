@@ -4,12 +4,12 @@ LazyQoder deliberately aligns policy and package safety across hosts while keepi
 
 ## Onboarding baseline
 
-## Current v1.2.3 evidence boundary
+## Current v1.3.0 evidence boundary
 
 This documentation release covers `qodercli-cli`, `qodercli-ide`, and
-`qoder`; it does not publish a v1.2.3 package or claim a host has loaded
+`qoder`; it does not publish a v1.3.0 package or claim a host has loaded
 one. Marketplace is the default full-plugin route for Qoder CLI and
-Qoder IDE. The Skills/manual-MCP route is recovery-only and mutually exclusive
+the Qoder app. The Skills/manual-MCP route is recovery-only and mutually exclusive
 with a full-plugin route in the same project.
 
 | v2 field | Allowed values and boundary |
@@ -33,7 +33,7 @@ selection never proves native workflow loading or host dispatch.
 
 Open or link the durable release selected by `status` in the selected host, give the agent
 `https://github.com/elvinzhao10/LazyQoder`, and type `onboard`. The agent
-detects or asks for Qoder CLI, Qoder CLI, or Qoder IDE, runs safe
+detects or asks for Qoder CLI, Qoder IDE, or the Qoder app, runs safe
 package checks, and reports package readiness separately from host readiness.
 Before a host-managed change it asks for approval, gives one exact action, and
 waits. It then uses Computer Use or a user-pasted status/screenshot; reload or
@@ -42,7 +42,7 @@ connections. Without observation, **HOST READINESS: PENDING**.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
 CLI route and the preferred Qoder CLI route whenever the Qoder CLI is
-available**. Qoder IDE uses `.qoder-plugin/plugin.json` as its default
+available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only.
 
@@ -50,11 +50,11 @@ only.
 
 | Host | Local route | Supported fallback | Required host proof |
 | --- | --- | --- | --- |
-| **Qoder CLI** | When the CLI is available (`qodercli`), use the user-scope release-root marketplace route shared with Qoder CLI. The GUI route is only an observed-build alternative; the supplied GUI Add local directory flow failed. | Public Skills import plus manual MCP JSON when the CLI is unavailable. It excludes commands, agents, and hooks. | New-session Skill/command appropriate to the chosen route and all six MCP connections. |
+| **Qoder IDE** | When the CLI is available (`qodercli`), use the user-scope release-root marketplace route shared with Qoder CLI. The GUI route is only an observed-build alternative; the supplied GUI Add local directory flow failed. | Public Skills import plus manual MCP JSON when the CLI is unavailable. It excludes commands, agents, and hooks. | New-session Skill/command appropriate to the chosen route and all six MCP connections. |
 | **Qoder CLI** | Run durable `status --route qodercli-marketplace`, then use its active durable release root with `qodercli plugin marketplace add "<active-durable-release-root>"`; wait before `qodercli plugin install lazyqoder@lazyqoder`. | Inside a Qoder CLI session, the interactive `/plugin` menu provides the same route. `--plugin-dir` is development/testing only, never persistent. | Fresh-session Skill/command and all six MCP connections. |
-| **Qoder IDE** | The active release's `.qoder-plugin/plugin.json` marketplace source, declaring Skills, commands, agents, hooks, and six MCP servers. | Recovery-only Skills import plus six manual local MCP connectors. It excludes commands, agents, and hooks. | A current source/version/build/session receipt with one loaded Skill, command, agent, hook, and all six MCP connections. |
+| **Qoder app** | The active release's `.qoder-plugin/plugin.json` marketplace source, declaring Skills, commands, agents, hooks, and six MCP servers. | Recovery-only Skills import plus six manual local MCP connectors. It excludes commands, agents, and hooks. | A current source/version/build/session receipt with one loaded Skill, command, agent, hook, and all six MCP connections. |
 
-The supplied macOS QA dated 2026-07-18 inspected Qoder IDE v5.2.6 on macOS
+The supplied macOS QA dated 2026-07-18 inspected the Qoder app v5.2.6 on macOS
 with a historical LazyQoder package; the Qoder CLI exact host version/build was not recorded.
 For Qoder CLI,
 prefer the CLI marketplace route whenever available; the GUI local-directory
@@ -78,7 +78,7 @@ It prints `HOST_PREPARATION=not-applied`, `HOST_MUTATION=none`, and
 `HOST_READINESS=pending`; `--apply` refuses. It is not an installer and never
 proves host readiness.
 
-For the Qoder CLI GUI alternative, wait for marketplace discovery, install
+For the Qoder IDE GUI alternative, wait for marketplace discovery, install
 as a separate action, then fully restart before inspecting a fresh session.
 
 `.qodercli/settings.json` is shareable non-secret project scope.
@@ -89,7 +89,7 @@ unstaged; secrets must never be committed. Package checks preserve both.
 
 The host adapter differs, but the safety model does not:
 
-- **Host integration:** Qoder CLI and Qoder IDE decide plugin discovery, connector registration, session lifetime, and event delivery.
+- **Host integration:** Qoder CLI, Qoder IDE, and the Qoder app decide plugin discovery, connector registration, session lifetime, and event delivery.
 - **State/path:** package run state and receipt-owned tooling roots are local; marketplace directories, `.qoder` data, credentials, and connector state remain host/user-owned.
 - **Inventory:** six local MCP servers are packaged. Optional remote exports and browser work remain separate explicit decisions.
 
@@ -113,7 +113,7 @@ Load-check, doctor, and capability reports emit only `package-ready`; they do
 not claim that a host loaded a plugin or connected an MCP process. A route seen
 in one build is an `observed-build-route`, not universal host support.
 
-The Qoder IDE fallback is Skills plus six manually configured local MCP
+The Qoder app fallback is Skills plus six manually configured local MCP
 connectors. It explicitly excludes agents, commands, and hooks. It must not be
 run alongside a full plugin route for the same project: coexistence is
 unsupported and may duplicate Skills or MCP processes. Stop the session,

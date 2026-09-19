@@ -2,11 +2,11 @@
 
 This page explains the deployment boundary in code terms. A plugin package contains files a host may load; it does not contain the host's marketplace database, session state, or connector process table.
 
-## Current v1.2.3 route status
+## Current v1.3.0 route status
 
 This documentation boundary covers `qodercli-cli`, `qodercli-ide`, and
-`qoder`; it does not publish a v1.2.3 package. Marketplace is the default
-full-plugin route for Qoder CLI and Qoder IDE. The Skills/manual-MCP route
+`qoder`; it does not publish a v1.3.0 package. Marketplace is the default
+full-plugin route for Qoder CLI and the Qoder app. The Skills/manual-MCP route
 is recovery-only and mutually exclusive with a full-plugin route. v2 records
 native mode as `invoke-documented`, `observe-only`, `descriptor-only`, or
 `unavailable`; public label as `documented-tested`, `documented-untested`,
@@ -41,9 +41,9 @@ which host is in use, runs safe package checks, and reports package readiness
 separately from host readiness. Before a host-managed marketplace, plugin,
 Skills, or connector change it asks for approval, then gives one exact action
 and waits. After the response it inspects the host with Computer Use; any
-reload/new-session step is separate. Qoder IDE's supported fallback is Skills
+reload/new-session step is separate. The Qoder app's supported fallback is Skills
 import plus six individual manual local MCP connectors. Files or load-check
-output never imply Qoder IDE commands, agents, hooks, or MCP loaded without a
+output never imply Qoder app commands, agents, hooks, or MCP loaded without a
 real full-plugin session. Host proof must show one real Skill/command and every
 expected MCP connection. If Computer Use is unavailable, a user-pasted verbatim
 status or screenshot is observed evidence; otherwise **HOST READINESS:
@@ -51,7 +51,7 @@ PENDING**.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
 CLI route and the preferred Qoder CLI route whenever the Qoder CLI is
-available**. Qoder IDE uses `.qoder-plugin/plugin.json` as its default
+available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only. Package checks never upgrade any route to host proof.
 
@@ -59,7 +59,7 @@ only. Package checks never upgrade any route to host proof.
 
 `lazyqoder-plugin/` can be copied and checked in isolation. `scripts/lazyqoder-load-check.sh` inspects the selected package root, manifests, inventories, declarations, executable scripts, and tooling contract. `lazyqoder-plugin-doctor.sh` adds health diagnostics. Neither script asks a host to install a plugin or open an MCP connection.
 
-The host is a second runtime. Qoder CLI and Qoder IDE choose how plugins are discovered, when hooks receive events, and when MCP launchers are spawned. The package models that with declarations and tests; it deliberately does not scan or mutate host-owned paths to infer success.
+The host is a second runtime. Qoder CLI, Qoder IDE, and the Qoder app choose how plugins are discovered, when hooks receive events, and when MCP launchers are spawned. The package models that with declarations and tests; it deliberately does not scan or mutate host-owned paths to infer success.
 
 ## Two evidence channels
 
@@ -84,27 +84,27 @@ qodercli plugin install lazyqoder@lazyqoder
 ```
 
 Inside a Qoder CLI session, the interactive `/plugin` menu is equivalent; do
-not use the slash forms as terminal commands. Qoder CLI uses that same
+not use the slash forms as terminal commands. Qoder IDE uses that same
 user-scope CLI marketplace route whenever the CLI is available; its supplied
 GUI Add local directory flow failed. If the CLI is unavailable, use the public
-Skills import plus manual MCP JSON fallback. Qoder IDE uses the active
+Skills import plus manual MCP JSON fallback. The Qoder app uses the active
 release's `.qoder-plugin/plugin.json` marketplace source. The recovery-only
 fallback remains Skills-only import plus six manual connectors and excludes commands, agents, and
 hooks. Full plugin/manual coexistence is unsupported: stop the session, remove
 only old LazyQoder entries through the host UI, choose one route, start a new
 session, and verify it.
 
-For Qoder CLI, the GUI full-plugin sequence is an observed-build
+For Qoder IDE, the GUI full-plugin sequence is an observed-build
 alternative only: add the release root as a local directory marketplace, wait
 for discovery, install as a separate action, fully restart, then verify a fresh
 session. The supplied GUI flow failed, so prefer the CLI route and retain
 **HOST READINESS: PENDING** until observed.
 
-### Qoder IDE marketplace full-plugin boundary
+### Qoder app marketplace full-plugin boundary
 
 The nested `.qoder-plugin/plugin.json` remains the default marketplace
 source even without a public manifest schema. Never inspect or mutate private
-Qoder IDE registries. This package preflight remains read-only:
+Qoder app registries. This package preflight remains read-only:
 
 ```bash
 bash lazyqoder-plugin/scripts/lazyqoder-qoder-preparation-check.sh \

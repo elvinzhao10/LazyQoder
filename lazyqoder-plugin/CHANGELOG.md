@@ -2,6 +2,20 @@
 
 > **Historical/non-operational record.** This dated change history is retained for context only. In a repository checkout, current guidance is in `README.md`, `AGENTS.md`, and `lazyqoder-plugin/README.md`; a copied package should use its local `README.md`.
 
+## v1.3.0 — Adaptive workflow experience (2026-09-16)
+
+- Dual activation: explicit start-work and natural-language implementation
+  requests converge on one execution authority; `execution_intent` defaults to
+  plan_only and explanation/plan-only requests never mutate product files.
+- Progressive milestones with scoped decision gates; provisional milestones
+  never dispatch; cycles/missing IDs/dangling links rejected.
+- Human plan-edit reconciliation: cosmetic edits preserve evidence, semantic
+  edits invalidate only affected tasks and transitive dependents; stale
+  results rejected.
+- Cross-plan decision ledger with immutable events, replay-derived active
+  view, and scoped corrections.
+- Verification tiers V0-V3 with receipt reuse; counts never promote a tier.
+
 ## v1.2.3 — Platform compatibility patch (2026-09-14)
 
 - Host MCP declarations are validated before use: stdio servers require

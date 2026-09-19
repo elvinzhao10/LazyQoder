@@ -1,10 +1,10 @@
 # Host routes
 
-## Current v1.2.3 route and evidence status
+## Current v1.3.0 route and evidence status
 
-This guide is the current v1.2.3 documentation boundary for `qodercli-cli`,
-`qodercli-ide`, and `qoder`; it does not publish a v1.2.3 package.
-Marketplace is the default full-plugin route for Qoder CLI and Qoder IDE.
+This guide is the current v1.3.0 documentation boundary for `qodercli-cli`,
+`qodercli-ide`, and `qoder`; it does not publish a v1.3.0 package.
+Marketplace is the default full-plugin route for Qoder CLI and the Qoder app.
 The manual Skills/MCP route is recovery-only and mutually exclusive with a
 full-plugin route for one project.
 
@@ -44,12 +44,12 @@ screenshot is observed evidence; otherwise **HOST READINESS: PENDING**.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
 CLI route and the preferred Qoder CLI route whenever the Qoder CLI is
-available**. Qoder IDE uses `.qoder-plugin/plugin.json` as its default
+available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only. These labels never prove the current build.
-The supplied macOS QA dated 2026-07-18 observed Qoder CLI full-plugin
+The supplied macOS QA dated 2026-07-18 observed Qoder IDE full-plugin
 loading through the CLI-backed user-scope marketplace route. It inspected
-Qoder IDE v5.2.6 on macOS and reported full-plugin behavior after undocumented
+the Qoder app v5.2.6 on macOS and reported full-plugin behavior after undocumented
 host-internal changes. This is historical feedback only. The GUI flows failed
 in that tested build; a different or unsupported build remains **HOST
 READINESS: PENDING**.
@@ -64,14 +64,14 @@ directory-marketplace compatibility.
 
 | Host route | Safe package artifact | Required host observation |
 | --- | --- | --- |
-| **Qoder CLI** | When the CLI is available (`qodercli`), use the same user-scope release-root marketplace route as Qoder CLI. The desktop GUI route is only an observed-build alternative; the supplied GUI Add local directory flow failed. | Use the CLI marketplace route below and inspect the IDE's fresh session. If the CLI is unavailable, record that limitation and choose the Skills/manual-MCP fallback explicitly. |
+| **Qoder IDE** | When the CLI is available (`qodercli`), use the same user-scope release-root marketplace route as Qoder CLI. The desktop GUI route is only an observed-build alternative; the supplied GUI Add local-directory flow failed. | Use the CLI marketplace route below and inspect the IDE's fresh session. If the CLI is unavailable, record that limitation and choose the Skills/manual-MCP fallback explicitly. |
 | **Qoder CLI** | Absolute release-root marketplace metadata and package validation. The nested `lazyqoder-plugin/` path is not the marketplace root. | Use the three separate actions below. After installation and a fresh session observe one real Skill/command plus all six MCP connections. |
-| **Qoder IDE full plugin** | The active release's `lazyqoder-plugin/.qoder-plugin/plugin.json`, declaring Skills, commands, agents, hooks, and `.mcp.json`. | Use the marketplace/plugin surface exposed by the current build. A current receipt must bind the active source/version and same build/session, and observe one loaded Skill, command, agent, hook, and all six MCP servers. |
-| **Qoder IDE recovery fallback** | Import/copy `lazyqoder-plugin/skills/` only, then configure each of six local MCP connectors manually. | Use only after receipt-scoped removal of the full-plugin route. Observe one imported Skill and each connector; commands, agents, and hooks remain excluded. |
+| **Qoder app full plugin** | The active release's `lazyqoder-plugin/.qoder-plugin/plugin.json`, declaring Skills, commands, agents, hooks, and `.mcp.json`. | Use the marketplace/plugin surface exposed by the current build. A current receipt must bind the active source/version and same build/session, and observe one loaded Skill, command, agent, hook, and all six MCP servers. |
+| **Qoder app recovery fallback** | Import/copy `lazyqoder-plugin/skills/` only, then configure each of six local MCP connectors manually. | Use only after receipt-scoped removal of the full-plugin route. Observe one imported Skill and each connector; commands, agents, and hooks remain excluded. |
 
-## Qoder CLI GUI alternative (observed-build only)
+## Qoder IDE GUI alternative (observed-build only)
 
-This route is conditional for Qoder CLI only, when the Qoder CLI route
+This route is conditional for Qoder IDE only, when the Qoder CLI route
 is unavailable and the current app visibly offers a local-directory
 marketplace. It is not the documented CLI route and must not be inferred from
 the presence of a manifest. The supplied build's GUI Add local directory flow
@@ -81,7 +81,7 @@ inspect before the next:
 1. After approval, open the host's **Plugins / Marketplace → Add local
    directory** GUI, choose the absolute release root containing
    `.qodercli-plugin/marketplace.json`, and wait.
-2. Inspect the version the marketplace actually displays; do not infer v1.2.3
+2. Inspect the version the marketplace actually displays; do not infer v1.3.0
    publication from this documentation boundary or install in the discovery
    action. If the control or marketplace is absent, record the
    current host version/build and exact error as `UNAVAILABLE`, leave **HOST
@@ -96,11 +96,11 @@ inspect before the next:
    `code-intel`, and `docs`. A marketplace row, cache, or connector-panel count
    is not live proof.
 
-## Qoder IDE marketplace full-plugin boundary
+## Qoder app marketplace full-plugin boundary
 
 The nested `.qoder-plugin/plugin.json` remains the default installation
 source even without a public manifest schema. Never inspect or mutate private
-Qoder IDE registries. Use only a marketplace/plugin action exposed by the
+Qoder app registries. Use only a marketplace/plugin action exposed by the
 current build, one approved host action at a time.
 
 This package preflight remains read-only:
@@ -256,7 +256,7 @@ or caller shell directory. After approval, add exactly one named connector,
 wait; handle a trust prompt as a separate action, wait; then inspect that
 connector before proceeding to the next one.
 
-## Qoder CLI / Qoder IDE Skills/manual-MCP boundary
+## Qoder IDE / Qoder app Skills/manual-MCP boundary
 
 The supported copied-repository route is Skills-only import/copy from
 `lazyqoder-plugin/skills/` plus six individual manual local MCP connectors in

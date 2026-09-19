@@ -12,6 +12,45 @@
 # Without --fix: prints a drift report and exits 0 (no writes).
 set -euo pipefail
 
+# T3: progressive-milestone graph validation mode (v1.3.0). Validates a parent
+# plan JSON for cycles, missing IDs, dangling child links, provisional
+# non-dispatch, and canonical decision-gate shape. Additive; does not affect the
+# checkbox-sync behaviour below.
+if [ "${1:-}" = "--validate-milestones" ]; then
+    PLAN_JSON="${2:-}"
+    if [ -z "$PLAN_JSON" ] || [ ! -f "$PLAN_JSON" ]; then
+        echo "Error: --validate-milestones requires a plan JSON file" >&2
+        exit 2
+    fi
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    PLUGIN_ROOT="$(cd -P -- "$SCRIPT_DIR/../.." && pwd -P)"
+    python3 - "$PLAN_JSON" <<'PYEOF'
+import json, sys
+sys.path.insert(0, str(__import__('pathlib').Path(sys.argv[0]).resolve().parent.parent / "tooling"))
+from lazyqoder_adaptive_planning import (
+    validate_plan_graph, validate_decision_gate, next_dispatchable_milestone,
+)
+plan_file = sys.argv[1]
+try:
+    plan = json.load(open(plan_file, encoding="utf-8"))
+except (OSError, ValueError) as exc:
+    print("Error: invalid plan JSON: %s" % exc, file=sys.stderr)
+    sys.exit(2)
+errors = validate_plan_graph(plan)
+print("=== milestone graph validation for %s ===" % plan_file)
+if errors:
+    print("INVALID (%d):" % len(errors))
+    for e in errors:
+        print("  - " + e)
+    sys.exit(1)
+nxt = next_dispatchable_milestone(plan)
+print("VALID — graph is acyclic with resolvable links and scoped gates.")
+print("next dispatchable milestone: %s" % (nxt["id"] if nxt else "none"))
+sys.exit(0)
+PYEOF
+    exit $?
+fi
+
 RUN_ID="${1:-}"
 FIX="${2:-}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -56,19 +95,78 @@ fi
 NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 TMP_FILE=$(mktemp "$STATE_RUN_DIR/.state.json.XXXXXX")
 EVENTS_TMP=$(mktemp "$STATE_RUN_DIR/.events.jsonl.XXXXXX")
+# v1.3.0 T4: reconcile tooling lives in the plugin's tooling/ dir.
+PLUGIN_TOOLING="$(cd -P -- "$SCRIPT_DIR/../.." && pwd -P)/tooling"
 cleanup_transaction_temps() { rm -f "$TMP_FILE" "$EVENTS_TMP"; }
 trap cleanup_transaction_temps EXIT
 
-python3 - "$STATE_FILE" "$PLAN_PATH" "$FIX" "$NOW" "$RUN_ID" "$CWD" "$TMP_FILE" "$EVENTS_FILE" "$EVENTS_TMP" <<'PYEOF'
-import json, sys, re, os
+python3 - "$STATE_FILE" "$PLAN_PATH" "$FIX" "$NOW" "$RUN_ID" "$CWD" "$TMP_FILE" "$EVENTS_FILE" "$EVENTS_TMP" "$PLUGIN_TOOLING" <<'PYEOF'
+import json, sys, re, os, hashlib
 
-state_file, plan_path, fix, now, run_id, cwd, tmp_file, events_file, events_tmp = sys.argv[1:]
+state_file, plan_path, fix, now, run_id, cwd, tmp_file, events_file, events_tmp, plugin_tooling = sys.argv[1:]
 fix = (fix == "--fix")
+if plugin_tooling:
+    sys.path.insert(0, plugin_tooling)
 
 with open(state_file) as f:
     state = json.load(f)
 with open(plan_path) as f:
-    plan_lines = f.readlines()
+    plan_text = f.read()
+    plan_lines = plan_text.splitlines(keepends=True)
+
+# --- v1.3.0 T4: approved-plan-revision reconciliation at the sync boundary ---
+run_dir = os.path.dirname(state_file)
+revision_path = os.path.join(run_dir, "checkpoints", "plan-revision.md")
+reconciliation_event = None
+try:
+    from lazyqoder_plan_reconcile import classify_plan_edits
+    if os.path.exists(revision_path):
+        with open(revision_path) as f:
+            approved_text = f.read()
+        if hashlib.sha256(plan_text.encode()).hexdigest() != hashlib.sha256(approved_text.encode()).hexdigest():
+            reconciliation = classify_plan_edits(approved_text, plan_text)
+            reconciliation_event = {
+                "ts": now, "run_id": run_id, "event": "plan_reconciled",
+                "classification": reconciliation["classification"],
+                "invalidations": reconciliation["invalidations"],
+                "reopen": reconciliation["reopen"],
+                "added": reconciliation["added"],
+                "removed": reconciliation["removed"],
+                "summary": reconciliation["summary"],
+            }
+            print("=== plan reconciliation ===")
+            print("classification: %s" % reconciliation["classification"])
+            for line in reconciliation["summary"]:
+                print("  - " + line)
+            if fix and reconciliation["classification"] == "semantic":
+                invalidated_ids = {i["task"] for i in reconciliation["invalidations"]}
+                for task in state.get("tasks", []):
+                    tid = task.get("id")
+                    if tid in invalidated_ids and task.get("status") == "done":
+                        task["status"] = "queued"
+                        task["evidence"] = []
+                        task["reconciled_reopened"] = True
+            if fix and reconciliation["reopen"]:
+                for task in state.get("tasks", []):
+                    if task.get("id") in reconciliation["reopen"] and task.get("status") == "done":
+                        task["status"] = "queued"
+                        task["reconciled_reopened"] = True
+            if fix:
+                os.makedirs(os.path.dirname(revision_path), exist_ok=True)
+                rev_tmp = revision_path + ".tmp"
+                with open(rev_tmp, "w") as f:
+                    f.write(plan_text)
+                os.replace(rev_tmp, revision_path)
+    else:
+        if fix:
+            os.makedirs(os.path.dirname(revision_path), exist_ok=True)
+            rev_tmp = revision_path + ".tmp"
+            with open(rev_tmp, "w") as f:
+                f.write(plan_text)
+            os.replace(rev_tmp, revision_path)
+except ImportError:
+    pass
+
 
 # Parse checkboxes from plan sections. Heading match is EXACT (case-sensitive):
 #   "TODOs"      -> canonical heading
@@ -218,6 +316,8 @@ if changed:
     with open(tmp_file, "w") as f:
         json.dump(state, f, indent=2)
     ev = {"ts": now, "run_id": run_id, "event": "plan_state_synced", "drift_fixed": len(drift)}
+    if reconciliation_event is not None:
+        ev["reconciliation"] = reconciliation_event
     with open(events_tmp, "w") as output:
         if os.path.exists(events_file):
             with open(events_file) as source:

@@ -264,3 +264,33 @@ def user_explanation(
             + "."
         )
     return explanation
+
+
+def verification_tier_status(
+    outcome: str,
+    current_milestone: str | None = None,
+    blockers: list | None = None,
+    decisions: list | None = None,
+    next_action: str | None = None,
+    material_verification: dict | None = None,
+) -> dict:
+    """Policy explanation surface for the v1.3.0 verification-tier status.
+
+    The machine-status v2 schema is frozen (``additionalProperties: false``;
+    exact keys in ``lifecycle/machine-status.js``), so the default-status
+    projection lives here instead of on the machine-status path. ``host_readiness``
+    stays pending: no activation claim is made by this lane.
+
+    See ``lazyqoder_verification_tiers.status_projection`` for the canonical
+    projection and the T6 rationale.
+    """
+    from lazyqoder_verification_tiers import status_projection
+
+    return status_projection(
+        outcome=outcome,
+        current_milestone=current_milestone,
+        blockers=blockers,
+        decisions=decisions,
+        next_action=next_action,
+        material_verification=material_verification,
+    )
