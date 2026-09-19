@@ -7,9 +7,9 @@ tooling only when its receipt proves ownership. These are separate operations.
 
 | Route | Safe action | Preserve |
 | --- | --- | --- |
-| Qoder IDE IDE or CLI plugin | Use the host plugin removal flow; remove or disable only LazyQoder MCP servers that you manually registered. | Host installation paths, unrelated MCP entries, credentials, and host state. |
-| Qoder IDE plugin/marketplace | Use Qoder IDE's documented remove flow and confirm the result in the host. | Host-managed plugin locations and `.qoder` state. |
-| Qoder IDE local-import fallback | Remove imported `skills/` entries through Skills UI and manually configured connectors through Settings. | Other imported skills, connectors, and Settings entries. |
+| Qoder IDE or Qoder CLI plugin | Use the host plugin removal flow; remove or disable only LazyQoder MCP servers that you manually registered. | Host installation paths, unrelated MCP entries, credentials, and host state. |
+| Qoder app plugin/marketplace | Use the Qoder app's documented remove flow and confirm the result in the host. | Host-managed plugin locations and `.qoder` state. |
+| Qoder app local-import fallback | Remove imported `skills/` entries through Skills UI and manually configured connectors through Settings. | Other imported skills, connectors, and Settings entries. |
 | Receipt-owned tooling root | Run the package uninstall command only for the exact owned root. | Modified, foreign, linked, caller-owned, project, global, and host-managed paths. |
 
 For a package-owned tooling root:

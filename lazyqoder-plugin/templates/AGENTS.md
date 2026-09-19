@@ -19,7 +19,7 @@ workspace. Only an explicitly verified lifecycle-owned sibling bootstrap lock
 or product `staging/`/`locks/` artifact is recoverable; never remove or replace
 caller workspace files.
 
-1. Detect or ask for **Qoder CLI**, **Qoder IDE (extensions)**, or **Qoder IDE (app)**.
+1. Detect or ask for **Qoder CLI**, **Qoder IDE**, or the **Qoder app**.
 2. Resolve the absolute release/plugin root; never guess it from PATH or treat
    `--plugin-dir` as an installed route.
 3. Run safe package checks only: from the release root, use
@@ -39,12 +39,12 @@ caller workspace files.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
 CLI route and the preferred Qoder CLI route whenever the CLI is
-available**. Qoder IDE uses `.qoder-plugin/plugin.json` as its default
+available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only. None is current host proof until observed.
 
-Supplied macOS QA dated 2026-07-18 observed Qoder CLI full-plugin loading
-through the CLI-backed user-scope marketplace route. It inspected Qoder IDE
+Supplied macOS QA dated 2026-07-18 observed Qoder IDE full-plugin loading
+through the CLI-backed user-scope marketplace route. It inspected the Qoder app
 v5.2.6 on macOS and reported full-plugin behavior after undocumented
 host-internal changes. That feedback is historical observation only, not an
 installation route. The GUI flows failed in that tested build. A current
@@ -87,12 +87,12 @@ as an observed-build alternative when the CLI is unavailable. If any GUI
 control is unavailable, record the host version/build and exact error, keep
 host readiness pending, and select the fallback only as a later action.
 
-## Qoder IDE marketplace full-plugin boundary
+## Qoder app marketplace full-plugin boundary
 
 The active release's `.qoder-plugin/plugin.json` is the default marketplace
 source for Skills, commands, agents, hooks, and all six MCP servers. Missing
 public manifest documentation does not demote this route. Never inspect or
-mutate private Qoder IDE registries; use only the plugin/marketplace surface
+mutate private Qoder app registries; use only the plugin/marketplace surface
 offered by the current build.
 
 Before asking for that approval, run this read-only preflight from the release
@@ -115,9 +115,9 @@ scoped `offboard` and re-onboard. Do not edit receipts. A moved same-version
 ref requires `--confirm-revision <full-sha>`. Package success never upgrades
 **HOST READINESS: PENDING** without observation.
 
-## IDE and Qoder IDE fallback
+## Qoder IDE and Qoder app fallback
 
-Qoder CLI's public fallback and Qoder IDE's supported local fallback import
+Qoder IDE's public fallback and the Qoder app's supported local fallback import
 `lazyqoder-plugin/skills/` and configure six local MCP connectors manually:
 `run-ledger`, `verification`, `status-dashboard`, `context-graph`, `code-intel`,
 and `docs`. This route excludes commands, agents, and hooks. A package file,
