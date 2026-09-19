@@ -1,6 +1,8 @@
 # LazyQoder
 
-LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, **Qoder IDE**, and the **Qoder IDE app**. It prepares local package assets
+![LazyQoder](lazyqoder-banner.png)
+
+LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, **Qoder IDE**, and the **Qoder app**. It prepares local package assets
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
@@ -18,8 +20,8 @@ Two entry routes converge on the same execution authority and gates:
 
 - **Natural language**: describe the work plainly — "Fix the typo in the
   welcome label" — and the smallest sufficient workflow is selected and run.
-- **Explicit command**: the start-work command for known plans, or the planner
-  command for new ones. Same authority, same gates.
+- **Explicit commands**: `/lazy-ulw-plan <idea>` builds a new plan, and
+  `/lazy-start-work <plan>` executes a known plan. Same authority, same gates.
 
 No command is required for a clear implementation request. Conversely, asking
 to *explain*, quoting a command, or saying "plan only" never touches your
@@ -58,7 +60,7 @@ same test is never rerun just because a phase changed.
 Milestones, decision gates, and full state/version semantics are shared
 byte-identically with LazyBuddy and LazyTrae (see
 `lazyqoder-plugin/contracts/lazyseries-shared-semantics.v1.json`). The Qoder
-CLI, Qoder IDE, and Qoder IDE app route boundaries are unchanged: package
+CLI, Qoder IDE, and Qoder app route boundaries are unchanged: package
 selection never proves host activation.
 
 ## Recommended: install with AI help
@@ -109,7 +111,7 @@ Pick one host route during onboarding:
 
 - **Qoder CLI** uses the documented local marketplace route.
 - **Qoder IDE** uses that marketplace route when the CLI is available.
-- **Qoder IDE** uses its full-plugin marketplace route.
+- **Qoder app** uses its full-plugin marketplace route.
 
 Skills plus manual MCP connectors are a recovery-only option. Do not run that
 fallback beside a full-plugin route for the same project. Stop the session,
