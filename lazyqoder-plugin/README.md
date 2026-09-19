@@ -13,7 +13,7 @@ offboard/re-onboard rather than receipt edits. Package success leaves **HOST
 READINESS: PENDING** without current observation. Historical Qoder IDE feedback
 about undocumented host state is not an installation route.
 
-> Self-contained workflow harness for Qoder CLI, the Qoder IDE extensions, and the Qoder IDE app's Skills/manual-MCP fallback.
+> Self-contained workflow harness for Qoder CLI, Qoder IDE, and the Qoder app's Skills/manual-MCP fallback.
 
 This package belongs to the LazyQoder learning project. It is
 primarily inspired by LazyCodex, while [NOTICE](NOTICE) records LazyCodex and
@@ -36,7 +36,7 @@ node "<install-root>/LazyQoder/launcher.js" status \
 The source checkout is transport only and may be removed after promotion. The
 durable install root must be absolute, non-root, and outside disposable
 downloads or caches. Open or link the active durable release in the selected
-Qoder CLI or Qoder IDE host, give the agent `https://github.com/elvinzhao10/LazyQoder`,
+Qoder CLI, Qoder IDE, or Qoder app host, give the agent `https://github.com/elvinzhao10/LazyQoder`,
 and type `onboard`. The agent asks which host is in use, runs safe package
 checks, and reports **package readiness** separately from **host readiness**.
 Before any host-managed marketplace, plugin, Skills, connector, account, or
@@ -53,14 +53,14 @@ caller workspace files.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
 CLI route and the preferred Qoder CLI route whenever the CLI is
-available**. Qoder IDE uses `.qoder-plugin/plugin.json` as its default
+available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. `manual-skills-mcp-fallback` is recovery-only.
 None is current host proof until observed.
 
 ## Quick Start
 
 `.qodercli-plugin/plugin.json` is the documented Qoder CLI host entry point.
-`.qoder-plugin/plugin.json` is the Qoder IDE marketplace source for Skills,
+`.qoder-plugin/plugin.json` is the Qoder app marketplace source for Skills,
 commands, agents, hooks, and all six MCP servers. Package metadata remains
 pending until current build/session evidence is observed. Skills import/copy
 plus six individual manual local MCP connectors is recovery-only.
@@ -78,7 +78,7 @@ package evidence, not proof of live host loading or MCP connection.
 
 ## What this plugin provides
 
-LazyQoder provides a workflow harness for Qoder CLI and Qoder IDE. Qoder IDE plugin/marketplace behavior must be verified in a live session; its local fallback uses imported skills:
+LazyQoder provides a workflow harness for Qoder CLI, Qoder IDE, and the Qoder app. Qoder app plugin/marketplace behavior must be verified in a live session; its local fallback uses imported skills:
 
 - **Hierarchical project memory** (`/lazyqoder:lazy-init-deep`) — generates `qoder.md` with directory scoring
 - **Prometheus planning** (`/lazyqoder:lazy-ulw-plan`) — decision-complete work plans; never writes product code
@@ -109,21 +109,21 @@ files, and leaves the run eligible for retry.
 
 | Directory | Purpose | Status |
 |-----------|---------|--------|
-| `skills/` | 14 portable workflow skills | Qoder CLI plugin content; verified Qoder IDE local import source |
-| `commands/` | 14 current slash-command workflows | Qoder CLI; Qoder IDE only after a verified plugin/marketplace session |
-| `agents/` | 13 agent role definitions | Qoder CLI; Qoder IDE only after a verified plugin/marketplace session |
-| `hooks/hooks.json` | 12 host hook-event declarations | Qoder CLI; Qoder IDE only after a verified plugin/marketplace session |
-| `mcp/` and `.mcp.json` | 6 local MCP server declarations | Qoder CLI declarations; manual connector configuration is the verified Qoder IDE fallback |
+| `skills/` | 14 portable workflow skills | Qoder CLI plugin content; verified Qoder app local import source |
+| `commands/` | 14 current slash-command workflows | Qoder CLI; Qoder app only after a verified plugin/marketplace session |
+| `agents/` | 13 agent role definitions | Qoder CLI; Qoder app only after a verified plugin/marketplace session |
+| `hooks/hooks.json` | 12 host hook-event declarations | Qoder CLI; Qoder app only after a verified plugin/marketplace session |
+| `mcp/` and `.mcp.json` | 6 local MCP server declarations | Qoder CLI declarations; manual connector configuration is the verified Qoder app fallback |
 | `scripts/` | state, loop, hooks, and validation utilities | Used by package readiness and workflow checks |
 | `templates/AGENTS.md` | reusable onboarding guide | A template; no installer claims it was generated |
 
 ## Install
 
 For **Qoder CLI**, use the local release-root marketplace route below. For
-**Qoder CLI**, use that same CLI marketplace route whenever the `qodercli`
+**Qoder IDE**, use that same CLI marketplace route whenever the `qodercli`
 CLI is available; the supplied GUI Add local directory flow failed. If the CLI
 is unavailable, use the public Skills/manual-MCP fallback or an observed-build
-GUI route only after current discovery. For **Qoder IDE**, use the supported
+GUI route only after current discovery. For the **Qoder app**, use the supported
 Skills/manual-MCP fallback. Historical full-plugin feedback did not establish a
 public installation contract. If a required control is unavailable, record
 the build/error with **HOST READINESS: PENDING**.
@@ -168,7 +168,7 @@ install yet. Second, after a separate approval, install
 session and observe one real Skill/command plus all six MCP connections.
 Package metadata alone is not host readiness.
 
-### Qoder CLI route
+### Qoder IDE route
 
 When the CLI is available (`qodercli`), add the absolute release root using the
 same two commands above, then restart the IDE and inspect a fresh session. The
@@ -178,11 +178,11 @@ six compatible local MCP connectors manually. For the observed GUI alternative,
 add the release root, wait for discovery, install separately, fully restart,
 and verify a fresh session.
 
-### Qoder IDE marketplace full-plugin boundary
+### Qoder app marketplace full-plugin boundary
 
 The nested `.qoder-plugin/plugin.json` remains the default marketplace
 source even without a public manifest schema. Never inspect or mutate private
-Qoder IDE registries. This package preflight remains read-only:
+Qoder app registries. This package preflight remains read-only:
 
 ```bash
 bash lazyqoder-plugin/scripts/lazyqoder-qoder-preparation-check.sh \
@@ -489,8 +489,8 @@ MIT — see the package [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
 ---
 
-_This is the installable Qoder CLI and Qoder IDE package for LazyQoder.
-`.qoder-plugin/plugin.json` is the Qoder IDE marketplace source, not proof
+_This is the installable Qoder CLI, Qoder IDE, and Qoder app package for LazyQoder.
+`.qoder-plugin/plugin.json` is the Qoder app marketplace source, not proof
 that a host loaded it. Use the local `skills/` import plus manual MCP only as a
 receipt-scoped recovery route. The repository-local `.qoder/` directory is
 host-managed development state and is intentionally not part of the release

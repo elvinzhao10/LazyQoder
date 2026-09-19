@@ -56,7 +56,7 @@ server's mutable behavior remains behind a dedicated path/receipt boundary.
 
 ## Host enablement and connection
 
-LazyQoder targets Qoder CLI, Qoder CLI, and Qoder IDE. Follow the selected
+LazyQoder targets Qoder CLI, Qoder IDE, and the Qoder app. Follow the selected
 route in [Host routes](reference/host-routes.md). A valid declaration, marketplace
 listing, or accepted trust prompt does not prove that a server connected. Verify
 the expected MCP tools in the current host session before reporting host readiness.
