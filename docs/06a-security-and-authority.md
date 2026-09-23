@@ -3,7 +3,7 @@
 LazyQoder's local checks are useful evidence, but they are never authority to
 change a host, access a credential, or claim that a host integration is live.
 The selected Qoder IDE session remains the authority for that host's plugin
-loading, hooks, and MCP connection. Automated package verification is defined by the product CI workflows (Ubuntu and macOS jobs). Supplied host observations are historical macOS reports; they do not establish a current v1.3.2 host session.
+loading, hooks, and MCP connection. Automated package verification is defined by the product CI workflows (Ubuntu and macOS jobs). Supplied host observations are historical macOS reports; they do not establish a current v1.3.1 host session.
 
 ## What the package policy protects
 

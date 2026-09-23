@@ -25,7 +25,7 @@ function fixture() {
   fs.mkdirSync(projectRoot);
   const paths = prepareProductRoot({ installRoot, product: 'LazyQoder' });
   const commitSha = 'c'.repeat(40);
-  const staged = stageRelease(paths, { sourceRoot, version: '1.3.2', commitSha });
+  const staged = stageRelease(paths, { sourceRoot, version: '1.3.1', commitSha });
   const promoted = promoteRelease(paths, {
     ...staged,
     commitSha,
@@ -33,7 +33,7 @@ function fixture() {
     manifestRelativePath: 'lazyqoder-plugin/.qodercli-plugin/plugin.json',
     origin: 'https://github.com/elvinzhao10/LazyQoder.git',
     runtimePath: process.execPath,
-    version: '1.3.2',
+    version: '1.3.1',
   });
   const releaseRoot = path.join(paths.releases, promoted.releaseId);
   const manifest = path.join(releaseRoot, 'lazyqoder-plugin', '.qoder-plugin', 'plugin.json');
@@ -50,7 +50,7 @@ function receipt(f) {
       manifest: 'lazyqoder-plugin/.qoder-plugin/plugin.json',
       manifest_sha256: crypto.createHash('sha256').update(fs.readFileSync(f.manifest)).digest('hex'),
       plugin: 'lazyqoder',
-      version: '1.3.2',
+      version: '1.3.1',
     },
     host: 'qoder',
     build: 'build:current',

@@ -2,10 +2,10 @@
 
 LazyQoder supports its documented CLI and IDE/app hosts. Automated package checks run in CI on Ubuntu and macOS as defined by the workflows; the supplied live-host reports are historical macOS observations. No current-session host activation is established. Package files, host settings, credentials, marketplace state, and live sessions remain separate authorities.
 
-## Current documentation release: v1.3.2
+## Current documentation release: v1.3.1
 
-This package version is v1.3.2.
-The prior v1.3.1 tag has no published GitHub Release.
+This package version is v1.3.1.
+The prior published release is v1.3.0.
 The route IDs are
 `qodercli-cli`, `qodercli-ide`, and `qoder`. v2 native modes are
 `invoke-documented`, `observe-only`, `descriptor-only`, and `unavailable`;
