@@ -1,6 +1,6 @@
 # LazyQoder v1.3.2
 
-**Status:** Published stable release. This patch corrects CI release verification reliability. It does not change product behavior or model selection. Qoder activation in a fresh host session still needs live testing.
+**Scope:** This package corrects CI release verification reliability. It does not change product behavior or model selection. Qoder activation in a fresh host session still needs live testing.
 
 ## Eval-driven fixes
 

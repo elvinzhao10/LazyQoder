@@ -4,7 +4,7 @@ LazyQoder supports its documented CLI and IDE/app hosts. Automated package check
 
 ## Current documentation release: v1.3.2
 
-The latest published stable release is v1.3.2.
+This package version is v1.3.2.
 The prior v1.3.1 tag has no published GitHub Release.
 The route IDs are
 `qodercli-cli`, `qodercli-ide`, and `qoder`. v2 native modes are

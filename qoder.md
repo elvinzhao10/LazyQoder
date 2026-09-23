@@ -1,7 +1,7 @@
 # LazyQoder workspace
 
 LazyQoder is a standalone Qoder CLI, IDE, and app workflow package. The
-current documentation describes the published stable v1.3.2 release. A local
+current documentation describes the v1.3.2 package. A local
 package check does not prove that a Qoder host loaded it.
 
 ## Current package

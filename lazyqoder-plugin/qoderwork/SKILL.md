@@ -6,7 +6,7 @@ description: "LazyQoder workflow harness for QoderWork. Provides structured work
 
 # LazyQoder for QoderWork
 
-Structured workflow harness adapted from the published stable LazyQoder v1.3.2 release; native-host readiness remains pending.
+Structured workflow harness adapted from the LazyQoder v1.3.2 package; native-host readiness remains pending.
 Provides five core workflows that enforce evidence-based discipline: define the
 observable outcome, keep authority with the user, choose local tools first, and
 finish by exercising the surface the user cares about.
