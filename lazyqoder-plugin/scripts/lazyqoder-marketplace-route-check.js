@@ -2,11 +2,17 @@
 'use strict';
 
 const path = require('node:path');
-const { validateMarketplaceRoutes } = require('./lifecycle/marketplace-routes');
+const fs = require('node:fs');
+const { validateInstalledMarketplacePackage, validateMarketplaceRoutes } = require('./lifecycle/marketplace-routes');
 
-const releaseRoot = process.argv[2] === undefined ? path.resolve(__dirname, '..', '..') : path.resolve(process.argv[2]);
+const hasExplicitReleaseRoot = process.argv[2] !== undefined;
+const releaseRoot = hasExplicitReleaseRoot ? path.resolve(process.argv[2]) : path.resolve(__dirname, '..', '..');
 try {
-  const result = validateMarketplaceRoutes(releaseRoot);
+  const result = hasExplicitReleaseRoot
+    ? validateMarketplaceRoutes(releaseRoot)
+    : fs.existsSync(path.join(releaseRoot, 'lazyqoder-plugin'))
+      ? validateMarketplaceRoutes(releaseRoot)
+      : validateInstalledMarketplacePackage(path.resolve(__dirname, '..'));
   process.stdout.write(`${JSON.stringify({
     status: 'pass',
     version: result.version,

@@ -1,9 +1,10 @@
 'use strict';
 
+const fs = require('node:fs');
 const path = require('node:path');
 const { LifecycleError } = require('./errors');
 const { safeFile } = require('./files');
-const { validateMarketplaceRoutes } = require('./marketplace-routes');
+const { validateInstalledMarketplacePackage, validateMarketplaceRoutes } = require('./marketplace-routes');
 const { CURRENT_VERSION, MACHINE_STATUS_CONTRACT_VERSION } = require('./version');
 
 const CONTRACT_REF = 'contracts/marketplace-route-contract.v1.json';
@@ -39,7 +40,9 @@ function contractDigest() {
 }
 
 function buildMachineStatus(releaseRoot) {
-  const marketplace = validateMarketplaceRoutes(releaseRoot);
+  const marketplace = fs.existsSync(path.join(releaseRoot, 'lazyqoder-plugin'))
+    ? validateMarketplaceRoutes(releaseRoot)
+    : validateInstalledMarketplacePackage(path.resolve(__dirname, '..', '..'));
   if (marketplace.version !== CURRENT_VERSION) fail();
   const digest = contractDigest();
   const report = {

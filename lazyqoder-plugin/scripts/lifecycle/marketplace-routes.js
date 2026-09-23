@@ -92,28 +92,17 @@ function validateManifest(value, host, expectedVersion) {
   }
 }
 
-function validateMarketplaceRoutes(releaseRoot) {
-  const policy = contract();
-  const artifacts = {};
-  for (const [relative, expectedDigest] of Object.entries(policy.artifacts)) {
-    const parsed = jsonFile(path.join(releaseRoot, relative), 'MARKETPLACE_MANIFEST_INVALID');
-    if (digest(parsed.bytes) !== expectedDigest) {
-      const version = parsed.value?.version ?? parsed.value?.plugins?.[0]?.version;
-      const code = version === policy.version ? 'MARKETPLACE_IDENTITY_INVALID' : 'MARKETPLACE_VERSION_MISMATCH';
-      throw new LifecycleError(code, `marketplace artifact bytes changed: ${relative}`);
-    }
-    artifacts[relative] = parsed.value;
+function validateArtifact(file, expectedDigest, expectedVersion) {
+  const parsed = jsonFile(file, 'MARKETPLACE_MANIFEST_INVALID');
+  if (digest(parsed.bytes) !== expectedDigest) {
+    const version = parsed.value?.version ?? parsed.value?.plugins?.[0]?.version;
+    const code = version === expectedVersion ? 'MARKETPLACE_IDENTITY_INVALID' : 'MARKETPLACE_VERSION_MISMATCH';
+    throw new LifecycleError(code, `marketplace artifact bytes changed: ${file}`);
   }
-  const marketplace = artifacts['.qoder-plugin/marketplace.json'];
-  const entry = marketplace?.plugins?.[0];
-  if (marketplace?.name !== policy.identity.marketplace || marketplace?.owner?.name !== policy.identity.owner
-    || marketplace?.plugins?.length !== 1 || entry?.name !== policy.identity.plugin
-    || entry?.source !== './lazyqoder-plugin' || entry?.version !== policy.version) {
-    throw new LifecycleError('MARKETPLACE_IDENTITY_INVALID', 'Qoder marketplace identity does not match the contract');
-  }
-  validateManifest(artifacts['lazyqoder-plugin/.qodercli-plugin/plugin.json'], 'qodercli', policy.version);
-  validateManifest(artifacts['lazyqoder-plugin/.qoder-plugin/plugin.json'], 'qoder', policy.version);
-  const payload = inventory(path.join(releaseRoot, 'lazyqoder-plugin'), policy.payload);
+  return parsed.value;
+}
+
+function resultForPayload(policy, payload) {
   if (payload.length !== policy.payload.file_count || digest(Buffer.from(JSON.stringify(payload))) !== policy.payload.inventory_sha256) {
     throw new LifecycleError('MARKETPLACE_PAYLOAD_INVALID', 'canonical marketplace payload inventory changed');
   }
@@ -128,6 +117,42 @@ function validateMarketplaceRoutes(releaseRoot) {
   };
 }
 
+function validateMarketplaceRoutes(releaseRoot) {
+  const policy = contract();
+  const artifacts = {};
+  for (const [relative, expectedDigest] of Object.entries(policy.artifacts)) {
+    artifacts[relative] = validateArtifact(path.join(releaseRoot, relative), expectedDigest, policy.version);
+  }
+  const marketplace = artifacts['.qoder-plugin/marketplace.json'];
+  const entry = marketplace?.plugins?.[0];
+  if (marketplace?.name !== policy.identity.marketplace || marketplace?.owner?.name !== policy.identity.owner
+    || marketplace?.plugins?.length !== 1 || entry?.name !== policy.identity.plugin
+    || entry?.source !== './lazyqoder-plugin' || entry?.version !== policy.version) {
+    throw new LifecycleError('MARKETPLACE_IDENTITY_INVALID', 'Qoder marketplace identity does not match the contract');
+  }
+  validateManifest(artifacts['lazyqoder-plugin/.qodercli-plugin/plugin.json'], 'qodercli', policy.version);
+  validateManifest(artifacts['lazyqoder-plugin/.qoder-plugin/plugin.json'], 'qoder', policy.version);
+  const payload = inventory(path.join(releaseRoot, 'lazyqoder-plugin'), policy.payload);
+  return resultForPayload(policy, payload);
+}
+
+function validateInstalledMarketplacePackage(pluginRoot) {
+  const policy = contract();
+  const qodercliManifest = validateArtifact(
+    path.join(pluginRoot, '.qodercli-plugin', 'plugin.json'),
+    policy.artifacts['lazyqoder-plugin/.qodercli-plugin/plugin.json'],
+    policy.version,
+  );
+  const qoderManifest = validateArtifact(
+    path.join(pluginRoot, '.qoder-plugin', 'plugin.json'),
+    policy.artifacts['lazyqoder-plugin/.qoder-plugin/plugin.json'],
+    policy.version,
+  );
+  validateManifest(qodercliManifest, 'qodercli', policy.version);
+  validateManifest(qoderManifest, 'qoder', policy.version);
+  return resultForPayload(policy, inventory(pluginRoot, policy.payload));
+}
+
 function defaultRouteForHost(host) {
   const route = contract().default_routes[host];
   if (!route) throw new LifecycleError('INVALID_HOST', `unsupported marketplace host: ${host}`);
@@ -138,4 +163,4 @@ function fallbackPolicy() {
   return contract().fallback;
 }
 
-module.exports = { defaultRouteForHost, fallbackPolicy, validateMarketplaceRoutes };
+module.exports = { defaultRouteForHost, fallbackPolicy, validateInstalledMarketplacePackage, validateMarketplaceRoutes };

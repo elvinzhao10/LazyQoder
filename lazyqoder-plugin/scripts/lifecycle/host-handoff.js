@@ -12,6 +12,7 @@ const {
 const {
   defaultRouteForHost,
   fallbackPolicy,
+  validateInstalledMarketplacePackage,
   validateMarketplaceRoutes,
 } = require('./marketplace-routes');
 
@@ -136,5 +137,6 @@ module.exports = {
   parseObservation,
   renderHandoff,
   routeSelection,
+  validateInstalledMarketplacePackage,
   validateMarketplaceRoutes,
 };

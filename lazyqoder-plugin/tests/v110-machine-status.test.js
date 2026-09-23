@@ -33,6 +33,26 @@ test('package load check keeps package-ready separate from pending host proof', 
   assert.doesNotMatch(result.stdout, /HOST_READINESS=(?:ready|observed)/);
 });
 
+test('installed-only package load check validates machine status without release metadata', (t) => {
+  // Given: an exact plugin copy whose parent has no marketplace release artifacts.
+  const parent = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-installed-only-'));
+  const installed = path.join(parent, 'plugin');
+  fs.cpSync(PLUGIN_ROOT, installed, { recursive: true });
+  t.after(() => fs.rmSync(parent, { recursive: true, force: true }));
+
+  // When: the installed plugin runs its public package load check.
+  const result = spawnSync('bash', [path.join(installed, 'scripts', 'lazyqoder-load-check.sh')], {
+    cwd: parent,
+    encoding: 'utf8',
+    env: { ...process.env, QODER_PLUGIN_ROOT: installed },
+  });
+
+  // Then: route and machine-status validation use the self-contained package boundary.
+  assert.equal(result.status, 0, `${result.stderr}\n${result.stdout}`);
+  assert.match(result.stdout, /^PACKAGE_READINESS=full$/m);
+  assert.match(result.stdout, /machine status v2/i);
+});
+
 test('machine status publishes authoritative v1.3.1 three-host route boundaries', () => {
   // Given: the checked-in v1.3.1 package and its marketplace route declarations.
   const expectedHosts = [

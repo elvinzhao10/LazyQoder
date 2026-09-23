@@ -113,7 +113,7 @@ if not os.path.exists(code_manifest_path) and not os.path.exists(work_manifest_p
     sys.exit(0)
 
 route_check = subprocess.run(
-    ["node", os.path.join(root, "scripts", "lazyqoder-marketplace-route-check.js"), os.path.dirname(root)],
+    ["node", os.path.join(root, "scripts", "lazyqoder-marketplace-route-check.js")],
     check=False,
     capture_output=True,
     text=True,

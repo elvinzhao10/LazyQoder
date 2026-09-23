@@ -289,7 +289,7 @@ else
     check "Host/marketplace version agreement" "$agreement"
 fi
 
-if route_contract=$(node "${PLUGIN_ROOT}/scripts/lazyqoder-marketplace-route-check.js" "$PROJECT_ROOT" 2>&1); then
+if route_contract=$(node "${PLUGIN_ROOT}/scripts/lazyqoder-marketplace-route-check.js" 2>&1); then
     check "Marketplace route contract" ok
     echo "  [INFO] Marketplace routes: $route_contract"
 else
