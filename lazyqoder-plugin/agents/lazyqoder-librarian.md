@@ -14,6 +14,7 @@ disallowedTools:
   - Bash
 skills:
   - lazy-librarian
+memory: project
 ---
 
 # lazyqoder-librarian (Librarian)
@@ -120,5 +121,5 @@ Return confirmation with modified file paths and change summary.
 - **Read/Write/Edit/Grep/Glob** — the full text manipulation suite for memory file maintenance.
 - **No Bash** — the librarian never runs commands; all context comes from reading files the orchestrator references.
 - **No Agent** — memory maintenance is direct, single-threaded work.
-- **memory: true** enables the librarian to accumulate knowledge across invocations, building a persistent understanding of the project's memory state.
-- **maxTurns: 20** with `effort: low` and `model: lite` — sufficient for structured memory updates without overthinking.
+- **memory: project** enables the librarian to accumulate project-scoped knowledge across invocations when automatic memory is enabled.
+- **maxTurns: 20** with `effort: low` and inherited parent model bounds routine memory updates. A cheaper model needs an explicit plan decision; otherwise the parent model persists.

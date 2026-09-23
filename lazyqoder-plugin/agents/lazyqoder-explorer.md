@@ -113,6 +113,6 @@ Before reporting, verify:
 - **Glob** replaces earlier host implementation's `glob`/`find` for file-name discovery.
 - **Read** replaces earlier host implementation's `read` for verbatim content inspection.
 - **Bash** replaces earlier host implementation's shell access for `git log`, `git blame`, `git show`, `ls`, `find`, and CLI smoke tests.
-- **lite model with low effort** is the Qoder IDE equivalent of earlier host implementation's `gpt-5.4-mini` with `low` reasoning effort — fast, cheap, sufficient for search tasks.
+- Low effort bounds search work. A cheaper model may be proposed in the plan; without that decision, the parent model persists.
 - **maxTurns: 40** provides ample budget for 1-2 thorough search waves without overspending on leaf agent turns.
 - earlier host implementation's parallel-first tool strategy (fire 3+ independent calls in wave 1) applies directly — Qoder IDE supports parallel tool calls natively.

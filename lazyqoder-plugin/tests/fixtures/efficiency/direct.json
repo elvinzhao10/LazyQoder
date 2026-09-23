@@ -13,7 +13,7 @@
     "required_evidence": [
       { "file": "lazyqoder-liveeval/lazyqoder/raw/direct/test-output.txt", "bytes": 1316, "sha256": "23431390d57198f3f55571b424226a06886ceee349fbe6bf0035d7f6bc565826" },
       { "file": "lazyqoder-liveeval/lazyqoder/raw/direct/final-diff.txt", "bytes": 1170, "sha256": "67b6fcc5d7957d683ffc4e3d42ff4acda403c2d25d036fdb230b4d80d9da76d9" },
-      { "file": "lazyqoder-liveeval/lazyqoder/raw/direct/adaptive-directive.json", "bytes": 2285, "sha256": "4c307d8a426cf8147816c1094f8931a53c4368ffadcfb914e2c1b8e6b8daa3a7" }
+      { "file": "lazyqoder-liveeval/lazyqoder/raw/direct/adaptive-directive.json", "bytes": 2285, "sha256": "b2b3ef30a2794d8c9b2b66dfaf4ceced86091867c52e7aaa7232245e7733b7e3" }
     ]
   },
   "gate_outcomes": [

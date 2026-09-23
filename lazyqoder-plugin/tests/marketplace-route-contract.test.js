@@ -45,7 +45,7 @@ test('validates exact marketplace identities and byte-equivalent canonical paylo
   const result = validateMarketplaceRoutes(root);
 
   // Then: Qoder CLI and Qoder IDE retain distinct manifests over one canonical payload.
-  assert.equal(result.version, '1.3.0');
+  assert.equal(result.version, '1.3.1');
   assert.equal(result.qodercli.plugin, 'lazyqoder@lazyqoder');
   assert.equal(result.qoder.plugin, 'lazyqoder');
   assert.deepEqual(result.qodercli.payload_inventory, result.qoder.payload_inventory);
@@ -68,7 +68,7 @@ test('publishes an exact Qoder IDE full-plugin receipt schema', () => {
   assert.deepEqual(capabilities.required, ['skill', 'command', 'agent', 'hook', 'mcp']);
   assert.deepEqual(mcp.required, ['run-ledger', 'verification', 'status-dashboard', 'context-graph', 'code-intel', 'docs']);
   assert.equal(schema.properties.source.properties.route.const, 'qoder-marketplace');
-  assert.equal(schema.properties.source.properties.version.const, '1.3.0');
+  assert.equal(schema.properties.source.properties.version.const, '1.3.1');
   assert.equal(schema.properties.type.const, 'qoder-marketplace-full-plugin');
 });
 
@@ -92,7 +92,7 @@ test('refuses altered marketplace identity and host-manifest version independent
 
 test('treats fallback as generated recovery and conflicts with either marketplace plugin route', () => {
   // Given: both full-plugin routes and the manual recovery route.
-  const releaseRoot = '/durable/LazyQoder/releases/v1.3.0-aaaaaaaaaaaa';
+  const releaseRoot = '/durable/LazyQoder/releases/v1.3.1-aaaaaaaaaaaa';
   const projectRoot = '/project';
 
   // When: fallback metadata and both coexistence selections are evaluated.

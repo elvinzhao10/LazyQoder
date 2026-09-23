@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const PLUGIN_ROOT = path.resolve(__dirname, '..', '..');
-const CONTRACT = JSON.parse(fs.readFileSync(path.join(PLUGIN_ROOT, 'contracts', 'qoder-hook-consumers.v1.json'), 'utf8'));
+const CONTRACT = JSON.parse(fs.readFileSync(path.join(PLUGIN_ROOT, 'contracts', 'qodercli-hook-consumers.v1.json'), 'utf8'));
 const MAX_INPUT_BYTES = CONTRACT.boundary.max_payload_bytes;
 const ACTIVE_STATUSES = new Set(CONTRACT.boundary.active_statuses);
 const SECRET_KEY = /(?:^|_)(?:token|password|secret|credential|grant|api_?key|private_?key|remote_?key|raw_?prompt|prompt|private_?transcript|transcript|authorization|oauth)(?:$|_)/i;

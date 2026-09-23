@@ -1,13 +1,13 @@
 ---
 name: lazy-ultrawork
 version: 1.0.0
-description: "Binding high-precision mode for Qoder IDE. Tier triage (LIGHT/HEAVY), PIN-RED-GREEN-SURFACE-CLEAN loop, binding reviewer gate, evidence-grade rigor. Maps to Qoder IDE Model selector."
+description: "Binding high-precision mode for Qoder IDE. Tier triage (LIGHT/HEAVY), PIN-RED-GREEN-SURFACE-CLEAN loop, binding reviewer gate, evidence-grade rigor."
 user-invocable: true
 ---
 
 # ultrawork
 
-> **Maps to Qoder IDE:** Model selector (GLM / DeepSeek / Kimi / MiniMax per task) for the sibling-family quota discipline.
+> **Model boundary:** Subagents keep the current model unless the plan explicitly enables switching. The Qoder IDE model selector is host-owned.
 
 > **earlier host implementation source:** `local project documentation`
 

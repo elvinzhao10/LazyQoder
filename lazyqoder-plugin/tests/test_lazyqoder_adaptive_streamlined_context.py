@@ -67,7 +67,31 @@ def test_inactive_packet_is_quiet_compact_and_keeps_decision_fields(
     project = _project(tmp_path)
 
     directive = _run(project, _payload(project, "Rename the local heading."))
-    encoded = json.dumps(directive, separators=(",", ":"), sort_keys=True).encode()
+    assert {
+        "duplicateEvent": directive["duplicateEvent"],
+        "entryRoute": directive["entryRoute"],
+        "hostHookSupport": directive["hostHookSupport"],
+        "hostReadiness": directive["hostReadiness"],
+        "selection": directive["selection"],
+    } == {
+        "duplicateEvent": False,
+        "entryRoute": "explicit-start-work",
+        "hostHookSupport": "unavailable",
+        "hostReadiness": "pending",
+        "selection": {"workflowSurfaces": []},
+    }
+    compact_payload = json.loads(json.dumps(directive))
+    del compact_payload["decision"]["executionIntent"]
+    del compact_payload["snapshot"]["executionIntent"]
+    for field in (
+        "duplicateEvent",
+        "entryRoute",
+        "hostHookSupport",
+        "hostReadiness",
+        "selection",
+    ):
+        compact_payload.pop(field)
+    encoded = json.dumps(compact_payload, separators=(",", ":"), sort_keys=True).encode()
 
     assert directive["dispatched"] == "selected:host-unobserved"
     assert directive["runtime"]["route"] == "selection-only"
@@ -77,6 +101,7 @@ def test_inactive_packet_is_quiet_compact_and_keeps_decision_fields(
     assert set(directive["decision"]) == {
         "approval",
         "explicitWorkflow",
+        "executionIntent",
         "mode",
         "responsibilities",
         "stages",

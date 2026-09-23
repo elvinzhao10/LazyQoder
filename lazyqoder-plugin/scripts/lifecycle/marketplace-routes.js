@@ -81,9 +81,8 @@ function inventory(pluginRoot, policy) {
 
 function validateManifest(value, host, expectedVersion) {
   const expected = host === 'qodercli'
-    ? { name: 'lazyqoder', version: expectedVersion, commands: PAYLOAD_COMPONENTS.commands, agents: PAYLOAD_COMPONENTS.agents, hooks: PAYLOAD_COMPONENTS.hooks, mcpServers: PAYLOAD_COMPONENTS.mcpServers, userConfig: QODER_USER_CONFIG }
-    : { name: 'lazyqoder', version: expectedVersion, description: 'LazyQoder workflows for Qoder and Qoder.', skills: PAYLOAD_COMPONENTS.skills, commands: PAYLOAD_COMPONENTS.commands, agents: PAYLOAD_COMPONENTS.agents, hooks: PAYLOAD_COMPONENTS.hooks, mcpServers: PAYLOAD_COMPONENTS.mcpServers };
-  if (host === 'qodercli') expected.description = 'LazyQoder workflows for Qoder and Qoder.';
+    ? { name: 'lazyqoder', version: expectedVersion, description: 'LazyQoder workflows for Qoder CLI.', commands: PAYLOAD_COMPONENTS.commands, agents: PAYLOAD_COMPONENTS.agents, hooks: PAYLOAD_COMPONENTS.hooks, mcpServers: PAYLOAD_COMPONENTS.mcpServers, userConfig: QODER_USER_CONFIG }
+    : { name: 'lazyqoder', version: expectedVersion, description: 'LazyQoder workflows for Qoder IDE.', skills: PAYLOAD_COMPONENTS.skills, commands: PAYLOAD_COMPONENTS.commands, agents: PAYLOAD_COMPONENTS.agents, hooks: PAYLOAD_COMPONENTS.hooks, mcpServers: PAYLOAD_COMPONENTS.mcpServers };
   const errorCode = value?.version === expectedVersion ? 'MARKETPLACE_IDENTITY_INVALID' : 'MARKETPLACE_VERSION_MISMATCH';
   const keysMatch = JSON.stringify(Object.keys(value || {}).sort()) === JSON.stringify(Object.keys(expected).sort());
   const valuesMatch = keysMatch && Object.entries(expected)

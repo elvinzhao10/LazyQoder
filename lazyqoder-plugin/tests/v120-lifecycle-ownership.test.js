@@ -106,10 +106,10 @@ test('v1.2 offboard reports modified, unknown, mismatched, and cross-product sta
   }
 });
 
-test('removal documentation separates Qoder package, daemon, and optional state scopes', () => {
+test('removal documentation separates host-managed plugin and receipt-owned tooling scopes', () => {
   const removal = fs.readFileSync(path.join(__dirname, '..', '..', 'docs', '08-safe-removal.md'), 'utf8');
-  assert.match(removal, /Qoder Code package removal/);
-  assert.match(removal, /qodercli daemon uninstall/);
-  assert.match(removal, /does not remove the Qoder Code package/);
-  assert.match(removal, /optional state cleanup/);
+  assert.match(removal, /Qoder IDE or Qoder CLI plugin/);
+  assert.match(removal, /Qoder app plugin\/marketplace/);
+  assert.match(removal, /Receipt-owned tooling root/);
+  assert.match(removal, /Host removal remains a separate user action/);
 });

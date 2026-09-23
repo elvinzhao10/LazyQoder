@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   supported-floor:
-    name: Supported floor (Node 20)
+    name: Legacy Node 20 compatibility (EOL)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -50,6 +50,8 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --fund=false
       - name: Run package verification
         run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
+      - name: Run targeted execution isolation and outcome evaluator contracts
+        run: node --test lazyqoder-plugin/tests/execution-isolation.test.js lazyqoder-plugin/contracts/tests/outcome-evaluation.test.js
       - name: Run publication verification
         run: bash lazyqoder-plugin/tests/publication-regression.sh
 
@@ -75,6 +77,8 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --fund=false
       - name: Run package verification
         run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
+      - name: Run targeted execution isolation and outcome evaluator contracts
+        run: node --test lazyqoder-plugin/tests/execution-isolation.test.js lazyqoder-plugin/contracts/tests/outcome-evaluation.test.js
 
   lifecycle:
     name: Lifecycle regressions (macOS)

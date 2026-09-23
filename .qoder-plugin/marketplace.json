@@ -9,7 +9,7 @@
       "name": "lazyqoder",
       "source": "./lazyqoder-plugin",
       "description": "Evidence-gated planning, execution, and review workflows.",
-      "version": "1.3.0"
+      "version": "1.3.1"
     }
   ]
 }
