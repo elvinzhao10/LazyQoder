@@ -6,7 +6,7 @@ plugin. Automated package checks run in CI on Ubuntu and macOS; host readiness r
 
 ## Current documentation version: v1.3.1
 
-The package version is v1.3.1. The prior v1.3.1 tag has no published GitHub Release.
+The package version is v1.3.1.
 Native-host readiness remains pending.
 
 The v1.3.1 documentation covers `qodercli-cli`, `qodercli-ide`, and

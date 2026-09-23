@@ -7,7 +7,7 @@ and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
 This package version is v1.3.1.
-v1.3.1 is the published release. Package checks do not prove host activation.
+Package checks do not prove host activation.
 
 ## v1.3.1
 

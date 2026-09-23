@@ -5,7 +5,7 @@ This page explains the deployment boundary in code terms. A plugin package conta
 ## v1.3.1 route and host readiness
 
 This documentation boundary covers `qodercli-cli`, `qodercli-ide`, and
-`qoder`; the package version is v1.3.1. v1.3.1 is the published release. Marketplace is the default
+`qoder`; the package version is v1.3.1. Marketplace is the default
 full-plugin route for Qoder CLI and the Qoder app. The Skills/manual-MCP route
 is recovery-only and mutually exclusive with a full-plugin route. v2 records
 native mode as `invoke-documented`, `observe-only`, `descriptor-only`, or

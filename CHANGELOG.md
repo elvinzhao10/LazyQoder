@@ -38,7 +38,7 @@
   connection remain host-owned and unobserved.
 
 All notable changes to LazyQoder are documented here. Versions follow
-[Semantic Versioning](https://semver.org/). v1.3.1 was published on 2026-09-23.
+[Semantic Versioning](https://semver.org/). This changelog describes package version v1.3.1.
 
 ## [0.0.1] - 2026-07-19
 
