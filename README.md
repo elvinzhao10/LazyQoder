@@ -6,10 +6,10 @@ LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, *
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
-This package version is v1.3.2.
-v1.3.1 was tagged but its GitHub Release was not published. Package checks do not prove host activation.
+This package version is v1.3.1.
+Package checks do not prove host activation.
 
-## v1.3.2
+## v1.3.1
 
 This release tightens intent parsing, worktree cleanup, outcome-evidence
 integrity, and context search. Subagents inherit the current model unless a
@@ -76,7 +76,7 @@ You do not need to manually work through every setup detail. Open an AI coding
 assistant in your project and paste this:
 
 > Help me install LazyQoder from https://github.com/elvinzhao10/LazyQoder for
-> this project. Use the v1.3.2 route. Run safe package checks first,
+> this project. Use the v1.3.1 route. Run safe package checks first,
 > explain each step plainly, and ask me before changing marketplace, plugin,
 > Skills, MCP, account, credential, or trust settings.
 

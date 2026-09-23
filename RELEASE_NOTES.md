@@ -1,24 +1,19 @@
-# LazyQoder v1.3.2
+# LazyQoder v1.3.1
 
-**Scope:** This package corrects CI release verification reliability. It does not change product behavior or model selection. Qoder activation in a fresh host session still needs live testing.
+**Scope:** v1.3.1 package release notes. The corrected package requires repository and release-package verification; Qoder activation in a fresh host session still needs live testing.
 
 ## Eval-driven fixes
-
-These fixes were included in the prior tagged build, whose GitHub Release was not published.
 
 - **Safer execution:** Workflow intent ignores quoted or historical command mentions while retaining explicit requests to start work. Isolation reports namespace allocation accurately; it does not claim to have created a Git worktree. Cleanup preserves populated allocations, linked files, and caller-owned changes.
 - **Better evidence:** Outcome comparisons hash the supplied task, budget, and permission snapshots and reject mismatched cohorts. Reports distinguish absent, partial, and validated evidence, count explicit host-billed costs from failed runs, and reject fixture telemetry as execution data. Hashes verify supplied bytes, not the truth of their contents.
 - **Predictable delegation:** Subagents keep the current session model by default. A plan may propose `efficient` or `performance` for named tasks, but switching requires an explicit plan decision and `--allow-switch`. The selector is advisory and does not change host settings or imply that a model is available on the account.
 - **Package and tooling fixes:** Installed-package and release-root validation now distinguish their routes, check pinned inventory integrity, and reject an invalid explicit release root. Agent metadata accepts optional model aliases and memory scopes; CLI discovery includes `qodercli`. Dependency search handles extension-bearing imports with fewer search processes, and verification avoids repeating the full suite for Python preflight. No end-to-end speed or cost gain has been measured.
-
-## v1.3.2 release-verification fix
-
-- The MCP grep-fallback regression harness now retains the Python interpreter selected by CI's `setup-python` instead of selecting macOS system Python from `PATH`.
-- The harness keeps its existing 1.5-second response bound and grep fallback. This changes test interpreter selection only; it does not alter runtime MCP behavior.
+- **Current guidance:** README, contributor, lifecycle, and verification documentation reflect v1.3.1. Obsolete attribution and initial-port files were removed; credits and licenses remain in NOTICE and LICENSE.
+- **CI harness correction:** The MCP grep-fallback regression harness retains the Python interpreter selected by CI `setup-python`, with its existing 1.5-second response bound and grep fallback. This fixes interpreter selection only; runtime MCP behavior is unchanged.
 
 ## Measured efficiency
 
-No product productivity, latency, or native-cost improvement is claimed. The change makes the regression check use the intended CI Python interpreter.
+No measured productivity, latency, or native-cost improvement is claimed. The CI correction makes the regression check use the configured Python interpreter; it does not claim a product efficiency gain. The corrected source must pass its own repository and release-package verification before publication.
 
 ## Host capability matrix
 
@@ -30,11 +25,11 @@ No product productivity, latency, or native-cost improvement is claimed. The cha
 
 ## Migration and upgrade
 
-Before upgrading, record the installed version and lifecycle ownership, then validate the exact v1.3.2 package. Keep host readiness pending until the selected route is observed in a fresh Qoder session.
+Before upgrading, record the installed version and lifecycle ownership, then validate the exact v1.3.1 archive. Keep host readiness pending until the selected route is observed in a fresh Qoder session.
 
 ## Known risks
 
-Repository and CI checks do not establish that a release archive loads in a host. Installation, activation, MCP, specialist, cancellation, and completed-task behavior remain unobserved in fresh Qoder sessions.
+Repository and CI checks do not establish that a release archive loads in a host. Installation, activation, MCP, specialist, cancellation, and completed-task behavior remain unobserved in fresh Qoder sessions. Evidence hashes bind supplied bytes but do not establish their independent truth.
 
 ## Rollback
 
