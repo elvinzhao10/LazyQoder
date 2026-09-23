@@ -6,12 +6,18 @@ LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, *
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
-The current release package is v1.3.0. It is prepared for publication; package
-checks do not by themselves publish a tag or prove a host loaded it.
+The latest published stable release is v1.3.0. The v1.3.1 candidate is being prepared in this worktree; this candidate has not been tagged or published. Package checks do not prove host activation.
 
-## New in v1.3.0: work the way you talk
+## v1.3.1 candidate
 
-v1.3.0 is a major workflow release. You no longer need to remember commands —
+This candidate tightens intent parsing, worktree cleanup, outcome-evidence
+integrity, and context search. Subagents inherit the current model unless a
+plan explicitly enables a switch. See [release notes](RELEASE_NOTES.md) for
+the changes and verification scope; current native-host testing is pending.
+
+## Published v1.3.0: work the way you talk
+
+The published v1.3.0 release is a major workflow release. You no longer need to remember commands —
 the harness meets you at the level of your request.
 
 ### Just ask, or use a command — both work
@@ -69,7 +75,7 @@ You do not need to manually work through every setup detail. Open an AI coding
 assistant in your project and paste this:
 
 > Help me install LazyQoder from https://github.com/elvinzhao10/LazyQoder for
-> this project. Use the v1.3.0 route. Run safe package checks first,
+> this project. Use the published v1.3.0 route. Run safe package checks first,
 > explain each step plainly, and ask me before changing marketplace, plugin,
 > Skills, MCP, account, credential, or trust settings.
 
@@ -78,7 +84,7 @@ The assistant can guide onboarding, but you approve every host-managed change.
 ## Manual setup
 
 Manual setup is available when you prefer complete control. You need
-**Node.js LTS 20 or newer** and **Git**. Start from the verified origin
+**Node.js LTS 24 (recommended) or 22 (supported alternative)** and **Git**. The lifecycle also accepts Node.js LTS 20 for compatibility. Start from the verified origin
 `https://github.com/elvinzhao10/LazyQoder` and follow the
 [installation guide](docs/03-install-and-host-verification.md).
 
@@ -123,7 +129,7 @@ and start a new session to verify it.
 Start with the result you want and how you will know it worked. Then use the
 smallest amount of structure that fits the task. You can simply describe the
 work in plain language; the modes are guidance, not commands you need to
-memorize. The v1.3.0 dual-entry routing picks one of these for you.
+memorize. The published v1.3.0 dual-entry routing picks one of these for you.
 
 | Mode | Use it when | Example request |
 | --- | --- | --- |
@@ -167,11 +173,12 @@ runtime.
 ## Learn more
 
 - [Install and verify a host](docs/03-install-and-host-verification.md)
-- [Supported v1.3.0 route](docs/v1.3.0-supported-route.md)
+- [Published stable v1.3.0 route](docs/v1.3.0-supported-route.md)
 - [Workflow playbooks — how the modes pick work](docs/04-workflow-playbooks.md)
 - [Evidence and completion — what "done" proves](docs/05-evidence-and-completion.md)
 - [Host routes and recovery](docs/reference/host-routes.md)
 - [Release notes](RELEASE_NOTES.md)
+- [Published v1.3.0 release notes](docs/v1.3.0-release-notes.md)
 - [Documentation index](docs/README.md)
 
 ## License

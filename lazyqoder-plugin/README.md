@@ -1,8 +1,10 @@
 # LazyQoder Plugin
 
-## Durable v1.3.0 installation
+The package source in this worktree is an unpublished v1.3.1 candidate; v1.3.0 remains the published stable release.
 
-**Node.js LTS 20 or newer** and **Git** are required. Bootstrap `onboard` only
+## Published stable v1.3.0 installation
+
+**Node.js LTS 24 (recommended) or 22 (supported alternative)** and **Git** are recommended. The lifecycle also accepts Node.js LTS 20 for compatibility. Bootstrap `onboard` only
 from `https://github.com/elvinzhao10/LazyQoder.git`, then use
 `node "<install-root>/LazyQoder/launcher.js"` for `update`, `status`,
 `recover-bootstrap-lock`, and plan-first `offboard`. The exact tree is
@@ -22,7 +24,7 @@ require LazyCodex or OmO at runtime.
 
 ## Durable onboarding
 
-Bootstrap v1.3.0 once from a verified official source checkout, then use the
+Bootstrap the published stable v1.3.0 route from a verified official source checkout, then use the
 durable launcher rather than treating that checkout as the installed runtime:
 
 ```bash
@@ -72,7 +74,7 @@ plus six individual manual local MCP connectors is recovery-only.
 3. **Verify the host** — in Qoder CLI, confirm one `/lazyqoder:lazy-<command>` or Skill and all six MCP connections in a new session. In Qoder IDE, confirm an imported Skill and each manually configured local connector; do not infer commands, agents, hooks, or MCP loading from files or load-check output without full-plugin proof.
 4. **Use the workflow** — in Qoder CLI, `/lazyqoder:lazy-<command>` commands; in Qoder IDE, use the equivalent natural-language workflow or imported skill unless a verified plugin session exposes a command.
 
-**Verification scope:** macOS only. Repository-level public guides cover the
+**Verification scope:** CI package checks run on Ubuntu and macOS per the workflow; supplied live-host observations are historical macOS reports. Repository-level public guides cover the
 workflow and host-specific onboarding/offboarding; package readiness remains
 package evidence, not proof of live host loading or MCP connection.
 
@@ -86,6 +88,15 @@ LazyQoder provides a workflow harness for Qoder CLI, Qoder IDE, and the Qoder ap
 - **Verified completion loop** (`/lazyqoder:lazy-ulw-loop`) — evidence-backed done claims with adversarial verification
 - **5-agent parallel review** (`/lazyqoder:lazy-review-work`) — goal/QA/code/security/context; all 5 must pass
 - **Ultrawork mode** (`/lazyqoder:lazy-ultrawork`) — binding directive with tier triage and Manual-QA discipline
+
+### Model routing
+
+LazyQoder maps task classes to host-native routing recommendations. Subagents
+inherit the current model unless a plan explicitly enables switching. The package
+does not choose a concrete backing model, configure a provider, or overwrite a
+user-selected session model. See [Model routing](docs/model-routing.md) for the
+read-only helper, Qoder CLI per-agent override preview, custom-model boundary,
+and current-host verification steps.
 
 ### Execution evidence and recovery
 

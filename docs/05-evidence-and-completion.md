@@ -94,3 +94,10 @@ files rather than parsing prose. State scripts preserve a run event/evidence
 reference separately from verifier output. This lets a reviewer distinguish
 “the package check passed,” “the requested surface was observed,” and “the
 claim remains limited by an unverified host fact.”
+
+
+## v1.3.1 measurement boundary
+
+Cost-outcome records may identify `measurement_scope` as `fixture-validation` or `execution`. An absent scope is unspecified. Buddy/Qoder baseline-runner records explicitly use `fixture-validation`: their elapsed time measures fixture validation, and their counters come from the supplied fixture. They are not observations of a coding task. The outcome comparison accepts only explicit `execution` scope; unspecified and fixture-validation records are rejected there. Scope metadata is a caller declaration, not independent execution or billing proof.
+
+Native model resolution, token usage, billed cost, task duration and productivity still require current host-run evidence. Unknown usage remains unavailable. Optional LSP/CodeGraph provider status and heuristic context-search results do not establish native activation or complete semantic coverage.

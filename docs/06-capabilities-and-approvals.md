@@ -3,9 +3,10 @@
 LazyQoder is local-first. Its automatic broker selects the lightest eligible
 capability for the task and keeps that selection task-scoped and nonpersistent.
 It does not write target dependencies, lockfiles, host configuration, or a
-host MCP registration. Model routing (the OmO quota discipline) recommends the
-matching entry in the Qoder IDE **Model selector** — GLM-5.1, DeepSeek,
-Kimi-K2.6, or MiniMax — but the package does not reconfigure the selector.
+host MCP registration. Model routing recommends a task class to Qoder's current
+host-native selector, but the package does not reconfigure that selector. See
+[the package model-routing guide](../lazyqoder-plugin/docs/model-routing.md)
+for catalog, custom-model, cost, and host-observation boundaries.
 
 ## Capability ladder
 

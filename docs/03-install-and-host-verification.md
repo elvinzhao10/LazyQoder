@@ -2,10 +2,10 @@
 
 This page explains the deployment boundary in code terms. A plugin package contains files a host may load; it does not contain the host's marketplace database, session state, or connector process table.
 
-## Current v1.3.0 route status
+## Published v1.3.0 route and v1.3.1 candidate status
 
 This documentation boundary covers `qodercli-cli`, `qodercli-ide`, and
-`qoder`; it does not publish a v1.3.0 package. Marketplace is the default
+`qoder`; v1.3.1 remains an unpublished candidate. Marketplace is the default
 full-plugin route for Qoder CLI and the Qoder app. The Skills/manual-MCP route
 is recovery-only and mutually exclusive with a full-plugin route. v2 records
 native mode as `invoke-documented`, `observe-only`, `descriptor-only`, or
@@ -19,7 +19,7 @@ only a selection record; it does not prove a workflow loaded or dispatched.
 
 ## Durable lifecycle
 
-Prerequisites are **Node.js LTS 20 or newer** and **Git**. Bootstrap `onboard`
+Prerequisites are **Node.js LTS 24 (recommended) or 22 (supported alternative)** and **Git**. The lifecycle also accepts Node.js LTS 20 for compatibility. Bootstrap `onboard`
 only from `https://github.com/elvinzhao10/LazyQoder.git`. After promotion use
 `node "<install-root>/LazyQoder/launcher.js"` for `update`, `status`, and
 plan-first `offboard`. The exact tree is
@@ -115,11 +115,9 @@ It prints `HOST_PREPARATION=not-applied`, `HOST_MUTATION=none`, and
 `HOST_READINESS=pending`; `--apply` refuses. Treat supplied QA as historical
 observed behavior, never as permission to reproduce undocumented host state.
 
-The supplied 2026-07-18 macOS reports inspected Qoder IDE v5.2.6 on macOS; the
-Qoder CLI exact host version/build was not recorded, and an unsupported build
-remains **HOST READINESS: PENDING**. The fallback's exact
+The supplied historical reports do not establish an exact Qoder host build or current-session activation. The Qoder CLI build is not recorded; current Qoder host evidence remains **HOST READINESS: PENDING**. The fallback's exact
 non-mutating six-entry JSON—with absolute release-local `server.sh` arguments,
-`cwd`, `CWD`, and `CODEBUDDY_PROJECT_DIR` set to the consumer project—is in
+`cwd`, `CWD`, and `QODER_PROJECT_DIR` set to the consumer project—is in
 [Host routes](reference/host-routes.md#manual-connector-specification).
 
 `.qodercli/settings.json` is shareable non-secret project scope; ignored

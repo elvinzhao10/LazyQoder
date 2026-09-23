@@ -4,11 +4,10 @@ LazyQoder deliberately aligns policy and package safety across hosts while keepi
 
 ## Onboarding baseline
 
-## Current v1.3.0 evidence boundary
+## Published v1.3.0 and v1.3.1 candidate evidence boundary
 
-This documentation release covers `qodercli-cli`, `qodercli-ide`, and
-`qoder`; it does not publish a v1.3.0 package or claim a host has loaded
-one. Marketplace is the default full-plugin route for Qoder CLI and
+The v1.3.0 release is published; this v1.3.1 candidate documentation covers `qodercli-cli`, `qodercli-ide`, and
+`qoder`; v1.3.1 is not tagged or published, and no current host activation is claimed. Marketplace is the default full-plugin route for Qoder CLI and
 the Qoder app. The Skills/manual-MCP route is recovery-only and mutually exclusive
 with a full-plugin route in the same project.
 
@@ -18,7 +17,7 @@ with a full-plugin route in the same project.
 | Public label | `documented-tested`, `documented-untested`, `observed-build-specific`, or `unavailable`. |
 | Evidence scope | `package`, `probe`, or `current-session`; `package` does not prove a live host. |
 
-Require **Node.js LTS 20 or newer** and **Git**. Bootstrap `onboard` only from
+Use **Node.js LTS 24 (recommended) or 22 (supported alternative)** and **Git**. The lifecycle also accepts Node.js LTS 20 for compatibility. Bootstrap `onboard` only from
 `https://github.com/elvinzhao10/LazyQoder.git`; then run `update`, `status`,
 and plan-first `offboard` with
 `node "<install-root>/LazyQoder/launcher.js"`. The durable tree is
@@ -54,8 +53,7 @@ only.
 | **Qoder CLI** | Run durable `status --route qodercli-marketplace`, then use its active durable release root with `qodercli plugin marketplace add "<active-durable-release-root>"`; wait before `qodercli plugin install lazyqoder@lazyqoder`. | Inside a Qoder CLI session, the interactive `/plugin` menu provides the same route. `--plugin-dir` is development/testing only, never persistent. | Fresh-session Skill/command and all six MCP connections. |
 | **Qoder app** | The active release's `.qoder-plugin/plugin.json` marketplace source, declaring Skills, commands, agents, hooks, and six MCP servers. | Recovery-only Skills import plus six manual local MCP connectors. It excludes commands, agents, and hooks. | A current source/version/build/session receipt with one loaded Skill, command, agent, hook, and all six MCP connections. |
 
-The supplied macOS QA dated 2026-07-18 inspected the Qoder app v5.2.6 on macOS
-with a historical LazyQoder package; the Qoder CLI exact host version/build was not recorded.
+The supplied historical reports do not establish the Qoder app build or current-session activation; the Qoder CLI exact host version/build is not recorded.
 For Qoder CLI,
 prefer the CLI marketplace route whenever available; the GUI local-directory
 marketplace is only a fallback observed-build alternative. In Qoder IDE, use
@@ -120,9 +118,9 @@ unsupported and may duplicate Skills or MCP processes. Stop the session,
 remove only the old LazyQoder entries in the host UI, choose one route, restart,
 and verify that route before making a live-host-proof claim.
 
-## macOS-only scope
+## Host evidence scope
 
-The package evidence is verified on macOS only. It does not claim equivalent host loading, marketplace behavior, hook execution, or MCP connection on other operating systems. Those are observed per host session.
+Automated package CI runs on Ubuntu and macOS as defined in the workflows. Manual host loading, route discovery, hooks, and MCP connection remain per-session observations; the supplied host reports are historical macOS evidence only.
 
 ## Migration and removal
 

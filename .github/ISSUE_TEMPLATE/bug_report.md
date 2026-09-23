@@ -18,7 +18,7 @@ labels: bug
 ## Environment
 
 - LazyQoder version: <!-- run `bash lazyqoder-plugin/scripts/lazyqoder-plugin-doctor.sh` -->
-- Host and version: <!-- Qoder IDE IDE, Qoder IDE CLI -->
+- Host and version: <!-- Qoder IDE, Qoder CLI -->
 - OS:
 
 ## Verification Output

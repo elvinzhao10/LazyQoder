@@ -2,6 +2,13 @@
 
 > **Historical/non-operational record.** This dated change history is retained for context only. In a repository checkout, current guidance is in `README.md`, `AGENTS.md`, and `lazyqoder-plugin/README.md`; a copied package should use its local `README.md`.
 
+## [1.3.1] - Unreleased
+
+- Follow-up fixes bind evaluation snapshots to bytes, report honest integrity and measurement scope, and close confirmed routing/isolation/context-tool gaps; see RELEASE_NOTES.md for product-specific scope.
+
+- Removed obsolete agent-session attribution and port setup notes; NOTICE and LICENSE retain project credits.
+- Candidate runtime fixes and verification boundaries are documented in root RELEASE_NOTES.md.
+
 ## v1.3.0 — Adaptive workflow experience (2026-09-16)
 
 - Dual activation: explicit start-work and natural-language implementation

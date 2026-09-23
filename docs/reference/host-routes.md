@@ -1,9 +1,9 @@
 # Host routes
 
-## Current v1.3.0 route and evidence status
+## Published v1.3.0 route and v1.3.1 candidate status
 
-This guide is the current v1.3.0 documentation boundary for `qodercli-cli`,
-`qodercli-ide`, and `qoder`; it does not publish a v1.3.0 package.
+This guide is the v1.3.1 candidate documentation boundary for `qodercli-cli`,
+`qodercli-ide`, and `qoder`; v1.3.0 is published; the v1.3.1 worktree remains an unpublished candidate.
 Marketplace is the default full-plugin route for Qoder CLI and the Qoder app.
 The manual Skills/MCP route is recovery-only and mutually exclusive with a
 full-plugin route for one project.
@@ -19,7 +19,7 @@ Automatic workflow selection chooses the smallest sufficient existing workflow
 from task risk and complexity. Before a current host observation it is
 selection-only, not evidence that a host loaded or dispatched that workflow.
 
-Require **Node.js LTS 20 or newer** and **Git**. Bootstrap `onboard` only from
+Use **Node.js LTS 24 (recommended) or 22 (supported alternative)** and **Git**. The lifecycle also accepts Node.js LTS 20 for compatibility. Bootstrap `onboard` only from
 `https://github.com/elvinzhao10/LazyQoder.git`; then run `update`, `status`,
 and plan-first `offboard` through
 `node "<install-root>/LazyQoder/launcher.js"`. The exact durable tree is
@@ -47,12 +47,10 @@ CLI route and the preferred Qoder CLI route whenever the Qoder CLI is
 available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only. These labels never prove the current build.
-The supplied macOS QA dated 2026-07-18 observed Qoder IDE full-plugin
-loading through the CLI-backed user-scope marketplace route. It inspected
-the Qoder app v5.2.6 on macOS and reported full-plugin behavior after undocumented
-host-internal changes. This is historical feedback only. The GUI flows failed
-in that tested build; a different or unsupported build remains **HOST
-READINESS: PENDING**.
+The supplied historical reports do not establish an exact Qoder app or IDE
+build, or any current-session activation. The Qoder CLI exact version/build is
+also unrecorded. Qoder host routes and GUI flows remain **HOST READINESS:
+PENDING** until observed in a fresh current build.
 
 Public contract references: Qoder CLI documents [local plugin
 marketplaces](https://www.qodercli.ai/docs/cli/plugin-marketplaces),
@@ -81,9 +79,9 @@ inspect before the next:
 1. After approval, open the host's **Plugins / Marketplace → Add local
    directory** GUI, choose the absolute release root containing
    `.qodercli-plugin/marketplace.json`, and wait.
-2. Inspect the version the marketplace actually displays; do not infer v1.3.0
-   publication from this documentation boundary or install in the discovery
-   action. If the control or marketplace is absent, record the
+2. Inspect the version the marketplace actually displays. v1.3.0 is the
+   published stable release; do not infer v1.3.1 publication from this candidate
+   documentation or install in the discovery action. If the control or marketplace is absent, record the
    current host version/build and exact error as `UNAVAILABLE`, leave **HOST
    READINESS: PENDING**, and select the fallback only as a later action.
 3. After separate approval, click **Install** for `lazyqoder@lazyqoder`, then
@@ -213,37 +211,37 @@ absolute paths before asking to change host settings. Do not edit the shipped
       "command": "bash",
       "args": ["<release-root>/lazyqoder-plugin/mcp/run-ledger/server.sh"],
       "cwd": "<project-root>",
-      "env": {"CWD": "<project-root>", "CODEBUDDY_PROJECT_DIR": "<project-root>"}
+      "env": {"CWD": "<project-root>", "QODER_PROJECT_DIR": "<project-root>"}
     },
     "verification": {
       "command": "bash",
       "args": ["<release-root>/lazyqoder-plugin/mcp/verification/server.sh"],
       "cwd": "<project-root>",
-      "env": {"CWD": "<project-root>", "CODEBUDDY_PROJECT_DIR": "<project-root>"}
+      "env": {"CWD": "<project-root>", "QODER_PROJECT_DIR": "<project-root>"}
     },
     "status-dashboard": {
       "command": "bash",
       "args": ["<release-root>/lazyqoder-plugin/mcp/status-dashboard/server.sh"],
       "cwd": "<project-root>",
-      "env": {"CWD": "<project-root>", "CODEBUDDY_PROJECT_DIR": "<project-root>"}
+      "env": {"CWD": "<project-root>", "QODER_PROJECT_DIR": "<project-root>"}
     },
     "context-graph": {
       "command": "bash",
       "args": ["<release-root>/lazyqoder-plugin/mcp/context-graph/server.sh"],
       "cwd": "<project-root>",
-      "env": {"CWD": "<project-root>", "CODEBUDDY_PROJECT_DIR": "<project-root>"}
+      "env": {"CWD": "<project-root>", "QODER_PROJECT_DIR": "<project-root>"}
     },
     "code-intel": {
       "command": "bash",
       "args": ["<release-root>/lazyqoder-plugin/mcp/code-intel/server.sh"],
       "cwd": "<project-root>",
-      "env": {"CWD": "<project-root>", "CODEBUDDY_PROJECT_DIR": "<project-root>"}
+      "env": {"CWD": "<project-root>", "QODER_PROJECT_DIR": "<project-root>"}
     },
     "docs": {
       "command": "bash",
       "args": ["<release-root>/lazyqoder-plugin/mcp/docs/server.sh"],
       "cwd": "<project-root>",
-      "env": {"CWD": "<project-root>", "CODEBUDDY_PROJECT_DIR": "<project-root>"}
+      "env": {"CWD": "<project-root>", "QODER_PROJECT_DIR": "<project-root>"}
     }
   }
 }
@@ -251,7 +249,7 @@ absolute paths before asking to change host settings. Do not edit the shipped
 
 Every entry uses `bash`, its absolute release-local `server.sh`, and explicit
 consumer-project context in both `cwd` and the `CWD` /
-`CODEBUDDY_PROJECT_DIR` environment. Never fall back to the package directory
+`QODER_PROJECT_DIR` environment. Never fall back to the package directory
 or caller shell directory. After approval, add exactly one named connector,
 wait; handle a trust prompt as a separate action, wait; then inspect that
 connector before proceeding to the next one.
