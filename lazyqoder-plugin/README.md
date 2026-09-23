@@ -1,8 +1,8 @@
 # LazyQoder Plugin
 
-The package source in this worktree is an unpublished v1.3.1 candidate; v1.3.0 remains the published stable release.
+The package source in this worktree is the published stable v1.3.1 release. Package readiness does not prove native-host activation.
 
-## Published stable v1.3.0 installation
+## Published stable v1.3.1 installation
 
 **Node.js LTS 24 (recommended) or 22 (supported alternative)** and **Git** are recommended. The lifecycle also accepts Node.js LTS 20 for compatibility. Bootstrap `onboard` only
 from `https://github.com/elvinzhao10/LazyQoder.git`, then use
@@ -24,7 +24,7 @@ require LazyCodex or OmO at runtime.
 
 ## Durable onboarding
 
-Bootstrap the published stable v1.3.0 route from a verified official source checkout, then use the
+Bootstrap the published stable v1.3.1 route from a verified official source checkout, then use the
 durable launcher rather than treating that checkout as the installed runtime:
 
 ```bash

@@ -1,8 +1,8 @@
 # LazyQoder workspace
 
 LazyQoder is a standalone Qoder CLI, IDE, and app workflow package. The
-current worktree is a v1.3.1 candidate; v1.3.0 remains the published stable
-release. A local package check does not prove that a Qoder host loaded it.
+current documentation describes the published stable v1.3.1 release. A local
+package check does not prove that a Qoder host loaded it.
 
 ## Current package
 
@@ -27,5 +27,5 @@ and artifact review pass.
 
 For package checks, run `bash lazyqoder-plugin/scripts/lazyqoder-load-check.sh`
 and the relevant focused tests. Current release changes and limitations are in
-`RELEASE_NOTES.md`; the published v1.3.0 guide remains at
+`RELEASE_NOTES.md`; the historical v1.3.0 guide remains at
 the historical `docs/v1.3.0-supported-route.md`.

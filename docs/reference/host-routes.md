@@ -1,9 +1,9 @@
 # Host routes
 
-## Published v1.3.0 route and v1.3.1 candidate status
+## Published v1.3.1 route and host readiness
 
-This guide is the v1.3.1 candidate documentation boundary for `qodercli-cli`,
-`qodercli-ide`, and `qoder`; v1.3.0 is published; the v1.3.1 worktree remains an unpublished candidate.
+This guide is the published v1.3.1 documentation boundary for `qodercli-cli`,
+`qodercli-ide`, and `qoder`; native-host readiness remains pending.
 Marketplace is the default full-plugin route for Qoder CLI and the Qoder app.
 The manual Skills/MCP route is recovery-only and mutually exclusive with a
 full-plugin route for one project.
@@ -79,8 +79,8 @@ inspect before the next:
 1. After approval, open the host's **Plugins / Marketplace → Add local
    directory** GUI, choose the absolute release root containing
    `.qodercli-plugin/marketplace.json`, and wait.
-2. Inspect the version the marketplace actually displays. v1.3.0 is the
-   published stable release; do not infer v1.3.1 publication from this candidate
+2. Inspect the version the marketplace actually displays. v1.3.1 is the
+   published stable release; do not infer host activation from this
    documentation or install in the discovery action. If the control or marketplace is absent, record the
    current host version/build and exact error as `UNAVAILABLE`, leave **HOST
    READINESS: PENDING**, and select the fallback only as a later action.

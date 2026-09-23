@@ -1,11 +1,11 @@
 # Changelog
 
-## [1.3.1] - Unreleased
+## [1.3.1] - 2026-09-23
 
 - Follow-up fixes bind evaluation snapshots to bytes, report honest integrity and measurement scope, and close confirmed routing/isolation/context-tool gaps; see RELEASE_NOTES.md for product-specific scope.
 
 - Removed obsolete agent-session attribution and port setup notes; NOTICE and LICENSE retain project credits.
-- Candidate changes are documented in RELEASE_NOTES.md. This entry is not a publication record.
+- Release changes and verification limits are documented in RELEASE_NOTES.md.
 
 ## [1.3.0] - 2026-09-16
 
@@ -38,7 +38,7 @@
   connection remain host-owned and unobserved.
 
 All notable changes to LazyQoder are documented here. Versions follow
-[Semantic Versioning](https://semver.org/). v1.3.0 was published on GitHub on 2026-09-16; v1.3.1 is an unpublished candidate.
+[Semantic Versioning](https://semver.org/). v1.3.1 was published on GitHub on 2026-09-23.
 
 ## [0.0.1] - 2026-07-19
 

@@ -1,6 +1,6 @@
-# LazyQoder v1.3.1 release candidate
+# LazyQoder v1.3.1
 
-**Status:** Unpublished. v1.3.0 remains the latest stable release. Local repository checks passed; see [PR #8](https://github.com/elvinzhao10/LazyQoder/pull/8) for current CI status. Qoder activation in a fresh host session still needs live testing.
+**Status:** Published stable release. Repository and release-package checks passed; see [PR #8](https://github.com/elvinzhao10/LazyQoder/pull/8) for CI results. Qoder activation in a fresh host session still needs live testing.
 
 ## Eval-driven fixes
 
@@ -8,7 +8,7 @@
 - **Better evidence:** Outcome comparisons hash the supplied task, budget, and permission snapshots and reject mismatched cohorts. Reports distinguish absent, partial, and validated evidence, count explicit host-billed costs from failed runs, and reject fixture telemetry as execution data. Hashes verify supplied bytes, not the truth of their contents.
 - **Predictable delegation:** Subagents keep the current session model by default. A plan may propose `efficient` or `performance` for named tasks, but switching requires an explicit plan decision and `--allow-switch`. The selector is advisory and does not change host settings or imply that a model is available on the account.
 - **Package and tooling fixes:** Installed-package and release-root validation now distinguish their routes, check pinned inventory integrity, and reject an invalid explicit release root. Agent metadata accepts optional model aliases and memory scopes; CLI discovery includes `qodercli`. Dependency search handles extension-bearing imports with fewer search processes, and verification avoids repeating the full suite for Python preflight. No end-to-end speed or cost gain has been measured.
-- **Current guidance:** README, contributor, lifecycle, and verification documentation reflect the candidate. Obsolete attribution and initial-port files were removed; credits and licenses remain in NOTICE and LICENSE.
+- **Current guidance:** README, contributor, lifecycle, and verification documentation reflect v1.3.1. Obsolete attribution and initial-port files were removed; credits and licenses remain in NOTICE and LICENSE.
 
 ## Measured efficiency
 
@@ -16,7 +16,7 @@ No measured productivity or native-cost improvement is claimed. Local repository
 
 ## Host capability matrix
 
-| Host | Candidate route | Live status |
+| Host | Release route | Live status |
 | --- | --- | --- |
 | Qoder CLI | Release-root marketplace | Pending fresh-session test |
 | Qoder IDE | CLI-backed marketplace when available | Pending fresh-session test |
@@ -24,7 +24,7 @@ No measured productivity or native-cost improvement is claimed. Local repository
 
 ## Migration and upgrade
 
-Keep v1.3.0 as the stable version until the exact v1.3.1 archive and host routes are verified. Before upgrading, record the installed version and lifecycle ownership, then validate the exact candidate archive.
+Before upgrading, record the installed version and lifecycle ownership, then validate the exact v1.3.1 archive. Keep host readiness pending until the selected route is observed in a fresh Qoder session.
 
 ## Known risks
 
