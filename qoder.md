@@ -27,5 +27,5 @@ and artifact review pass.
 
 For package checks, run `bash lazyqoder-plugin/scripts/lazyqoder-load-check.sh`
 and the relevant focused tests. Current release changes and limitations are in
-`RELEASE_NOTES.md`; the published v1.3.0 guide remains in
-`docs/v1.3.0-supported-route.md`.
+`RELEASE_NOTES.md`; the published v1.3.0 guide remains at
+the historical `docs/v1.3.0-supported-route.md`.
