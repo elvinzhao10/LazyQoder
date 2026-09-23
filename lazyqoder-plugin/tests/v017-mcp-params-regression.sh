@@ -225,8 +225,15 @@ environment = {
     "QODER_PLUGIN_ROOT": plugin,
     "CWD": project,
     "LAZYQODER_MCP_MODE": "orchestrated",
-    "PATH": "/usr/bin:/bin",
+    "PATH": f"{os.path.dirname(sys.executable)}:/usr/bin:/bin",
 }
+selected_python = subprocess.check_output(
+    ["/bin/bash", "-c", "command -v python3"], env=environment, text=True
+).strip()
+assert os.path.realpath(selected_python) == os.path.realpath(sys.executable), selected_python
+assert subprocess.run(
+    ["/bin/bash", "-c", "command -v rg"], env=environment, capture_output=True
+).returncode != 0
 process = subprocess.Popen(
     ["/bin/bash", f"{plugin}/mcp/context-graph/server.sh"],
     stdin=subprocess.PIPE,

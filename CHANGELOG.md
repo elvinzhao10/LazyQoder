@@ -1,6 +1,11 @@
 # Changelog
 
-## [1.3.1] - 2026-09-23
+## [1.3.2] - 2026-09-23
+
+- Corrected CI release-verification reliability: the MCP grep-fallback regression harness retains the Python interpreter selected by setup-python, with its existing 1.5-second response bound and grep fallback. No product behavior or model selection changed.
+- See RELEASE_NOTES.md for scope and verification limits.
+
+## [1.3.1] - 2026-09-23 (tagged; GitHub Release not published)
 
 - Follow-up fixes bind evaluation snapshots to bytes, report honest integrity and measurement scope, and close confirmed routing/isolation/context-tool gaps; see RELEASE_NOTES.md for product-specific scope.
 
@@ -38,7 +43,7 @@
   connection remain host-owned and unobserved.
 
 All notable changes to LazyQoder are documented here. Versions follow
-[Semantic Versioning](https://semver.org/). v1.3.1 was published on GitHub on 2026-09-23.
+[Semantic Versioning](https://semver.org/). v1.3.1 was tagged on 2026-09-23, but its GitHub Release was not published.
 
 ## [0.0.1] - 2026-07-19
 

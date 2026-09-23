@@ -35,8 +35,8 @@ function writeFixtureFiles(root, selfTest = "process.stdout.write('self-test-ok\
   fs.mkdirSync(path.join(packageRoot, '.qoder-plugin'), { recursive: true });
   fs.mkdirSync(path.join(packageRoot, 'scripts'), { recursive: true });
   fs.mkdirSync(contracts, { recursive: true });
-  fs.writeFileSync(path.join(packageRoot, '.qodercli-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.3.1"}\n');
-  fs.writeFileSync(path.join(packageRoot, '.qoder-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.3.1"}\n');
+  fs.writeFileSync(path.join(packageRoot, '.qodercli-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.3.2"}\n');
+  fs.writeFileSync(path.join(packageRoot, '.qoder-plugin', 'plugin.json'), '{"name":"lazyqoder","version":"1.3.2"}\n');
   fs.writeFileSync(path.join(packageRoot, 'scripts', 'lazyqoder-lifecycle.js'), "console.log('fixture-launch-ok')\n");
   fs.writeFileSync(path.join(packageRoot, 'scripts', 'lifecycle-self-test.js'), selfTest);
   for (const name of ['lazy-harness-lifecycle.v1.schema.json', 'lazy-harness-lifecycle.v1.example.json']) {
@@ -61,7 +61,7 @@ function fixture() {
   git(source, ['add', 'lazyqoder-plugin']);
   git(source, ['commit', '-m', 'fixture v1']);
   git(source, ['branch', '-M', 'main']);
-  git(source, ['tag', 'v1.3.1']);
+  git(source, ['tag', 'v1.3.2']);
   git(sandbox, ['clone', '--bare', source, remote]);
   return {
     paths: prepareProductRoot({ installRoot: path.join(sandbox, 'durable root'), product: 'LazyQoder' }),
@@ -125,8 +125,8 @@ function treeSnapshot(root) {
 
 test('parses only canonical official HTTPS source forms for the selected product', () => {
   const accepted = [
-    ['https://github.com/elvinzhao10/LazyQoder', 'v1.3.1'],
-    ['https://github.com/elvinzhao10/LazyQoder.git', 'v1.3.1'],
+    ['https://github.com/elvinzhao10/LazyQoder', 'v1.3.2'],
+    ['https://github.com/elvinzhao10/LazyQoder.git', 'v1.3.2'],
     ['https://github.com/elvinzhao10/LazyQoder/tree/release/v1.2.3', 'release/v1.2.3'],
   ];
   const rejected = [
@@ -172,7 +172,7 @@ test('resolves, verifies, self-tests, and promotes a local fixture under an offi
     commit_sha: expectedSha,
     status: 'ready',
     test_status: 'passed',
-    version: '1.3.1',
+    version: '1.3.2',
   });
   assert.equal(launched.status, 0, launched.stderr);
   assert.equal(launched.stdout.trim(), 'fixture-launch-ok');
@@ -183,7 +183,7 @@ test('resolves, verifies, self-tests, and promotes a local fixture under an offi
 test('repo, tag, branch, and full-SHA sources resolve through Git to the same immutable commit', () => {
   const sources = [
     'https://github.com/elvinzhao10/LazyQoder',
-    'https://github.com/elvinzhao10/LazyQoder/tree/v1.3.1',
+    'https://github.com/elvinzhao10/LazyQoder/tree/v1.3.2',
     'https://github.com/elvinzhao10/LazyQoder/tree/main',
   ];
   for (const sourceUrl of sources) {

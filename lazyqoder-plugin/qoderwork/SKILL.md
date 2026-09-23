@@ -1,12 +1,12 @@
 ---
 name: lazyqoder
-version: 1.3.1
+version: 1.3.2
 description: "LazyQoder workflow harness for QoderWork. Provides structured workflows for project analysis (init-deep), strategic planning (ulw-plan), orchestrated execution (start-work), multi-agent review (review-work), and verified completion loops (ulw-loop). Use when the user says init-deep, plan, start-work, review, ulw-loop, or asks for structured multi-step implementation with verification."
 ---
 
 # LazyQoder for QoderWork
 
-Structured workflow harness adapted from the published stable LazyQoder v1.3.1 release; native-host readiness remains pending.
+Structured workflow harness adapted from the LazyQoder v1.3.2 release candidate; native-host readiness remains pending.
 Provides five core workflows that enforce evidence-based discipline: define the
 observable outcome, keep authority with the user, choose local tools first, and
 finish by exercising the surface the user cares about.
