@@ -27,8 +27,8 @@ test('v1.3.2 release versions are classified with one current root release note'
   assert.deepEqual(classify(ROOT).failures, []);
 });
 
-test('classifier rejects a current 1.3.0 claim even when migration wording is present', () => {
-  const root = mutate('README.md', text => `${text}\nCurrent supported release is 1.3.0 for migration compatibility.\n`);
+test('classifier rejects a current 1.3.1 claim even when migration wording is present', () => {
+  const root = mutate('README.md', text => `${text}\nCurrent supported release is 1.3.1 for migration compatibility.\n`);
   try {
     const result = spawnSync(process.execPath, [path.resolve(__dirname, '../scripts/release-version-classifier.js'), root], { encoding: 'utf8' });
     assert.equal(result.status, 1);
@@ -39,7 +39,7 @@ test('classifier rejects a current 1.3.0 claim even when migration wording is pr
 });
 
 for (const [name, relativePath, transform, failure] of [
-  ['current 1.3.0 drift', 'README.md', text => `${text}\nCurrent release version is 1.3.0.\n`, 'CURRENT_VERSION_DRIFT_TEXT'],
+  ['current 1.3.1 drift', 'README.md', text => `${text}\nCurrent release version is 1.3.1.\n`, 'CURRENT_VERSION_DRIFT_TEXT'],
   ['missing release-note section', 'RELEASE_NOTES.md', text => text.replace('## Rollback', '## Recovery'), 'MISSING_RELEASE_NOTE_SECTION'],
   ['package/runtime mismatch', 'lazyqoder-plugin/.qodercli-plugin/plugin.json', text => text.replace('"version": "1.3.2"', '"version": "1.3.0"'), 'CURRENT_VERSION_DRIFT'],
   ['superseded versioned release note', 'RELEASE_NOTES.md', text => text, 'VERSIONED_RELEASE_NOTE_PRESENT'],

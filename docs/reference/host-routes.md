@@ -80,7 +80,7 @@ inspect before the next:
    directory** GUI, choose the absolute release root containing
    `.qodercli-plugin/marketplace.json`, and wait.
 2. Inspect the version the marketplace actually displays. v1.3.2 is the
-   published stable release; do not infer host activation from this
+   release candidate; do not infer host activation from this
    documentation or install in the discovery action. If the control or marketplace is absent, record the
    current host version/build and exact error as `UNAVAILABLE`, leave **HOST
    READINESS: PENDING**, and select the fallback only as a later action.

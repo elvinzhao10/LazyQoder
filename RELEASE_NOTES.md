@@ -2,7 +2,9 @@
 
 **Status:** Release candidate; publication is pending. This patch corrects CI release verification reliability. It does not change product behavior or model selection.
 
-## Included v1.3.1 fixes
+## Eval-driven fixes
+
+These fixes were included in the prior tagged build, whose GitHub Release was not published.
 
 - **Safer execution:** Workflow intent ignores quoted or historical command mentions while retaining explicit requests to start work. Isolation reports namespace allocation accurately; it does not claim to have created a Git worktree. Cleanup preserves populated allocations, linked files, and caller-owned changes.
 - **Better evidence:** Outcome comparisons hash the supplied task, budget, and permission snapshots and reject mismatched cohorts. Reports distinguish absent, partial, and validated evidence, count explicit host-billed costs from failed runs, and reject fixture telemetry as execution data. Hashes verify supplied bytes, not the truth of their contents.
