@@ -32,6 +32,14 @@ function output(result) {
   return JSON.parse(result.stdout);
 }
 
+test('public Qoder IDE surface CLI exposes read-only help without writing output', () => {
+  const result = command(['--help']);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /template\|observe\|evidence-template\|evidence-observe/);
+  assert.equal(result.stderr, '');
+});
+
 function nativeFixture(t) {
   const sandbox = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'lazyqoder ide hostile '));
   const projectRoot = path.join(sandbox, 'project');
@@ -46,7 +54,7 @@ function nativeFixture(t) {
   ]));
   const observation = {
     schema_version: 1,
-    record_type: 'qodercli-ide-native-observation',
+    record_type: 'qoder-ide-native-observation',
     observation_id: 'obs:ide:001',
     session_id: 'session:001',
     observed_at: '2026-08-03T10:05:00Z',
@@ -91,7 +99,7 @@ function evidenceFixture(t) {
   });
   const observation = {
     schema_version: 1,
-    record_type: 'qodercli-ide-evidence-observation',
+    record_type: 'qoder-ide-evidence-observation',
     observation_id: 'obs:ide:evidence:001',
     session_id: 'session:evidence:001',
     observed_at: '2026-08-03T10:05:00Z',
@@ -154,7 +162,7 @@ test('pending native template ingests sanitized IDE observations without promoti
   ]));
   fs.writeFileSync(observationPath, `${JSON.stringify({
     schema_version: 1,
-    record_type: 'qodercli-ide-native-observation',
+    record_type: 'qoder-ide-native-observation',
     observation_id: 'obs:ide:001',
     session_id: 'session:001',
     observed_at: '2026-08-03T10:05:00Z',
@@ -309,7 +317,7 @@ test('IDE evidence template describes every native MCP, preview, artifact, and c
   ]));
 
   // Then: every requested surface is pending with an explicit native mode.
-  assert.equal(descriptor.record_type, 'qodercli-ide-evidence-template');
+  assert.equal(descriptor.record_type, 'qoder-ide-evidence-template');
   assert.deepEqual(descriptor.surfaces.map(({ surface_id, native_mode, status }) => ({ surface_id, native_mode, status })), [
     { surface_id: 'openFile', native_mode: 'invoke-documented', status: 'pending' },
     { surface_id: 'openDiff', native_mode: 'invoke-documented', status: 'pending' },

@@ -56,4 +56,6 @@ Desktop.ini
 
 # Logs
 *.log
+!/lazyqoder-plugin/contracts/fixtures/completion-evidence-v1/artifacts/criterion.log
+!/lazyqoder-plugin/contracts/fixtures/outcome-evaluation-v1/artifacts/criterion.log
 logs/

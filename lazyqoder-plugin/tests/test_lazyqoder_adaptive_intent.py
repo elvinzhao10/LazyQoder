@@ -13,6 +13,25 @@ from lazyqoder_adaptive_intent import (
     normalise_intent,
     strips_execution_authority,
 )
+from lazyqoder_adaptive_detector import classify_adaptive_decision
+
+
+INTENT_BOUNDARY_CASES = (
+    ("inline-backticked-command", "`/lazy-start-work fix the typo`", "plan_only"),
+    ("quoted-command", '"/lazy-start-work fix the typo"', "plan_only"),
+    ("fenced-quote", "```text\n> /lazy-start-work fix the typo\n```", "plan_only"),
+    ("markdown-quote", "> /lazy-start-work fix the typo", "plan_only"),
+    ("history", "History: /lazy-start-work fix the typo", "plan_only"),
+    ("inline-reference-then-fix", "The docs mention `/lazy-start-work`. Fix the parser bug.", "execute"),
+    ("history-then-fix", "History: /lazy-start-work fix the typo\nFix the parser bug.", "execute"),
+    ("quoted-line-with-words", "> please run /lazy-start-work", "plan_only"),
+    ("history-then-direct-command", "History: /lazy-start-work fix the typo\n/lazy-start-work fix the typo", "execute"),
+    ("denial", "Do not execute /lazy-start-work.", "plan_only"),
+    ("explanation", "Explain /lazy-start-work.", "plan_only"),
+    ("bare-command", "/lazy-start-work fix the typo", "execute"),
+    ("direct-command", "Please run /lazy-start-work fix the typo.", "execute"),
+    ("clear-fix", "Fix the typo in the welcome label.", "execute"),
+)
 
 
 @pytest.mark.parametrize(
@@ -65,3 +84,10 @@ def test_plan_only_invariant_helpers() -> None:
     # The plan-only invariant: plan_only never grants execution authority.
     assert strips_execution_authority("plan_only") is True
     assert strips_execution_authority("execute") is False
+
+
+@pytest.mark.parametrize(("_case", "prompt", "expected"), INTENT_BOUNDARY_CASES)
+def test_current_message_intent_ignores_inert_workflow_mentions(
+    _case: str, prompt: str, expected: str,
+) -> None:
+    assert classify_adaptive_decision(prompt)["execution_intent"] == expected

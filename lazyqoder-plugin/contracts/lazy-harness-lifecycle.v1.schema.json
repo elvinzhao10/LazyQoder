@@ -218,6 +218,11 @@
         },
         {
           "not": {
+            "pattern": "(?:^|[\\\\/])\\.workbuddy(?:[\\\\/]|$)"
+          }
+        },
+        {
+          "not": {
             "pattern": "(?:^|[\\\\/])\\.\\.?(?:[\\\\/]|$)"
           }
         },
@@ -535,7 +540,7 @@
         },
         {
           "not": {
-            "pattern": "(?:^|/)(?:LazyTrae|LazyQoder)(?:/|$)"
+            "pattern": "(?:^|/)(?:LazyBuddy|LazyTrae|LazyQoder)(?:/|$)"
           }
         },
         {

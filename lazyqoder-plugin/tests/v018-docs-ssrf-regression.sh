@@ -5,11 +5,12 @@ PLUGIN="$(cd "$(dirname "$0")/.." && pwd)"
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/lazyqoder-docs-ssrf.XXXXXX")"
 FAKE_BIN="$TMP/bin"
 CALLS="$TMP/curl.calls"
+PROJECT="$TMP/project"
 
 cleanup() { rm -rf "$TMP"; }
 trap cleanup EXIT
 
-mkdir -p "$FAKE_BIN"
+mkdir -p "$FAKE_BIN" "$PROJECT"
 cat >"$FAKE_BIN/curl" <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -40,7 +41,7 @@ rpc() {
     local library="$1" registry="$2"
     PATH="$FAKE_BIN:$PATH" LAZYQODER_FAKE_CURL_CALLS="$CALLS" \
         printf '%s\n' "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"get_library_docs\",\"arguments\":{\"library\":\"$library\",\"registry\":\"$registry\"}}}" \
-        | PATH="$FAKE_BIN:$PATH" LAZYQODER_FAKE_CURL_CALLS="$CALLS" bash "$PLUGIN/mcp/docs/server.sh"
+        | PATH="$FAKE_BIN:$PATH" LAZYQODER_FAKE_CURL_CALLS="$CALLS" CWD="$PROJECT" bash "$PLUGIN/mcp/docs/server.sh"
 }
 
 assert_registry_only() {
@@ -64,7 +65,7 @@ assert_registry_only() {
 npm_response="$(rpc '@scope/name' npm)"
 printf '%s' "$npm_response" | grep -q 'npm package'
 assert_registry_only 1
-grep -Fx -- '-sS --proto =https --proto-redir =https --max-redirs 0 --max-time 20 -A lazyqoder-docs/1.3.0 https://registry.npmjs.org/@scope/name/latest' "$CALLS" >/dev/null
+grep -Fx -- '-sS --proto =https --proto-redir =https --max-redirs 0 --max-time 20 -A lazyqoder-docs/1.3.1 https://registry.npmjs.org/@scope/name/latest' "$CALLS" >/dev/null
 
 # Given: a PyPI name and loopback URLs in untrusted registry metadata.
 # When: the real launcher is called.
@@ -73,7 +74,7 @@ grep -Fx -- '-sS --proto =https --proto-redir =https --max-redirs 0 --max-time 2
 pypi_response="$(rpc fastapi pypi)"
 printf '%s' "$pypi_response" | grep -q 'PyPI package'
 assert_registry_only 1
-grep -Fx -- '-sS --proto =https --proto-redir =https --max-redirs 0 --max-time 20 -A lazyqoder-docs/1.3.0 https://pypi.org/pypi/fastapi/json' "$CALLS" >/dev/null
+grep -Fx -- '-sS --proto =https --proto-redir =https --max-redirs 0 --max-time 20 -A lazyqoder-docs/1.3.1 https://pypi.org/pypi/fastapi/json' "$CALLS" >/dev/null
 
 # Given: hostile or malformed library values.
 # When: each is sent to its relevant registry resolver.

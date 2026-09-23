@@ -18,6 +18,7 @@ SNAPSHOT_REQUIRED_FIELDS: Final = (
     "decisionId",
     "escalationCount",
     "escalationHistory",
+    "executionIntent",
     "hostFingerprint",
     "mode",
     "nextAction",
@@ -35,6 +36,7 @@ SINGLE_WRITER: Final = "orchestrator"
 MODES: Final = {"direct", "assisted", "planned", "orchestrated", "long-horizon"}
 RISKS: Final = {"low", "standard", "material", "high"}
 VERIFICATION_LEVELS: Final = {"targeted", "standard", "independent", "live-surface"}
+EXECUTION_INTENTS: Final = {"execute", "plan_only"}
 CAPABILITY_CLASSES: Final = {
     "architecture-context",
     "documentation",
@@ -217,6 +219,8 @@ def validate_adaptive_snapshot(snapshot: object) -> bool:
     if snapshot.get("risk") not in RISKS:
         return False
     if snapshot.get("verificationLevel") not in VERIFICATION_LEVELS:
+        return False
+    if snapshot.get("executionIntent") not in EXECUTION_INTENTS:
         return False
     if not _valid_enum_list(snapshot.get("capabilityClasses"), CAPABILITY_CLASSES):
         return False

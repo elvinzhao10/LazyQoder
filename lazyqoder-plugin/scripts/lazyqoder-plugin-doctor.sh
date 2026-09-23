@@ -289,7 +289,7 @@ else
     check "Host/marketplace version agreement" "$agreement"
 fi
 
-if route_contract=$(node "${PLUGIN_ROOT}/scripts/lazyqoder-marketplace-route-check.js" "$PROJECT_ROOT" 2>&1); then
+if route_contract=$(node "${PLUGIN_ROOT}/scripts/lazyqoder-marketplace-route-check.js" 2>&1); then
     check "Marketplace route contract" ok
     echo "  [INFO] Marketplace routes: $route_contract"
 else
@@ -303,7 +303,7 @@ import sys
 
 status = json.loads(sys.argv[1])
 assert status.get("schema_version") == 2
-assert status.get("version") == "1.3.0"
+assert status.get("version") == "1.3.1"
 assert status.get("package_readiness") == {"status": "ready", "scope": "package"}
 assert status.get("host_readiness") == {"status": "pending"}
 hosts = status.get("hosts")

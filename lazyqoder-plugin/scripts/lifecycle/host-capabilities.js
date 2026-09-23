@@ -103,7 +103,9 @@ function probeQoder({ aliases, now, currentSessionId = null, workflowObservation
   if (versions.size !== 1) {
     return { product: 'Qoder Code CLI', outcome: 'blocked', aliases: probes.map(({ name, fingerprint }) => ({ name, fingerprint })), capabilities: CLI_CAPABILITIES.map(name => unavailable(name, 'ALIAS_VERSION_DISAGREEMENT')) };
   }
-  const selected = probes.find(({ name }) => name === 'qoder') || probes[0];
+  const selected = probes.find(({ name }) => name === 'qodercli')
+    || probes.find(({ name }) => name === 'qoder')
+    || probes[0];
   const fingerprint = selected.fingerprint;
   const version = selected.probe.version;
   const aliasesResult = probes.map(({ name, fingerprint: digest }) => ({ name, fingerprint: digest, version: versionText(version) }));
@@ -190,7 +192,7 @@ function buildQoderMatrix({ manifestPath, routes, receipt, now, version = null, 
 
 function discoverQoderAliases(pathValue = process.env.PATH || '') {
   const aliases = [];
-  for (const name of ['qoder', 'cbc']) {
+  for (const name of ['qodercli', 'qoder', 'cbc']) {
     for (const directory of pathValue.split(path.delimiter).filter(Boolean)) {
       const candidate = path.resolve(directory, name);
       try {

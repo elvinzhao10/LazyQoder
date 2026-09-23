@@ -43,20 +43,21 @@ function statusMap(matrix) {
   return Object.fromEntries(matrix.capabilities.map(({ capability, status, reason_code }) => [capability, { status, reason_code }]));
 }
 
-test('Qoder and cbc are one product and expose only help-proven capabilities', (t) => {
+test('qodercli, qoder, and cbc are one product and expose only help-proven capabilities', (t) => {
   // Given: agreeing Qoder aliases whose safe help advertises every supported surface.
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-qodercli-probe-'));
   const qodercli = fakeBinary(root, 'qodercli', '2.105.0');
+  const qoder = fakeBinary(root, 'qoder', '2.105.0');
   const cbc = fakeBinary(root, 'cbc', '2.105.0');
   t.after(() => fs.rmSync(root, { recursive: true }));
 
   // When: the aliases are versioned and queried through bounded non-shell help calls.
-  const matrix = probeQoder({ aliases: [qodercli, cbc], now: NOW });
+  const matrix = probeQoder({ aliases: [qodercli, qoder, cbc], now: NOW });
 
   // Then: they identify one product and each help-proven feature is host-executed.
   assert.equal(matrix.product, 'Qoder Code CLI');
-  assert.deepEqual(matrix.aliases.map(({ name }) => name), ['qodercli', 'cbc']);
-  assert.deepEqual(discoverQoderAliases(root), [qodercli, cbc]);
+  assert.deepEqual(matrix.aliases.map(({ name }) => name), ['qodercli', 'qoder', 'cbc']);
+  assert.deepEqual(discoverQoderAliases(root), [qodercli, qoder, cbc]);
   assert.deepEqual(statusMap(matrix), {
     worktree: { status: 'host-executed', reason_code: null },
     background: { status: 'host-executed', reason_code: null },

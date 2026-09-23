@@ -10,15 +10,16 @@ const EXPECTED_NAMES = new Set([
   'lazyqoder-verifier',
 ]);
 const REQUIRED_FIELDS = new Set([
-  'name', 'description', 'model', 'effort', 'maxTurns', 'tools', 'disallowedTools', 'skills', 'memory',
+  'name', 'description', 'effort', 'maxTurns', 'tools', 'disallowedTools', 'skills',
 ]);
-const ALLOWED_FIELDS = new Set([...REQUIRED_FIELDS, 'isolation']);
+const ALLOWED_FIELDS = new Set([...REQUIRED_FIELDS, 'model', 'isolation', 'memory']);
 const WORKTREE_NAMES = new Set(['lazyqoder-implementer', 'lazyqoder-orchestrator']);
 const READONLY_NAMES = new Set([
   'lazyqoder-context-miner', 'lazyqoder-explorer', 'lazyqoder-gate-reviewer', 'lazyqoder-planner',
   'lazyqoder-reviewer', 'lazyqoder-security-auditor', 'lazyqoder-verifier',
 ]);
-const MODELS = new Set(['lite', 'default', 'reasoning']);
+const MODELS = new Set(['inherit', 'auto', 'lite', 'efficient', 'performance']);
+const MEMORY_SCOPES = new Set(['user', 'project', 'local']);
 const EFFORTS = new Set(['low', 'medium', 'high', 'xhigh']);
 
 class AgentPolicyError extends Error {
@@ -96,13 +97,13 @@ function validateAgent(filePath) {
   for (const field of REQUIRED_FIELDS) if (!Object.hasOwn(data, field)) refuse(`${filename}: required field ${field} is missing`);
   requireString(data.name, 'name', filename);
   requireString(data.description, 'description', filename);
-  requireString(data.model, 'model', filename, MODELS);
+  if (Object.hasOwn(data, 'model')) requireString(data.model, 'model', filename, MODELS);
   requireString(data.effort, 'effort', filename, EFFORTS);
   if (!Number.isSafeInteger(data.maxTurns) || data.maxTurns <= 0) refuse(`${filename}: maxTurns must be a positive integer`);
   requireList(data.tools, 'tools', filename);
   requireList(data.disallowedTools, 'disallowedTools', filename, true);
   requireList(data.skills, 'skills', filename);
-  if (typeof data.memory !== 'boolean') refuse(`${filename}: memory must be a boolean`);
+  if (Object.hasOwn(data, 'memory')) requireString(data.memory, 'memory', filename, MEMORY_SCOPES);
   if (data.name !== filename.slice(0, -3)) refuse(`${filename}: name must match filename`);
   if (!EXPECTED_NAMES.has(data.name)) refuse(`${filename}: unexpected agent name ${data.name}`);
   if (Object.hasOwn(data, 'isolation') && data.isolation !== 'worktree') refuse(`${filename}: isolation must be the string worktree`);

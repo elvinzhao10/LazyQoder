@@ -10,12 +10,14 @@ const test = require('node:test');
 const {
   renderHandoff,
   routeSelection,
+  validateInstalledMarketplacePackage,
   validateMarketplaceRoutes,
 } = require('../scripts/lifecycle/host-handoff');
 
 const REPOSITORY_ROOT = path.resolve(__dirname, '..', '..');
 const PLUGIN_ROOT = path.join(REPOSITORY_ROOT, 'lazyqoder-plugin');
 const ASSET_CLI = path.join(PLUGIN_ROOT, 'scripts', 'assets', 'asset-ownership-cli.js');
+const ROUTE_CHECK = path.join(PLUGIN_ROOT, 'scripts', 'lazyqoder-marketplace-route-check.js');
 
 function releaseFixture() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-marketplace-routes-'));
@@ -26,6 +28,14 @@ function releaseFixture() {
   );
   for (const relative of ['.qodercli-plugin', '.qoder-plugin', 'skills', 'commands', 'agents', 'hooks', 'mcp', '.mcp.json']) {
     fs.cpSync(path.join(PLUGIN_ROOT, relative), path.join(root, 'lazyqoder-plugin', relative), { recursive: true });
+  }
+  return root;
+}
+
+function installedPackageFixture() {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-installed-package-'));
+  for (const relative of ['.qodercli-plugin', '.qoder-plugin', 'skills', 'commands', 'agents', 'hooks', 'mcp', '.mcp.json']) {
+    fs.cpSync(path.join(PLUGIN_ROOT, relative), path.join(root, relative), { recursive: true });
   }
   return root;
 }
@@ -45,12 +55,38 @@ test('validates exact marketplace identities and byte-equivalent canonical paylo
   const result = validateMarketplaceRoutes(root);
 
   // Then: Qoder CLI and Qoder IDE retain distinct manifests over one canonical payload.
-  assert.equal(result.version, '1.3.0');
+  assert.equal(result.version, '1.3.1');
   assert.equal(result.qodercli.plugin, 'lazyqoder@lazyqoder');
   assert.equal(result.qoder.plugin, 'lazyqoder');
   assert.deepEqual(result.qodercli.payload_inventory, result.qoder.payload_inventory);
   assert.ok(result.qodercli.payload_inventory.includes('skills/lazy-programming/SKILL.md'));
   assert.ok(result.qodercli.payload_inventory.includes('mcp/run-ledger/server.sh'));
+});
+
+test('validates the canonical payload from an installed plugin without release metadata', (t) => {
+  // Given: a standalone plugin payload copied without its release-root marketplace files.
+  const root = installedPackageFixture();
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+
+  // When: the installed package boundary is validated.
+  const result = validateInstalledMarketplacePackage(root);
+
+  // Then: its manifest identity and canonical payload remain verifiable.
+  assert.equal(result.version, '1.3.1');
+  assert.ok(result.qoder.payload_inventory.includes('skills/lazy-programming/SKILL.md'));
+});
+
+test('refuses an explicit release root that lacks route artifacts', (t) => {
+  // Given: an explicit directory without the checked-in marketplace release artifacts.
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-invalid-release-root-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+
+  // When: the marketplace route checker is directed at that root.
+  const result = spawnSync(process.execPath, [ROUTE_CHECK, root], { encoding: 'utf8' });
+
+  // Then: it fails instead of falling back to the checker's local installed package.
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /MARKETPLACE_MANIFEST_INVALID/);
 });
 
 test('publishes an exact Qoder IDE full-plugin receipt schema', () => {
@@ -68,7 +104,7 @@ test('publishes an exact Qoder IDE full-plugin receipt schema', () => {
   assert.deepEqual(capabilities.required, ['skill', 'command', 'agent', 'hook', 'mcp']);
   assert.deepEqual(mcp.required, ['run-ledger', 'verification', 'status-dashboard', 'context-graph', 'code-intel', 'docs']);
   assert.equal(schema.properties.source.properties.route.const, 'qoder-marketplace');
-  assert.equal(schema.properties.source.properties.version.const, '1.3.0');
+  assert.equal(schema.properties.source.properties.version.const, '1.3.1');
   assert.equal(schema.properties.type.const, 'qoder-marketplace-full-plugin');
 });
 
@@ -92,7 +128,7 @@ test('refuses altered marketplace identity and host-manifest version independent
 
 test('treats fallback as generated recovery and conflicts with either marketplace plugin route', () => {
   // Given: both full-plugin routes and the manual recovery route.
-  const releaseRoot = '/durable/LazyQoder/releases/v1.3.0-aaaaaaaaaaaa';
+  const releaseRoot = '/durable/LazyQoder/releases/v1.3.1-aaaaaaaaaaaa';
   const projectRoot = '/project';
 
   // When: fallback metadata and both coexistence selections are evaluated.

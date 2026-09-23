@@ -17,6 +17,8 @@ from __future__ import annotations
 import re
 from typing import Final
 
+from lazyqoder_adaptive_policy import current_action_text
+
 PLAN_ONLY_PATTERN: Final = re.compile(
     r"\b(?:plan only|plan-only|just (?:the )?plan|do not implement|don'?t implement|"
     r"do not (?:run|execute|apply|make|code|build|change)|"
@@ -27,7 +29,7 @@ PLAN_ONLY_PATTERN: Final = re.compile(
 # Explanation / documentation framing dominates: a request to explain, describe,
 # or answer "how/what" never executes code even if it names an action verb.
 EXPLANATION_PATTERN: Final = re.compile(
-    r"\b(?:explain|describe|document|summarise|summarize|compare|mention|reference|"
+    r"\b(?:explain|describe|document|summarise|summarize|compare|"
     r"tell me|what (?:is|are|was|were)|how (?:do|does|did|to|can|should)|why (?:do|does|is|are))\b",
     re.I,
 )
@@ -73,13 +75,14 @@ def derive_execution_intent(request: str, context: dict | None = None) -> str:
         persisted = normalise_intent(context.get("execution_intent"))
         if persisted is not None:
             return persisted
-    if PLAN_ONLY_PATTERN.search(request) is not None:
+    active_request = current_action_text(request)
+    if PLAN_ONLY_PATTERN.search(active_request) is not None:
         return "plan_only"
-    if EXPLANATION_PATTERN.search(request) is not None:
+    if EXPLANATION_PATTERN.search(active_request) is not None:
         return "plan_only"
-    if QUOTED_COMMAND_PATTERN.search(request) is not None:
+    if QUOTED_COMMAND_PATTERN.search(active_request) is not None:
         return "plan_only"
-    if EXECUTION_VERB_PATTERN.search(request) is not None:
+    if EXECUTION_VERB_PATTERN.search(active_request) is not None:
         return "execute"
     return "plan_only"
 

@@ -81,7 +81,9 @@ or live proof occurred.
 
 ## Scope and paired evidence
 
-Verification in this matrix is macOS only. Normal CI does not require a
+Automated package checks run on Ubuntu and macOS as defined by the repository's
+CI workflows. This matrix does not establish live host behavior; the supplied
+host observations are historical macOS reports. Normal CI does not require a
 sibling repository. Release-only paired parity may receive explicitly supplied
 sibling roots to compare documentation or contracts; it is not a runtime,
 installation, or normal-CI dependency. The repository-level evaluation is

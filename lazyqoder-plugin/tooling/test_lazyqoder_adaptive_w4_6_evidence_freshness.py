@@ -64,27 +64,30 @@ def test_revision_marker_changes_when_implementation_changes():
 
 
 def test_no_new_lineage_evidence_db_transaction_files_introduced():
-    """git diff v1.0.2..HEAD for lineage/evidence-db/transaction files must be empty."""
-    result = subprocess.run(
-        [
-            "git",
-            "diff",
-            "--name-only",
-            "v1.0.2..HEAD",
-            "--",
-            "**/lineage*",
-            "**/evidence-db*",
-            "**/transaction*",
-        ],
+    tracked = subprocess.run(
+        ["git", "ls-files"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,
         check=True,
     )
-    diff = result.stdout.strip()
-    assert (
-        diff == ""
-    ), f"no lineage/evidence-db/transaction files may be introduced; got:\n{diff}"
+    untracked = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    inventory = (tracked.stdout + untracked.stdout).splitlines()
+    forbidden = ("lineage", "evidence-db", "transaction")
+    violations = [
+        path for path in inventory
+        if any(part.startswith(forbidden) for part in Path(path).parts)
+    ]
+    assert not violations, (
+        "no lineage/evidence-db/transaction files may be introduced; got:\n"
+        + "\n".join(violations)
+    )
 
 
 def test_adaptive_layer_reuses_lazy_verifier_no_parallel_verifier():

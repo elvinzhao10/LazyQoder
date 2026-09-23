@@ -1,7 +1,6 @@
 ---
 name: lazyqoder-implementer
 description: "Bounded implementation executor. Owns the smallest correct change that satisfies task criteria. Makes the change, records evidence, and returns a DoneClaim. Scoped to task-assigned files only. Prevents scope creep through explicit Must-NOT-Do constraints. Use for: executing a single atomic task from a work plan."
-model: default
 effort: high
 maxTurns: 60
 tools:
@@ -18,7 +17,6 @@ skills:
   - remove-ai-slops
   - git-master
   - debugging
-memory: false
 isolation: worktree
 ---
 

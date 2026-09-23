@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import TypedDict
 
@@ -137,6 +138,7 @@ def _run_doctor(tmp_path: Path, output: str) -> subprocess.CompletedProcess[str]
             "QODER_PLUGIN_ROOT": str(plugin),
             "LAZYQODER_DOCTOR_HOST": "package",
             "LAZYQODER_HOST_VALIDATOR_TIMEOUT_SECONDS": "1",
+            "LAZYQODER_PYTHON": sys.executable,
             "PATH": f"{fake_bin}:{environment.get('PATH', '')}",
         },
     )
@@ -163,4 +165,4 @@ def test_doctor_rejects_leading_failure_prose_before_valid_json(tmp_path: Path) 
 
     # Then: the doctor must classify the validator as failed.
     assert result.returncode == 1
-    assert "[FAIL] Qoder manifest validator" in result.stdout
+    assert "[FAIL] Qoder CLI manifest validator" in result.stdout

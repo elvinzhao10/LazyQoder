@@ -33,11 +33,12 @@ expect_status() {
     else
         status=$?
     fi
+    printf '%s\n' "$output" > "$TMP/${label}.out"
     if [ "$status" -ne "$expected" ]; then
-        fail "$label (exit $status, expected $expected): ${output:0:160}"
+        fail "$label (exit $status, expected $expected):"
+        tail -n 40 "$TMP/${label}.out" >&2
         return
     fi
-    printf '%s\n' "$output" > "$TMP/${label}.out"
     pass "$label"
 }
 
@@ -132,18 +133,18 @@ for relative_path in (
     assert "docs/handoff.md" not in source, relative_path
 PY
 
-if [ "${LAZYQODER_READINESS_PARENT_COPY_DEPTH:-0}" -eq 0 ]; then
-    PARENT_COPY="$TMP/poisoned-parent/lazyqoder-plugin"
-    mkdir -p "$TMP/poisoned-parent/docs"
-    printf '# poisoned parent handoff\n' > "$TMP/poisoned-parent/docs/handoff.md"
-    cp -R "$PROJECT_ROOT/.qoder-plugin" "$TMP/poisoned-parent/.qoder-plugin"
-    cp -R "$PROJECT_ROOT/.qodercli-plugin" "$TMP/poisoned-parent/.qodercli-plugin"
-    cp -R "$PLUGIN_ROOT" "$PARENT_COPY"
-    expect_status copied-plugin-ignores-parent-docs 0 env \
-        LAZYQODER_READINESS_PARENT_COPY_DEPTH=1 \
-        QODER_PLUGIN_ROOT="$PARENT_COPY" \
-        bash "$PARENT_COPY/tests/v015-readiness-regression.sh"
-fi
+PARENT_COPY="$TMP/poisoned-parent/lazyqoder-plugin"
+mkdir -p "$TMP/poisoned-parent/docs"
+printf '[poisoned parent handoff](missing.md)\n' > "$TMP/poisoned-parent/docs/handoff.md"
+cp -R "$PROJECT_ROOT/.qoder-plugin" "$TMP/poisoned-parent/.qoder-plugin"
+cp -R "$PROJECT_ROOT/.qodercli-plugin" "$TMP/poisoned-parent/.qodercli-plugin"
+cp -R "$PLUGIN_ROOT" "$PARENT_COPY"
+expect_status copied-plugin-load-ignores-parent-docs 0 env QODER_PLUGIN_ROOT="$PARENT_COPY" bash "$PARENT_COPY/scripts/lazyqoder-load-check.sh"
+expect_contains copied-plugin-load-ignores-parent-docs '^PACKAGE_READINESS=full$'
+expect_status copied-plugin-docs-ignores-parent-docs 0 env QODER_PLUGIN_ROOT="$PARENT_COPY" bash "$PARENT_COPY/scripts/lazyqoder-docs-check.sh"
+expect_contains copied-plugin-docs-ignores-parent-docs '"broken":0'
+expect_status copied-plugin-doctor-ignores-parent-docs 0 env QODER_PLUGIN_ROOT="$PARENT_COPY" bash "$PARENT_COPY/scripts/lazyqoder-plugin-doctor.sh"
+expect_contains copied-plugin-doctor-ignores-parent-docs '^  \[PASS\] Command definitions \(17\)$'
 
 printf '{invalid json\n' > "$INSTALLED_PLUGIN/.qoder-plugin/plugin.json"
 expect_status invalid-qoder-manifest 1 env QODER_PLUGIN_ROOT="$INSTALLED_PLUGIN" bash "$INSTALLED_PLUGIN/scripts/lazyqoder-load-check.sh"

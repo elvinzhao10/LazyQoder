@@ -2,7 +2,7 @@
 set -euo pipefail
 
 PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-EXPECTED_VERSION="1.3.0"
+EXPECTED_VERSION="1.3.1"
 REQUEST='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}'
 
 for server in run-ledger verification status-dashboard context-graph code-intel docs lsp; do
@@ -19,7 +19,7 @@ grep -q "lazyqoder-docs/$EXPECTED_VERSION" "$PLUGIN_ROOT/mcp/docs/server.py"
 grep -q "LazyQoder v$EXPECTED_VERSION" "$PLUGIN_ROOT/mcp/status-dashboard/dashboard.html"
 grep -q "LazyQoder v$EXPECTED_VERSION" "$PLUGIN_ROOT/scripts/hooks/session-start.sh"
 grep -q "v$EXPECTED_VERSION" "$PLUGIN_ROOT/scripts/lazyqoder-verify.sh"
-grep -q "v$EXPECTED_VERSION" "$PLUGIN_ROOT/CHANGELOG.md"
+grep -Fq "[$EXPECTED_VERSION]" "$PLUGIN_ROOT/CHANGELOG.md"
 if grep -Eq '\]\((\./)*\.\./docs/' "$PLUGIN_ROOT/README.md"; then
   printf 'FAIL package README must not link to removed repository-root docs/\n' >&2
   exit 1
@@ -59,4 +59,4 @@ if marketplace_path.is_file():
     entry = next(item for item in marketplace["plugins"] if item["name"] == "lazyqoder")
     assert entry["version"] == expected, f"marketplace reported {entry['version']!r}"
 PY
-printf 'v1.0 runtime version regression: PASS\n'
+printf 'v1.3.1 runtime version regression: PASS\n'

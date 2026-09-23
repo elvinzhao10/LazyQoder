@@ -131,13 +131,16 @@ pass 'missing learner page fixture is rejected'
 
 copy_publication_fixture() {
     local fixture_root="$1"
-    mkdir -p "$fixture_root/lazyqoder-plugin"
+    mkdir -p "$fixture_root/lazyqoder-plugin/contracts"
     cp -R "$REPOSITORY_ROOT/docs" "$fixture_root/docs"
     cp "$REPOSITORY_ROOT/README.md" "$REPOSITORY_ROOT/AGENTS.md" "$REPOSITORY_ROOT/CONTRIBUTING.md" \
         "$REPOSITORY_ROOT/SECURITY.md" "$REPOSITORY_ROOT/RELEASE_NOTES.md" \
         "$REPOSITORY_ROOT/lazyqoder-evaluation.md" "$fixture_root/"
     cp "$REPOSITORY_ROOT/LICENSE" "$REPOSITORY_ROOT/NOTICE" "$REPOSITORY_ROOT/lazyqoder-banner.png" "$fixture_root/"
     cp "$REPOSITORY_ROOT/lazyqoder-plugin/README.md" "$fixture_root/lazyqoder-plugin/README.md"
+    mkdir -p "$fixture_root/lazyqoder-plugin/docs"
+    cp "$REPOSITORY_ROOT/lazyqoder-plugin/docs/model-routing.md" "$fixture_root/lazyqoder-plugin/docs/model-routing.md"
+    cp "$REPOSITORY_ROOT/lazyqoder-plugin/contracts/OUTCOME-EVALUATION.md" "$fixture_root/lazyqoder-plugin/contracts/OUTCOME-EVALUATION.md"
 }
 
 assert_bad_link() {

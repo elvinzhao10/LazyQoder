@@ -33,8 +33,28 @@ test('package load check keeps package-ready separate from pending host proof', 
   assert.doesNotMatch(result.stdout, /HOST_READINESS=(?:ready|observed)/);
 });
 
-test('machine status publishes authoritative v1.3.0 three-host route boundaries', () => {
-  // Given: the checked-in v1.3.0 package and its marketplace route declarations.
+test('installed-only package load check validates machine status without release metadata', (t) => {
+  // Given: an exact plugin copy whose parent has no marketplace release artifacts.
+  const parent = fs.mkdtempSync(path.join(os.tmpdir(), 'lazyqoder-installed-only-'));
+  const installed = path.join(parent, 'plugin');
+  fs.cpSync(PLUGIN_ROOT, installed, { recursive: true });
+  t.after(() => fs.rmSync(parent, { recursive: true, force: true }));
+
+  // When: the installed plugin runs its public package load check.
+  const result = spawnSync('bash', [path.join(installed, 'scripts', 'lazyqoder-load-check.sh')], {
+    cwd: parent,
+    encoding: 'utf8',
+    env: { ...process.env, QODER_PLUGIN_ROOT: installed },
+  });
+
+  // Then: route and machine-status validation use the self-contained package boundary.
+  assert.equal(result.status, 0, `${result.stderr}\n${result.stdout}`);
+  assert.match(result.stdout, /^PACKAGE_READINESS=full$/m);
+  assert.match(result.stdout, /machine status v2/i);
+});
+
+test('machine status publishes authoritative v1.3.1 three-host route boundaries', () => {
+  // Given: the checked-in v1.3.1 package and its marketplace route declarations.
   const expectedHosts = [
     ['qodercli-cli', 'qodercli-marketplace', 'invoke-documented', 'documented-tested'],
     ['qodercli-ide', 'qodercli-marketplace', 'invoke-documented', 'documented-tested'],
@@ -49,7 +69,7 @@ test('machine status publishes authoritative v1.3.0 three-host route boundaries'
   const report = JSON.parse(result.stdout);
   assert.equal(report.schema_version, 2);
   assert.equal(report.contract_version, '2.0.0');
-  assert.equal(report.version, '1.3.0');
+  assert.equal(report.version, '1.3.1');
   assert.deepEqual(report.package_readiness, { status: 'ready', scope: 'package' });
   assert.deepEqual(report.host_readiness, { status: 'pending' });
   assert.deepEqual(report.hosts.map((row) => [row.host, row.route, row.native_mode, row.public_label]), expectedHosts);
@@ -86,8 +106,8 @@ test('authoritative version fields advance without rewriting historical v1.0.3 f
     return value.version ?? value.plugins?.[0]?.version ?? value.packages?.['']?.version;
   });
 
-  // Then: every current authority is v1.3.0 and the historical receipt remains v1.0.3.
-  assert.deepEqual(versions, Array(currentFiles.length).fill('1.3.0'));
+  // Then: every current authority is v1.3.1 and the historical receipt remains v1.0.3.
+  assert.deepEqual(versions, Array(currentFiles.length).fill('1.3.1'));
   assert.equal(historical.manifest.version, '1.0.3');
   assert.match(historical.release.id, /^1\.0\.3-/);
 });

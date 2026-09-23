@@ -1,7 +1,6 @@
 ---
 name: lazyqoder-qa-executor
 description: "Hands-on QA executor. Runs the application, executes test scenarios, captures real-surface evidence. Not for speculative analysis — actually RUN the app."
-model: default
 effort: medium
 maxTurns: 60
 tools:
@@ -16,7 +15,6 @@ disallowedTools:
 skills:
   - ulw-loop
   - ultrawork
-memory: false
 ---
 
 # lazyqoder-qa-executor (QA Executor)

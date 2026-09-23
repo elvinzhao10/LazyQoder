@@ -17,7 +17,7 @@ flowchart TB
 
 ## Manifest, contract, and readiness layer
 
-`.qoder/plugin.json` advertises skills, commands, agents, hooks, and `.mcp.json`; it does not load a host. `contracts/automatic-tooling-contract.v1.json` defines providers, fallbacks, permissions, timeouts, and error identifiers. `contracts/lazyseries-capability-readiness.v1.json` defines the canonical capability-readiness records (`lazyqoder_capability_readiness.py readiness-report --json` returns 9 records). Load-check, doctor, and contract checks validate these artifacts from a package root.
+`.qodercli-plugin/plugin.json` and `.qoder-plugin/plugin.json` declare the CLI and IDE package routes; neither proves host loading. `contracts/automatic-tooling-contract.v1.json` defines providers, fallbacks, permissions, timeouts, and error identifiers. `contracts/lazyseries-capability-readiness.v1.json` defines the canonical capability-readiness records (`lazyqoder_capability_readiness.py readiness-report --json` returns 9 records). Load-check, doctor, and contract checks validate these artifacts from a package root.
 
 ## Hook and event layer
 

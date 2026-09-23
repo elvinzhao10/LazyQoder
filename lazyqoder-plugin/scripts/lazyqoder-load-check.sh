@@ -113,7 +113,7 @@ if not os.path.exists(code_manifest_path) and not os.path.exists(work_manifest_p
     sys.exit(0)
 
 route_check = subprocess.run(
-    ["node", os.path.join(root, "scripts", "lazyqoder-marketplace-route-check.js"), os.path.dirname(root)],
+    ["node", os.path.join(root, "scripts", "lazyqoder-marketplace-route-check.js")],
     check=False,
     capture_output=True,
     text=True,
@@ -142,7 +142,7 @@ try:
     if (
         machine_status.returncode != 0
         or status.get("schema_version") != 2
-        or status.get("version") != "1.3.0"
+        or status.get("version") != "1.3.1"
         or status.get("package_readiness") != {"status": "ready", "scope": "package"}
         or status.get("host_readiness") != {"status": "pending"}
         or not isinstance(host_rows, list)

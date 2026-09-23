@@ -1,91 +1,35 @@
-# LazyQoder v1.3.0 — adaptive workflow experience
+# LazyQoder v1.3.1
 
-This release prepares the v1.3.0 package. It does not publish a tag,
-marketplace entry, or host installation. Package readiness and current host
-observation remain separate authorities.
-
-This is a feature release. It adds dual activation, progressive milestones
-with scoped decision gates, human plan-edit reconciliation, a cross-plan
-decision ledger, and verification-tier selection with receipt reuse. Qoder
-CLI, Qoder IDE, and qoder-app route boundaries are unchanged: package
-selection never proves host activation, and host readiness stays explicit
-pending without fresh-session evidence.
+**Status:** Published stable release. Repository and release-package checks passed; see [PR #8](https://github.com/elvinzhao10/LazyQoder/pull/8) for CI results. Qoder activation in a fresh host session still needs live testing.
 
 ## Eval-driven fixes
 
-- Explicit start-work and plain natural-language implementation requests
-  converge on the same execution authority and gates. Explanation,
-  quoted-command, and explicit plan-only requests never mutate product files,
-  and an ambiguous approval with several pending questions never grants
-  execution authority.
-- `execution_intent` (plan_only|execute) is persisted separately from workflow
-  mode and current stage, defaulting to plan_only. Duplicate host events do
-  not duplicate dispatch; resume selects the single compatible run or asks
-  only when genuinely ambiguous.
-- Complex work uses one parent plan with milestones. Provisional milestones
-  never dispatch; dependency cycles, missing IDs, and dangling child links are
-  rejected. Decision gates carry the canonical shape; a recommendation never
-  becomes owner approval and only transitive dependents block.
-- Human plan edits are reconciled at execution boundaries: cosmetic edits
-  preserve all evidence, semantic edits invalidate only the affected task and
-  its transitive dependents, a human checked box is a completion assertion
-  never a verified result, and stale results cannot update newer plan state.
-- Cross-plan decision memory is durable (`decisions/ledger.jsonl`): immutable
-  versioned events, replay-derived active view, scoped corrections, and
-  visible failure on malformed records.
-- Verification is selected once from the changed boundary and risk on the
-  V0-V3 tier ladder, then a green receipt is reused while its declared inputs
-  and covered behavior are unchanged. Counts never promote a tier; a failing
-  focused check reruns only itself plus directly affected integration checks.
+- **Safer execution:** Workflow intent ignores quoted or historical command mentions while retaining explicit requests to start work. Isolation reports namespace allocation accurately; it does not claim to have created a Git worktree. Cleanup preserves populated allocations, linked files, and caller-owned changes.
+- **Better evidence:** Outcome comparisons hash the supplied task, budget, and permission snapshots and reject mismatched cohorts. Reports distinguish absent, partial, and validated evidence, count explicit host-billed costs from failed runs, and reject fixture telemetry as execution data. Hashes verify supplied bytes, not the truth of their contents.
+- **Predictable delegation:** Subagents keep the current session model by default. A plan may propose `efficient` or `performance` for named tasks, but switching requires an explicit plan decision and `--allow-switch`. The selector is advisory and does not change host settings or imply that a model is available on the account.
+- **Package and tooling fixes:** Installed-package and release-root validation now distinguish their routes, check pinned inventory integrity, and reject an invalid explicit release root. Agent metadata accepts optional model aliases and memory scopes; CLI discovery includes `qodercli`. Dependency search handles extension-bearing imports with fewer search processes, and verification avoids repeating the full suite for Python preflight. No end-to-end speed or cost gain has been measured.
+- **Current guidance:** README, contributor, lifecycle, and verification documentation reflect v1.3.1. Obsolete attribution and initial-port files were removed; credits and licenses remain in NOTICE and LICENSE.
 
 ## Measured efficiency
 
-This patch does not change the compact task packet or any previously measured
-byte, assertion, or gate figure. The previously recorded baseline measured
-the compact task packet at 1,637 bytes rather than 2,285 bytes, a
-648-byte / **28.36%** reduction, with the direct and six-module quality gates
-unchanged at 13/13 and 57/57 assertions. No new efficiency claim is made here.
+No measured productivity or native-cost improvement is claimed. Local repository, installed-package, release-root, machine-status, and verifier-policy checks passed; [PR #8](https://github.com/elvinzhao10/LazyQoder/pull/8) records the current CI results.
 
 ## Host capability matrix
 
-| Host | Package route | Readiness requirement |
+| Host | Release route | Live status |
 | --- | --- | --- |
-| Qoder CLI | Release-root local marketplace | Fresh session with one loaded Skill or command and all six MCP connections. |
-| Qoder IDE | CLI-backed marketplace when available; observed-build GUI or recovery fallback otherwise | Fresh IDE session with the same loaded surface and six live MCP connections. |
-| Qoder app | `.qoder-plugin/plugin.json` through the host's visible marketplace/plugin flow | Current-build receipt for a Skill, command, agent, hook, and all six MCP connections. |
-
-Package checks are package evidence only. Every host remains **pending host
-proof** until it is observed in a fresh session; this release does not claim
-that any host loaded, enabled, or connected anything.
+| Qoder CLI | Release-root marketplace | Pending fresh-session test |
+| Qoder IDE | CLI-backed marketplace when available | Pending fresh-session test |
+| Qoder app | Full-plugin marketplace | Pending fresh-session test |
 
 ## Migration and upgrade
 
-Use the durable launcher to update from v1.2.3 after inventorying
-receipt-owned, modified, and unknown assets. Preserve user changes and
-host-managed settings. Run package checks, then start a fresh host session and
-observe the selected route before reporting host readiness. Existing
-valid declarations, including executable paths containing spaces, need no change.
+Before upgrading, record the installed version and lifecycle ownership, then validate the exact v1.3.1 archive. Keep host readiness pending until the selected route is observed in a fresh Qoder session.
 
 ## Known risks
 
-- Live marketplace discovery, plugin loading, hooks, workflow dispatch, and
-  MCP connectivity remain host-owned and pending without current-session
-  evidence.
-- The command validation is a local declaration boundary. It does not prove
-  that a declared server starts, that its arguments are safe, or that a host
-  will load it.
-- Host tool surfaces may interpose their own command shims. A shim that does
-  not implement POSIX extended regular-expression classes can change the
-  behavior of shipped shell checks on that host; this release converts the
-  affected hook patterns to POSIX character classes but cannot constrain
-  arbitrary host shims.
-- Same-version ref movement, a changed runtime/executable, or changed host
-  fingerprint invalidates prior evidence and requires re-verification.
+Repository and CI checks do not establish that a release archive loads in a host. Installation, activation, MCP, specialist, cancellation, and completed-task behavior remain unobserved in fresh Qoder sessions. Evidence hashes bind supplied bytes but do not establish their independent truth.
 
 ## Rollback
 
-Stop the host session and run durable `offboard` plan-first. After approval,
-remove only unmodified v1.3.0 receipt-owned assets, preserve modified, unknown,
-linked, caller-owned, and host-managed state, then reactivate the intended
-immutable prior release. Start a fresh session and re-observe the selected host
-route; never edit receipts, `active.json`, or private host registries by hand.
+Stop the host session and use the lifecycle offboard/rollback route for the previous release. Remove only unmodified receipt-owned assets; preserve modified, unknown, linked, caller-owned, and host-managed files. Start a fresh session to verify the restored installation.

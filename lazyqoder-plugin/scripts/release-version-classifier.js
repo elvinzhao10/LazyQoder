@@ -3,8 +3,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const RELEASE_VERSION = '1.3.0';
-const PREVIOUS_VERSION = '1.2.3';
+const RELEASE_VERSION = '1.3.1';
+const PREVIOUS_VERSION = '1.3.0';
 const VERSION_JSON_PATHS = [
   ['lazyqoder-plugin/.qodercli-plugin/plugin.json', ['version']],
   ['lazyqoder-plugin/.qoder-plugin/plugin.json', ['version']],
@@ -46,8 +46,8 @@ function walk(root, directory = root) {
 }
 
 function previousVersionClassification(relativePath, line) {
-  if (relativePath.startsWith('docs/v1.2.')) return 'historical-release-document';
-  if (relativePath === 'AGENT_ATTRIBUTION.md' || relativePath === 'CHANGELOG.md') return 'historical-release-history';
+  if (relativePath.startsWith('docs/v1.2.') || relativePath.startsWith('docs/v1.3.')) return 'historical-release-document';
+  if (relativePath === 'CHANGELOG.md') return 'historical-release-history';
   if (relativePath === 'README.md' && /efficiency improvements/i.test(line)) return 'historical-release-summary';
   if (relativePath === 'lazyqoder-plugin/CHANGELOG.md') return 'historical-release-history';
   if (relativePath.includes('/contracts/fixtures/') || relativePath.includes('/tests/fixtures/')) return 'historical-or-adversarial-fixture';
@@ -55,11 +55,13 @@ function previousVersionClassification(relativePath, line) {
     || relativePath.includes('paired-candidate') || relativePath.includes('paired-live-test')
     || relativePath.includes('v1.0.3-')) return 'schema-independent-contract-history';
   if (relativePath.endsWith('release-version-classifier.js')) return 'classifier-input';
+  if (relativePath.endsWith('scripts/state/sync-plan-state.sh')) return 'historical-implementation-history';
+  if (relativePath.startsWith('lazyqoder-plugin/skills/') || relativePath.startsWith('lazyqoder-plugin/tooling/')) return 'historical-implementation-history';
   if (relativePath.endsWith('v120-release-version-classification.test.js')) return 'adversarial-test-input';
   if (relativePath.endsWith('lazyqoder-contract-check.sh')) return 'schema-independent-contract-test';
   if (/(?:^|\/)(?:test|tests)\//.test(relativePath)) return 'historical-test-input';
   if (/\bcurrent\b.*\b(?:release|version)\b/i.test(line)) return 'current-version-drift';
-  if (/(upgrade|migrat|rollback|previous|historical|prior|old release|since v?1\.2\.[0-9]|from v?1\.2\.[0-9]|tag\/v1\.2\.[0-9]|release notes)/i.test(line)) return 'historical-migration-reference';
+  if (/(upgrade|migrat|rollback|previous|historical|prior|old release|published|candidate|stable reference|new in|documentation boundary|supported route|supported v?1\.[23]\.[0-9] route|major workflow|dual-entry|actually displays|bootstrap v?1\.[23]\.[0-9]|since v?1\.[23]\.[0-9]|from v?1\.[23]\.[0-9]|tag\/v1\.[23]\.[0-9]|release notes)/i.test(line)) return 'historical-migration-reference';
   return null;
 }
 

@@ -1,12 +1,12 @@
 ---
 name: lazyqoder
-version: 1.3.0
+version: 1.3.1
 description: "LazyQoder workflow harness for QoderWork. Provides structured workflows for project analysis (init-deep), strategic planning (ulw-plan), orchestrated execution (start-work), multi-agent review (review-work), and verified completion loops (ulw-loop). Use when the user says init-deep, plan, start-work, review, ulw-loop, or asks for structured multi-step implementation with verification."
 ---
 
 # LazyQoder for QoderWork
 
-Structured workflow harness adapted from the LazyQoder plugin (MIT, v1.3.0).
+Structured workflow harness adapted from the published stable LazyQoder v1.3.1 release; native-host readiness remains pending.
 Provides five core workflows that enforce evidence-based discipline: define the
 observable outcome, keep authority with the user, choose local tools first, and
 finish by exercising the surface the user cares about.
@@ -203,7 +203,7 @@ Goal-driven verified completion loop for open-ended tasks.
 | Agent subagents with `isolation: true` | Agent tool with `subagent_type` parameter |
 | Hooks (SessionStart, PreToolUse, etc.) | Encoded in skill procedure steps |
 | MCP run-ledger / verification servers | File-based state in `.lazyqoder/` (MCP optional) |
-| Model selector (GLM/DeepSeek/Kimi/MiniMax) | QoderWork automatic model routing |
+| Model selection | QoderWork host selection; subagents inherit unless the plan explicitly enables a switch |
 | `qoder.md` project memory | `qoder.md` (same format, workspace root) |
 
 ## Optional: MCP Server Registration
