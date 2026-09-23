@@ -25,7 +25,7 @@ The `tests/v*.sh` inventory covers copied-package boundaries, manifest and readi
 
 Normal CI is self-contained: it does not require a sibling repository. Documentation and contract parity with LazyTrae are release-only paired parity checks, run only when both absolute roots are explicitly supplied. That keeps the shared safety contract auditable without creating a runtime, installer, or CI dependency between packages.
 
-Package CI coverage runs on the operating systems and Node versions listed in the workflows. Qoder asset discovery, hooks, MCP calls, specialist behavior, cancellation, and completion require separate manual observation in the selected current host session. The supplied host observations are historical macOS reports and do not establish current v1.3.1 readiness.
+Package CI coverage runs on the operating systems and Node versions listed in the workflows. Qoder asset discovery, hooks, MCP calls, specialist behavior, cancellation, and completion require separate manual observation in the selected current host session. The supplied host observations are historical macOS reports and do not establish current v1.3.2 readiness.
 
 ## How to read a regression by boundary
 
@@ -47,7 +47,7 @@ ownership or evidence contract.
 
 ## Manual host-session verification record
 
-Automated CI and package checks do not establish host activation. Current observation: no current Qoder CLI, Qoder IDE, or Qoder app session has been observed. The supplied macOS host reports are historical and do not establish v1.3.1 behavior. Keep the per-host record below pending until observed; do not fill unknown fields from package files or a previous build.
+Automated CI and package checks do not establish host activation. Current observation: no current Qoder CLI, Qoder IDE, or Qoder app session has been observed. The supplied macOS host reports are historical and do not establish v1.3.2 behavior. Keep the per-host record below pending until observed; do not fill unknown fields from package files or a previous build.
 
 Before a host session, record the candidate commit or archive SHA and package-check result. In the selected user-approved host, record host product, exact version/build, edition or region when shown, OS, selected route, install root, fresh session ID and start time. Then observe a real Skill/command/hook appropriate to that route and record the exact invocation and result. Invoke one named specialist for a bounded task and capture the host-visible action and actual outputs. Start a bounded delegated task, cancel it through the host, and record cancellation propagation plus whether any late write occurred. Complete a small task and inspect the actual changed paths, task/plan status, and completion artifact; record artifact paths and hashes alongside the content review. Hashes prove byte integrity only, not independent truth. For Qoder full-plugin routes, record all six expected MCP connections; for the recovery route, record only the imported Skills and manual MCP connectors it declares.
 

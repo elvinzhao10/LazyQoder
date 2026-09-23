@@ -80,7 +80,7 @@ if [ ! -f "$PLUGIN_ROOT/.qoder-plugin/plugin.json" ] \
     || [ ! -f "$PLUGIN_ROOT/.mcp.json" ] \
     || [ ! -f "$RELEASE_ROOT/.qoder-plugin/marketplace.json" ]; then
     printf '%s\n' \
-        'ERROR: LazyQoder plugin root is unavailable; keep this script under the v1.3.1 lazyqoder-plugin/scripts directory.' >&2
+        'ERROR: LazyQoder plugin root is unavailable; keep this script under the v1.3.2 lazyqoder-plugin/scripts directory.' >&2
     exit 1
 fi
 
@@ -107,7 +107,7 @@ plugin_root = Path(sys.argv[1]).resolve()
 release_root = Path(sys.argv[2]).resolve()
 project_root = Path(sys.argv[3]).resolve()
 home_root = Path(os.path.abspath(sys.argv[4]))
-version = "1.3.1"
+version = "1.3.2"
 server_names = (
     "run-ledger",
     "verification",
@@ -138,7 +138,7 @@ try:
         "Qoder manifest",
     )
     if work_manifest.get("name") != "lazyqoder" or work_manifest.get("version") != version:
-        raise ValueError("Qoder manifest must identify lazyqoder version 1.3.1")
+        raise ValueError("Qoder manifest must identify lazyqoder version 1.3.2")
 
     marketplace = load_object(
         release_root / ".qoder-plugin" / "marketplace.json",
@@ -156,7 +156,7 @@ try:
         None,
     )
     if entry is None or entry.get("version") != version or entry.get("source") != "./lazyqoder-plugin":
-        raise ValueError("release marketplace must contain lazyqoder 1.3.1 from ./lazyqoder-plugin")
+        raise ValueError("release marketplace must contain lazyqoder 1.3.2 from ./lazyqoder-plugin")
     if (release_root / entry["source"]).resolve() != plugin_root:
         raise ValueError("release marketplace source does not resolve to this plugin root")
 

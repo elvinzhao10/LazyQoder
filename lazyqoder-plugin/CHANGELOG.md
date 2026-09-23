@@ -1,8 +1,12 @@
 # LazyQoder Plugin Changelog
 
+## [1.3.2] - 2026-09-23
+
+- Corrected CI release-verification reliability; see the root RELEASE_NOTES.md. No product behavior or model selection changed.
+
 > **Historical/non-operational record.** This dated change history is retained for context only. In a repository checkout, current guidance is in `README.md`, `AGENTS.md`, and `lazyqoder-plugin/README.md`; a copied package should use its local `README.md`.
 
-## [1.3.1] - 2026-09-23
+## [1.3.1] - 2026-09-23 (tagged; GitHub Release not published)
 
 - Follow-up fixes bind evaluation snapshots to bytes, report honest integrity and measurement scope, and close confirmed routing/isolation/context-tool gaps; see RELEASE_NOTES.md for product-specific scope.
 

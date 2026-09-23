@@ -4,9 +4,9 @@ LazyQoder deliberately aligns policy and package safety across hosts while keepi
 
 ## Onboarding baseline
 
-## Published v1.3.1 evidence boundary
+## v1.3.2 release candidate evidence boundary
 
-The published v1.3.1 documentation covers `qodercli-cli`, `qodercli-ide`, and
+The v1.3.2 release candidate documentation covers `qodercli-cli`, `qodercli-ide`, and
 `qoder`; no current host activation is claimed. Marketplace is the default full-plugin route for Qoder CLI and
 the Qoder app. The Skills/manual-MCP route is recovery-only and mutually exclusive
 with a full-plugin route in the same project.

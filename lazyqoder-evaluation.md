@@ -4,11 +4,12 @@ This document records public, present-tense evidence for the LazyQoder package.
 It is not evidence that a specific Qoder CLI or Qoder IDE session has loaded a
 plugin. Automated package checks run in CI on Ubuntu and macOS; host readiness requires a separate current-session observation.
 
-## Current documentation status: v1.3.1 published
+## Current documentation status: v1.3.2 release candidate
 
-The latest published stable release is v1.3.1; native-host readiness remains pending.
+The latest published stable release is v1.3.0. The prior v1.3.1 tag has no published GitHub Release.
+The current release candidate is v1.3.2; native-host readiness remains pending.
 
-The published stable v1.3.1 documentation covers `qodercli-cli`, `qodercli-ide`, and
+The v1.3.2 release candidate documentation covers `qodercli-cli`, `qodercli-ide`, and
 `qoder`. For Qoder CLI and
 Qoder IDE, marketplace is the default full-plugin route. The manual
 Skills/MCP route is recovery-only and mutually exclusive with the full-plugin
