@@ -1,3 +1,39 @@
+# LazyQoder v1.3.3 — durable verification handoff
+
+**Status:** Local release candidate. Package checks and source tests are required before publication; live host readiness remains pending.
+
+## Eval-driven fixes
+
+- The verifier contract writes a run-scoped, revision-bound report as checks finish; the orchestrator contract blocks a verdict when that report is missing, incomplete, or stale. Generic completion APIs do not yet enforce this report format.
+- The orchestrator contract requires focused checks between stages, one full matrix at closure, a compact run digest, and completion events instead of active polling. It forbids duplicate dispatch while owned paths or evidence are changing.
+- Where the host supplies agent identity, the PreToolUse hook denies an orchestrator Write/Edit outside its own state directory. Host payloads without identity still require the agent contract to enforce this boundary.
+
+## Measured efficiency
+
+The B3 postmortem identifies repeated whole-suite verification and polling as major token sinks. v1.3.3 has no measured token, latency, or cost reduction yet.
+
+## Host capability matrix
+
+| Host | Package route | Current session |
+| --- | --- | --- |
+| Qoder CLI, Qoder IDE, Qoder app | Existing documented routes | Pending live observation |
+
+## Migration and upgrade
+
+Upgrade from the published v1.3.2 package using the documented lifecycle after inventorying managed and modified assets. Preserve caller files and existing run evidence. The report contract applies to new verification attempts; old conversational verdicts do not become durable evidence.
+
+## Known risks
+
+The role-aware hook depends on host-provided agent identity and does not classify arbitrary Bash writes. Quota termination can still leave an in-progress report; it must remain blocked until independently resumed or rerun.
+
+## Rollback
+
+Use the lifecycle rollback to the prior verified release. Keep v1.3.3 run evidence for diagnosis and do not mark in-progress reports complete.
+
+## Prior release notes (v1.3.2 and v1.3.1)
+
+LazyQoder v1.3.2 was published on 2026-09-23 at tag `v1.3.2` for the CI and documentation correction. A subsequent main-branch correction restored the declared package version to v1.3.1 without removing the published tag. This v1.3.3 candidate uses a new version rather than reusing the published artifact.
+
 # LazyQoder v1.3.1
 
 **Scope:** v1.3.1 package release notes. The corrected package requires repository and release-package verification; Qoder activation in a fresh host session still needs live testing.

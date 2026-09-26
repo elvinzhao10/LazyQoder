@@ -4,7 +4,7 @@ This document records public, present-tense evidence for the LazyQoder package.
 It is not evidence that a specific Qoder CLI or Qoder IDE session has loaded a
 plugin. Automated package checks run in CI on Ubuntu and macOS; host readiness requires a separate current-session observation.
 
-## Current documentation version: v1.3.1
+## Historical documentation version: v1.3.1
 
 The package version is v1.3.1.
 Native-host readiness remains pending.

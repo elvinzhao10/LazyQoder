@@ -1,8 +1,8 @@
 # LazyQoder Plugin
 
-The package source in this worktree is v1.3.1. Package readiness does not prove native-host activation.
+The package source in this worktree is v1.3.3. Package readiness does not prove native-host activation.
 
-## v1.3.1 installation
+## v1.3.3 installation
 
 **Node.js LTS 24 (recommended) or 22 (supported alternative)** and **Git** are recommended. The lifecycle also accepts Node.js LTS 20 for compatibility. Bootstrap `onboard` only
 from `https://github.com/elvinzhao10/LazyQoder.git`, then use
