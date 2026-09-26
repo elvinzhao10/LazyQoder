@@ -1,6 +1,6 @@
 # LazyQoder v1.3.3 — durable verification handoff
 
-**Status:** Local release candidate. Package checks and source tests are required before publication; live host readiness remains pending.
+**Status:** Draft release candidate. Local source and publication checks passed, and PR #13 checks passed. Fresh Qoder activation and release-history reconciliation remain pending.
 
 ## Eval-driven fixes
 
@@ -20,7 +20,7 @@ The B3 postmortem identifies repeated whole-suite verification and polling as ma
 
 ## Migration and upgrade
 
-Upgrade from the published v1.3.2 package using the documented lifecycle after inventorying managed and modified assets. Preserve caller files and existing run evidence. The report contract applies to new verification attempts; old conversational verdicts do not become durable evidence.
+Upgrade from the last independently verified installed package using the documented lifecycle after inventorying managed and modified assets. Preserve caller files and existing run evidence. The report contract applies to new verification attempts; old conversational verdicts do not become durable evidence.
 
 ## Known risks
 
@@ -32,7 +32,7 @@ Use the lifecycle rollback to the prior verified release. Keep v1.3.3 run eviden
 
 ## Prior release notes (v1.3.2 and v1.3.1)
 
-LazyQoder v1.3.2 was published on 2026-09-23 at tag `v1.3.2` for the CI and documentation correction. A subsequent main-branch correction restored the declared package version to v1.3.1 without removing the published tag. This v1.3.3 candidate uses a new version rather than reusing the published artifact.
+The 2026-09-23 release ledger records a published v1.3.2 tag and release for the CI and documentation correction. On 2026-09-26, the current remote tag listing and GitHub release URL did not show v1.3.2. Preserve v1.3.3 to avoid reusing a historically published version; reconcile the remote release history before publication.
 
 # LazyQoder v1.3.1
 
