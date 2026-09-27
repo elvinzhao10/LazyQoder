@@ -1,5 +1,16 @@
 # LazyQoder Plugin Changelog
 
+## [1.3.3] - 2026-09-26 (release candidate)
+
+- Verifier reports are written incrementally to run-scoped evidence and tied to current task identity before completion.
+- Stage checks use focused scopes and a compact digest; completion events replace active polling and guessed worker death.
+- Role-aware hooks deny orchestrator product writes and verifier writes outside the report path when agent identity is present.
+- Package version, runtime identity, and marketplace inventories are aligned; live host readiness remains pending.
+
+## [1.3.2] - 2026-09-23 (published)
+
+- Corrected CI Python selection and release documentation. The annotated tag and GitHub Release remain immutable.
+
 ## [1.3.1] - 2026-09-23
 
 - Corrected CI release-verification reliability: the MCP grep-fallback regression harness retains the Python interpreter selected by setup-python, with its existing 1.5-second response bound and grep fallback. Runtime behavior is unchanged.

@@ -50,7 +50,7 @@ function fixture(t) {
     source: {
       route: 'qoder-marketplace', release_root: RELEASE_ROOT,
       manifest: 'lazyqoder-plugin/.qoder-plugin/plugin.json',
-      manifest_sha256: sha(fs.readFileSync(MANIFEST)), plugin: 'lazyqoder', version: '1.3.1',
+      manifest_sha256: sha(fs.readFileSync(MANIFEST)), plugin: 'lazyqoder', version: '1.3.3',
     },
     host: 'qoder', build: 'build:current', session_id: 'session:current', observed_at: OBSERVED_AT,
     capabilities: {

@@ -19,7 +19,7 @@ import json
 import sys
 
 repository_root = Path(sys.argv[1])
-version = "1.3.1"
+version = "1.3.3"
 marketplace = json.loads((repository_root / ".qodercli-plugin/marketplace.json").read_text(encoding="utf-8"))
 qodercli = json.loads((repository_root / "lazyqoder-plugin/.qodercli-plugin/plugin.json").read_text(encoding="utf-8"))
 qoder = json.loads((repository_root / "lazyqoder-plugin/.qoder-plugin/plugin.json").read_text(encoding="utf-8"))
@@ -90,7 +90,7 @@ PY
 if HOME="$TMP/home" bash "$NESTED_SOURCE_ROOT/lazyqoder-plugin/scripts/lazyqoder-preparation-check.sh" \
     --project-dir "$PROJECT_ROOT" >"$TMP/nested-source.out" 2>&1; then
     fail 'nested plugin metadata is rejected as a marketplace source'
-elif grep -Fq 'release marketplace must contain lazyqoder 1.3.1 from ./lazyqoder-plugin' "$TMP/nested-source.out"; then
+elif grep -Fq 'release marketplace must contain lazyqoder 1.3.3 from ./lazyqoder-plugin' "$TMP/nested-source.out"; then
     pass 'nested plugin metadata is rejected as a marketplace source'
 else
     fail 'nested plugin metadata is rejected with an actionable layout error'
@@ -100,7 +100,7 @@ READINESS_OUTPUT="$TMP/readiness.out"
 if env QODER_PLUGIN_ROOT="$RELEASE_ROOT/lazyqoder-plugin" \
     LAZYQODER_MARKETPLACE_FILE="$RELEASE_ROOT/.qodercli-plugin/marketplace.json" \
     bash "$RELEASE_ROOT/lazyqoder-plugin/scripts/lazyqoder-load-check.sh" >"$READINESS_OUTPUT" \
-    && grep -Fq 'PASS marketplace version agreement: 1.3.1' "$READINESS_OUTPUT" \
+    && grep -Fq 'PASS marketplace version agreement: 1.3.3' "$READINESS_OUTPUT" \
     && grep -Fq 'PACKAGE_READINESS=full' "$READINESS_OUTPUT"; then
     pass 'copied spaced release passes marketplace/plugin package readiness'
 else

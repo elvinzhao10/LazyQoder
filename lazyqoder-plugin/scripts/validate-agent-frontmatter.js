@@ -16,7 +16,7 @@ const ALLOWED_FIELDS = new Set([...REQUIRED_FIELDS, 'model', 'isolation', 'memor
 const WORKTREE_NAMES = new Set(['lazyqoder-implementer', 'lazyqoder-orchestrator']);
 const READONLY_NAMES = new Set([
   'lazyqoder-context-miner', 'lazyqoder-explorer', 'lazyqoder-gate-reviewer', 'lazyqoder-planner',
-  'lazyqoder-reviewer', 'lazyqoder-security-auditor', 'lazyqoder-verifier',
+  'lazyqoder-reviewer', 'lazyqoder-security-auditor',
 ]);
 const MODELS = new Set(['inherit', 'auto', 'lite', 'efficient', 'performance']);
 const MEMORY_SCOPES = new Set(['user', 'project', 'local']);
@@ -115,6 +115,9 @@ function validateAgent(filePath) {
   if (READONLY_NAMES.has(data.name)) {
     if (data.tools.includes('Write') || data.tools.includes('Edit')) refuse(`${filename}: read-only role must not expose Write or Edit`);
     if (!data.disallowedTools.includes('Write') || !data.disallowedTools.includes('Edit')) refuse(`${filename}: read-only role must deny Write and Edit`);
+  }
+  if (data.name === 'lazyqoder-verifier' && (!data.tools.includes('Write') || data.tools.includes('Edit') || data.disallowedTools.includes('Write') || !data.disallowedTools.includes('Edit'))) {
+    refuse(`${filename}: verifier must write only its evidence report and deny Edit`);
   }
   if (data.name === 'lazyqoder-implementer' && (!data.tools.includes('Write') || !data.tools.includes('Edit'))) {
     refuse(`${filename}: implementer must retain Write and Edit`);
