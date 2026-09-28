@@ -1,6 +1,6 @@
-# LazyQoder v1.3.3 — durable verification handoff
+# LazyQoder v1.3.2 — durable verification handoff
 
-**Status:** v1.3.3 release. Source, publication, and main-branch CI checks passed. Fresh Qoder activation remains pending; package verification alone does not establish host readiness.
+**Status:** v1.3.2 release. Source, publication, and main-branch CI checks passed. Fresh Qoder activation remains pending; package verification alone does not establish host readiness.
 
 ## Eval-driven fixes
 
@@ -10,11 +10,13 @@
 
 ## Measured efficiency
 
-The B3 postmortem identifies repeated whole-suite verification and polling as major token sinks. v1.3.3 has no measured token, latency, or cost reduction yet.
+The B3 postmortem identifies repeated whole-suite verification and polling as major token sinks. v1.3.2 has no measured token, latency, or cost reduction yet.
 
 ## Release verification and version history
 
-PR #13 and the merged main branch passed CI. The tag-triggered workflow separately verifies core behavior, lifecycle behavior, and the release archive before publication. The repository ledger records an earlier v1.3.2 publication, but its tag and GitHub Release were absent when checked on 2026-09-27. This release uses v1.3.3 to preserve the historical version boundary and ships the current durable verification changes. Confirm Qoder Skills, commands, agents, hooks, and MCP connections in a fresh host session before claiming live readiness.
+PR #13 introduced the B3 runtime changes. The current publication workflow verifies core behavior, lifecycle behavior, and the release archive before attaching the asset. An earlier v1.3.2 publication at `3035cc7` contained only the CI and documentation correction; its archive SHA-256 was `8e15c0e09b6fbccfc3db6ce4ee52ee50ab098e279ae9f924678c3c19103062eb`. This corrected v1.3.2 supersedes that mistaken package and includes the B3 runtime changes. Existing v1.3.2 installations may not see a version-based update: reinstall the corrected release and confirm Qoder Skills, commands, agents, hooks, and MCP connections in a fresh session before claiming live readiness.
+
+The short-lived v1.3.3 publication pointed to `d6e6a49`; its archive SHA-256 was `e4cceab598b50a8f88d30e79db03e7dc9308d153e1249683e6570a96c7de12d3`. It is being withdrawn as part of this version correction. These commit and digest records preserve the provenance of both superseded artifacts.
 
 ## Host capability matrix
 
@@ -32,11 +34,11 @@ The role-aware hook depends on host-provided agent identity and does not classif
 
 ## Rollback
 
-Use the lifecycle rollback to the prior verified release. Keep v1.3.3 run evidence for diagnosis and do not mark in-progress reports complete.
+Use the lifecycle rollback to the prior verified release. Keep v1.3.2 run evidence for diagnosis and do not mark in-progress reports complete.
 
-## Prior release notes (v1.3.2 and v1.3.1)
+## Prior release notes (v1.3.1)
 
-The 2026-09-23 release ledger records a published v1.3.2 tag and release for the CI and documentation correction. The current remote tag listing and GitHub release URL do not show v1.3.2. v1.3.3 avoids reusing that historically published version; remote release-history reconciliation remains a separate maintenance task.
+The mistaken first v1.3.2 publication is recorded above for provenance. Its tag and release were replaced at the user's request; the corrected archive has different bytes.
 
 # LazyQoder v1.3.1
 

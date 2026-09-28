@@ -1,6 +1,6 @@
 # LazyQoder Plugin Changelog
 
-## [1.3.3] - 2026-09-26 (release candidate)
+## [1.3.2] - 2026-09-26 (release candidate)
 
 - Verifier reports are written incrementally to run-scoped evidence and tied to current task identity before completion.
 - Stage checks use focused scopes and a compact digest; completion events replace active polling and guessed worker death.

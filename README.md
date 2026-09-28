@@ -6,10 +6,10 @@ LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, *
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
-This package version is v1.3.3.
+This package version is v1.3.2.
 Package checks do not prove host activation.
 
-## v1.3.3
+## v1.3.2
 
 This release adds durable verifier reports, focused stage checks, a compact
 run digest, and a role-aware orchestrator write boundary. The v1.3.1 intent,

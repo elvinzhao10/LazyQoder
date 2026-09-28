@@ -1,15 +1,13 @@
 # Changelog
 
-## [1.3.3] - 2026-09-27
+## [1.3.2] - 2026-09-27
 
 - Verifier reports are written incrementally to run-scoped evidence and tied to current task identity before completion.
 - Stage checks use focused scopes and a compact digest; completion events replace active polling and guessed worker death.
 - Role-aware hooks deny orchestrator product writes and verifier writes outside the report path when agent identity is present.
 - Package version, runtime identity, and marketplace inventories are aligned; live host readiness remains pending.
 
-## [1.3.2] - 2026-09-23 (published)
-
-- Corrected CI Python selection and release documentation. A release ledger records publication, but the remote v1.3.2 tag and GitHub Release were absent on 2026-09-27; this historical version is not reused.
+- Includes the CI Python selection and documentation correction first published under the mistaken v1.3.2 tag at `3035cc7`. The corrected v1.3.2 tag and archive supersede those bytes.
 
 ## [1.3.1] - 2026-09-23
 
