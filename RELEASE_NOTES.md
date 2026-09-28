@@ -1,6 +1,6 @@
 # LazyQoder v1.3.3 — durable verification handoff
 
-**Status:** Draft release candidate. Local source and publication checks passed, and PR #13 checks passed. Fresh Qoder activation and release-history reconciliation remain pending.
+**Status:** v1.3.3 release. Source, publication, and main-branch CI checks passed. Fresh Qoder activation remains pending; package verification alone does not establish host readiness.
 
 ## Eval-driven fixes
 
@@ -11,6 +11,10 @@
 ## Measured efficiency
 
 The B3 postmortem identifies repeated whole-suite verification and polling as major token sinks. v1.3.3 has no measured token, latency, or cost reduction yet.
+
+## Release verification and version history
+
+PR #13 and the merged main branch passed CI. The tag-triggered workflow separately verifies core behavior, lifecycle behavior, and the release archive before publication. The repository ledger records an earlier v1.3.2 publication, but its tag and GitHub Release were absent when checked on 2026-09-27. This release uses v1.3.3 to preserve the historical version boundary and ships the current durable verification changes. Confirm Qoder Skills, commands, agents, hooks, and MCP connections in a fresh host session before claiming live readiness.
 
 ## Host capability matrix
 
@@ -32,7 +36,7 @@ Use the lifecycle rollback to the prior verified release. Keep v1.3.3 run eviden
 
 ## Prior release notes (v1.3.2 and v1.3.1)
 
-The 2026-09-23 release ledger records a published v1.3.2 tag and release for the CI and documentation correction. On 2026-09-26, the current remote tag listing and GitHub release URL did not show v1.3.2. Preserve v1.3.3 to avoid reusing a historically published version; reconcile the remote release history before publication.
+The 2026-09-23 release ledger records a published v1.3.2 tag and release for the CI and documentation correction. The current remote tag listing and GitHub release URL do not show v1.3.2. v1.3.3 avoids reusing that historically published version; remote release-history reconciliation remains a separate maintenance task.
 
 # LazyQoder v1.3.1
 
