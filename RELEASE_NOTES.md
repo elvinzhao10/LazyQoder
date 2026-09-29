@@ -1,6 +1,6 @@
 # LazyQoder v1.3.3 — reliability and release consistency
 
-**Status:** local release candidate. Package, lifecycle, and publication checks passed locally; fresh Qoder activation and release publication have not been observed.
+**Status:** v1.3.3 release. Package, lifecycle, and publication checks passed locally and in PR CI. Fresh Qoder activation remains pending.
 
 ## Eval-driven fixes
 
