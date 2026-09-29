@@ -80,4 +80,4 @@ Orchestrator delivers: TASK, EVIDENCE_DIR, PLAN, LEDGER, DIFF, CHANGED_FILES. Re
 - **Bash** for file existence/size checks, test re-run validation, diff integrity.
 - **No Write/Edit** — gate review delivered inline in handoff response.
 - **Skills** loaded as Qoder IDE contexts, applied directly by the gate reviewer.
-- **maxTurns: 30**, `model: reasoning`, `effort: xhigh` — deep, skeptical analysis in bounded budget.
+- **maxTurns: 30**, inherited parent model, `effort: xhigh` — deep, skeptical analysis in bounded budget.

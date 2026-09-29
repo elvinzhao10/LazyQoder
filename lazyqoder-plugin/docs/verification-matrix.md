@@ -24,10 +24,10 @@ semantic claims.
 
 ## Capability and host boundary
 
-Package readiness and doctor validate copied package assets, the 14 `qoder-`
-skills, 14 commands, 13 `lazyqoder-` agents, 12 hook events, eight local MCP
-servers (`run-ledger`, `verification`, `status-dashboard`, `context-graph`,
-`code-intel`, `docs`, `codegraph`, `lsp`), the optional-capability policy, and
+Package readiness and doctor validate copied package assets, 19 skills,
+17 commands, 13 `lazyqoder-` agents, 25 declared hook events, and six
+declared MCP servers (`run-ledger`, `verification`, `status-dashboard`,
+`context-graph`, `code-intel`, `docs`), the optional-capability policy, and
 receipt-safe removal rules. They do not prove a live Qoder IDE host loaded the
 package, executed a hook, or connected an MCP server. A manual host
 observation in a new session or the applicable Qoder IDE UI is still required.

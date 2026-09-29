@@ -1,3 +1,34 @@
+# LazyQoder v1.3.3 — reliability and release consistency
+
+**Status:** local release candidate. Package, lifecycle, and publication checks passed locally; fresh Qoder activation and release publication have not been observed.
+
+## Eval-driven fixes
+
+- Restricted-role hooks reject conflicting identities, malformed or oversized mutating input, and unrestricted shell dispatch.
+- Deferred optional MCP servers retain a valid protocol endpoint. Canonical agent definitions now synchronize to required mirrors, with count and drift checks.
+
+## Measured efficiency
+
+No token, latency, or cost improvement has been measured for this patch.
+
+## Host capability matrix
+
+Package checks exercise Qoder IDE and CLI routes. Fresh host activation and MCP behavior still require observation on a recorded build and session.
+
+## Migration and upgrade
+
+Update from v1.3.2 through the normal host route. Preserve caller state and verify installed package identity.
+
+## Known risks
+
+Role enforcement depends on trusted host identity and an explicitly restricted run. Package checks do not establish host sandboxing or live connection health.
+
+## Rollback
+
+Use lifecycle rollback to the prior verified v1.3.2 release while preserving run evidence and caller state.
+
+## Prior release notes
+
 # LazyQoder v1.3.2 — durable verification handoff
 
 **Status:** v1.3.2 release. Source, publication, and main-branch CI checks passed. Fresh Qoder activation remains pending; package verification alone does not establish host readiness.
@@ -14,7 +45,7 @@ The B3 postmortem identifies repeated whole-suite verification and polling as ma
 
 ## Release verification and version history
 
-PR #13 introduced the B3 runtime changes. The current publication workflow verifies core behavior, lifecycle behavior, and the release archive before attaching the asset. An earlier v1.3.2 publication at `3035cc7` contained only the CI and documentation correction; its archive SHA-256 was `8e15c0e09b6fbccfc3db6ce4ee52ee50ab098e279ae9f924678c3c19103062eb`. This corrected v1.3.2 supersedes that mistaken package and includes the B3 runtime changes. Existing v1.3.2 installations may not see a version-based update: reinstall the corrected release and confirm Qoder Skills, commands, agents, hooks, and MCP connections in a fresh session before claiming live readiness.
+PR #13 introduced the B3 runtime changes. The then-current publication workflow verified core behavior, lifecycle behavior, and the release archive before attaching the asset. An earlier v1.3.2 publication at `3035cc7` contained only the CI and documentation correction; its archive SHA-256 was `8e15c0e09b6fbccfc3db6ce4ee52ee50ab098e279ae9f924678c3c19103062eb`. This corrected v1.3.2 supersedes that mistaken package and includes the B3 runtime changes. Existing v1.3.2 installations may not see a version-based update: reinstall the corrected release and confirm Qoder Skills, commands, agents, hooks, and MCP connections in a fresh session before claiming live readiness.
 
 The short-lived v1.3.3 publication pointed to `d6e6a49`; its archive SHA-256 was `e4cceab598b50a8f88d30e79db03e7dc9308d153e1249683e6570a96c7de12d3`. It is being withdrawn as part of this version correction. These commit and digest records preserve the provenance of both superseded artifacts.
 

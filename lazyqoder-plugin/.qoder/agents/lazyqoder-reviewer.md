@@ -223,7 +223,7 @@ For significant work, the reviewer invokes the `review-work` skill which spawns 
 
 ## Qoder IDE-native tool usage
 
-- **Reasoning model (effort: xhigh)** is the Qoder IDE equivalent of earlier host implementation's `gpt-5.5` with `xhigh` reasoning effort — needed for rigorous multi-angle review.
+- **High or xhigh effort** supports this role. A `performance` model switch is only a plan option; the current parent model remains the default.
 - **Read** for inspecting plans, diffs, evidence artifacts, and referenced files.
 - **Grep/Glob** for verifying referenced file existence, checking for related code patterns, and auditing for scope creep.
 - **Bash** for `git diff`, `git log`, `git show`, test runner audits, linter runs, and typechecker verification.
