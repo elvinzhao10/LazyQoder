@@ -1,8 +1,8 @@
 # LazyQoder Plugin
 
-The package source in this worktree is v1.3.2. Package readiness does not prove native-host activation.
+The package source in this worktree is v1.3.3. Package readiness does not prove native-host activation.
 
-## v1.3.2 installation
+## v1.3.3 installation
 
 **Node.js LTS 24 (recommended) or 22 (supported alternative)** and **Git** are recommended. The lifecycle also accepts Node.js LTS 20 for compatibility. Bootstrap `onboard` only
 from `https://github.com/elvinzhao10/LazyQoder.git`, then use
@@ -120,8 +120,8 @@ files, and leaves the run eligible for retry.
 
 | Directory | Purpose | Status |
 |-----------|---------|--------|
-| `skills/` | 14 portable workflow skills | Qoder CLI plugin content; verified Qoder app local import source |
-| `commands/` | 14 current slash-command workflows | Qoder CLI; Qoder app only after a verified plugin/marketplace session |
+| `skills/` | 19 portable workflow skills | Qoder CLI plugin content; verified Qoder app local import source |
+| `commands/` | 17 current slash-command workflows | Qoder CLI; Qoder app only after a verified plugin/marketplace session |
 | `agents/` | 13 agent role definitions | Qoder CLI; Qoder app only after a verified plugin/marketplace session |
 | `hooks/hooks.json` | 12 host hook-event declarations | Qoder CLI; Qoder app only after a verified plugin/marketplace session |
 | `mcp/` and `.mcp.json` | 6 local MCP server declarations | Qoder CLI declarations; manual connector configuration is the verified Qoder app fallback |

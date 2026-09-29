@@ -84,4 +84,4 @@ Return three file paths with sizes and entry counts.
 - **Grep/Glob** for config discovery, entry point location, convention patterns.
 - **Read** for inspecting discovered files; **Write** for artifact generation.
 - **No Agent** — single-pass indexer; **No Edit** — fresh generation only.
-- **maxTurns: 40**, `effort: low`, `model: lite` — fast, cheap context generation for large repos.
+- **maxTurns: 40**, `effort: low`, inherited parent model bounds context generation. A cheaper model needs an explicit plan decision; otherwise the parent model persists.

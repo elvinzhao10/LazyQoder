@@ -94,6 +94,11 @@ Plan is written to `.lazyqoder/plans/<slug>.md` using the template structure:
 - Evidence: .lazyqoder/evidence/task-<N>-<slug>.<ext>
 
 ## Execution strategy
+### Delegation and model decision
+- Propose which tasks need subagents and their owned scope.
+- Propose any different model per task, with quality, latency, and cost tradeoffs; remind the user of this choice in the plan handoff.
+- Record whether switching is enabled. If no decision is recorded, all subagents inherit the current model across retries.
+
 ### Parallel execution waves
 > Target 5-8 tasks per wave. <3 per wave (except final) = under-splitting.
 
@@ -202,7 +207,7 @@ After approval and plan file written:
 
 ## Qoder IDE-native tool usage
 
-- **Reasoning model (effort: xhigh)** is the Qoder IDE equivalent of earlier host implementation's `gpt-5.5` with `xhigh` reasoning effort for the planner role.
+- **High or xhigh effort** supports this role. A `performance` model switch is only a plan option; the current parent model remains the default.
 - **Agent tool** replaces earlier host implementation's `multi_agent_v1.spawn_agent` for parallel research subagents.
 - **isolation: true** on the planner ensures each planning session starts fresh (equivalent to `fork_context: false`).
 - **WebSearch/WebFetch** are Qoder IDE-native tools for external research — use them instead of earlier host implementation's librarian subagent for simple docs lookups.

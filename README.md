@@ -6,15 +6,14 @@ LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, *
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
-This package version is v1.3.2.
+This local release candidate is v1.3.3; publication remains pending.
 Package checks do not prove host activation.
 
-## v1.3.2
+## v1.3.3
 
-This release adds durable verifier reports, focused stage checks, a compact
-run digest, and a role-aware orchestrator write boundary. The v1.3.1 intent,
-cleanup, and evidence fixes remain available. See [release notes](RELEASE_NOTES.md) for
-the changes and verification scope; current native-host testing is pending.
+This candidate repairs restricted-role hooks and deferred MCP behavior, and
+synchronizes agent mirrors. See [release notes](RELEASE_NOTES.md) for the
+changes and verification scope; fresh native-host testing is pending.
 
 ## From v1.3.0: work the way you talk
 

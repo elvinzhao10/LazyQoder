@@ -163,4 +163,4 @@ function fallbackPolicy() {
   return contract().fallback;
 }
 
-module.exports = { defaultRouteForHost, fallbackPolicy, validateInstalledMarketplacePackage, validateMarketplaceRoutes };
+module.exports = { defaultRouteForHost, fallbackPolicy, inventory, validateInstalledMarketplacePackage, validateMarketplaceRoutes };

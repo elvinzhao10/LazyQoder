@@ -1,15 +1,23 @@
 # LazyQoder Plugin Changelog
 
-## [1.3.2] - 2026-09-26 (release candidate)
+## [1.3.3] - 2026-09-28
+
+Local candidate: restricted-role hook hardening, deferred MCP protocol endpoint, and agent mirror synchronization. See RELEASE_NOTES.md for verification limits.
+
+## [1.3.2] - 2026-09-23
+
+Historical note: the source also recorded a 2026-09-26 release candidate
+under the 1.3.2 heading after the 2026-09-23 published entry. Both narratives
+are retained below; the dates alone do not establish what was published.
 
 - Verifier reports are written incrementally to run-scoped evidence and tied to current task identity before completion.
 - Stage checks use focused scopes and a compact digest; completion events replace active polling and guessed worker death.
 - Role-aware hooks deny orchestrator product writes and verifier writes outside the report path when agent identity is present.
 - Package version, runtime identity, and marketplace inventories are aligned; live host readiness remains pending.
 
-## [1.3.2] - 2026-09-23 (published)
-
-- Corrected CI Python selection and release documentation. The annotated tag and GitHub Release remain immutable.
+- The 2026-09-23 publication entry recorded a CI Python selection and
+  documentation correction, and claimed the tag and GitHub Release would
+  remain immutable. The later root release notes record their replacement.
 
 ## [1.3.1] - 2026-09-23
 

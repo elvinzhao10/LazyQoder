@@ -3,8 +3,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const RELEASE_VERSION = '1.3.2';
-const PREVIOUS_VERSION = '1.3.1';
+const RELEASE_VERSION = '1.3.3';
+const PREVIOUS_VERSION = '1.3.2';
 const VERSION_JSON_PATHS = [
   ['lazyqoder-plugin/.qodercli-plugin/plugin.json', ['version']],
   ['lazyqoder-plugin/.qoder-plugin/plugin.json', ['version']],
@@ -92,7 +92,10 @@ function classify(root) {
     }
     let contents;
     try { contents = fs.readFileSync(path.join(root, relativePath), 'utf8'); } catch { continue; }
-    contents.split('\n').forEach((line, index) => {
+    const lines = contents.split('\n');
+    const priorNotesIndex = relativePath === 'RELEASE_NOTES.md' ? lines.indexOf('## Prior release notes') : -1;
+    lines.forEach((line, index) => {
+      if (priorNotesIndex >= 0 && index > priorNotesIndex) return;
       if (!/(?:^|\/)(?:test|tests)\//.test(relativePath) && !relativePath.startsWith('docs/v1.3.0-') && /\bcurrent\b/i.test(line) && /\b(?:release|version)\b/i.test(line)) {
         const versions = line.match(/1\.\d+\.\d+/g) || [];
         if (versions.some(version => version !== RELEASE_VERSION)) {
