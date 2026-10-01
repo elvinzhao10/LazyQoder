@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.4] - 2026-09-30
+
+Transactional run and hook updates preserve concurrent changes. MCP tools use native content envelopes and isolate malformed requests. Lifecycle and native-host support boundaries are documented in RELEASE_NOTES.md; current-session host acceptance remains pending.
+
 ## [1.3.3] - 2026-09-28
 
 Local candidate: restricted-role hook hardening, deferred MCP protocol endpoint, and agent mirror synchronization. See RELEASE_NOTES.md for verification limits.

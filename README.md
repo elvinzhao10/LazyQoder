@@ -6,10 +6,10 @@ LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, *
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
-This local release candidate is v1.3.3; publication remains pending.
+This local release candidate is v1.3.4; publication remains pending.
 Package checks do not prove host activation.
 
-## v1.3.3
+## v1.3.4
 
 This candidate repairs restricted-role hooks and deferred MCP behavior, and
 synchronizes agent mirrors. See [release notes](RELEASE_NOTES.md) for the
