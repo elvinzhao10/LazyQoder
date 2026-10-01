@@ -90,7 +90,11 @@ grep -Eq '^  supported-floor:$' "$WORKFLOW"
 grep -Eq '^  core:$' "$WORKFLOW"
 grep -Eq '^  core-current:$' "$WORKFLOW"
 grep -Eq '^  lifecycle:$' "$WORKFLOW"
-grep -Fq 'needs: [supported-floor, core, core-current, lifecycle]' "$WORKFLOW"
+grep -Eq '^  integrity:$' "$WORKFLOW"
+grep -Fq 'needs: [supported-floor, core, core-current, lifecycle, integrity]' "$WORKFLOW"
+grep -Fq 'INTEGRITY_RESULT: ${{ needs.integrity.result }}' "$WORKFLOW"
+grep -Fq 'test "$INTEGRITY_RESULT" = success' "$WORKFLOW"
+grep -Fq 'lazyqoder-plugin/tests/test_v134_run_integrity.py lazyqoder-plugin/tests/test_v134_snapshot_integrity.py' "$WORKFLOW"
 grep -Fq 'if: ${{ always() }}' "$WORKFLOW"
 grep -Fq 'LAZYQODER_VERIFY_SUITE: core' "$WORKFLOW"
 grep -Fq 'LAZYQODER_VERIFY_SUITE: lifecycle' "$WORKFLOW"
@@ -106,6 +110,7 @@ if grep -Fq 'continue-on-error:' "$WORKFLOW"; then
 fi
 grep -Fq 'LAZYQODER_VERIFY_SUITE: core' "$REPOSITORY_ROOT/.github/workflows/release.yml"
 grep -Fq 'LAZYQODER_VERIFY_SUITE: lifecycle' "$REPOSITORY_ROOT/.github/workflows/release.yml"
-grep -Fq 'needs: [verify, verify-lifecycle]' "$REPOSITORY_ROOT/.github/workflows/release.yml"
+grep -Eq '^  verify-integrity:$' "$REPOSITORY_ROOT/.github/workflows/release.yml"
+grep -Fq 'needs: [verify, verify-lifecycle, verify-integrity]' "$REPOSITORY_ROOT/.github/workflows/release.yml"
 
 printf 'PASS CI separates deterministic and lifecycle regression suites\n'
