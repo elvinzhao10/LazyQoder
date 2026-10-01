@@ -4,9 +4,9 @@ LazyQoder deliberately aligns policy and package safety across hosts while keepi
 
 ## Onboarding baseline
 
-## v1.3.1 evidence boundary
+## v1.3.4 evidence boundary
 
-The v1.3.1 documentation covers `qodercli-cli`, `qodercli-ide`, and
+The v1.3.4 documentation covers `qodercli-cli`, `qodercli-ide`, and
 `qoder`; no current host activation is claimed. Marketplace is the default full-plugin route for Qoder CLI and
 the Qoder app. The Skills/manual-MCP route is recovery-only and mutually exclusive
 with a full-plugin route in the same project.
@@ -40,7 +40,7 @@ new session is a later action. Verify one real Skill/command and all six MCP
 connections. Without observation, **HOST READINESS: PENDING**.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI route whenever the Qoder CLI is
+route and the preferred Qoder IDE route whenever the Qoder CLI is
 available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only.

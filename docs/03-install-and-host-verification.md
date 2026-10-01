@@ -2,10 +2,10 @@
 
 This page explains the deployment boundary in code terms. A plugin package contains files a host may load; it does not contain the host's marketplace database, session state, or connector process table.
 
-## v1.3.1 route and host readiness
+## v1.3.4 route and host readiness
 
 This documentation boundary covers `qodercli-cli`, `qodercli-ide`, and
-`qoder`; the package version is v1.3.1. Marketplace is the default
+`qoder`; the package version is v1.3.4. Marketplace is the default
 full-plugin route for Qoder CLI and the Qoder app. The Skills/manual-MCP route
 is recovery-only and mutually exclusive with a full-plugin route. v2 records
 native mode as `invoke-documented`, `observe-only`, `descriptor-only`, or
@@ -50,7 +50,7 @@ status or screenshot is observed evidence; otherwise **HOST READINESS:
 PENDING**.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI route whenever the Qoder CLI is
+route and the preferred Qoder IDE route whenever the Qoder CLI is
 available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only. Package checks never upgrade any route to host proof.

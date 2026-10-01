@@ -24,7 +24,7 @@ require LazyCodex or OmO at runtime.
 
 ## Durable onboarding
 
-Bootstrap the v1.3.1 route from a verified official source checkout, then use the
+Bootstrap the current package from a verified official source checkout, then use the
 durable launcher rather than treating that checkout as the installed runtime:
 
 ```bash
