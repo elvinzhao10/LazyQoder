@@ -34,6 +34,8 @@ jobs:
       - name: Install locked tooling dependencies
         working-directory: lazyqoder-plugin/tooling
         run: npm ci --ignore-scripts --no-audit --fund=false
+      - name: Install pinned Python test runner
+        run: python -m pip install pytest==8.4.2
       - name: Run full package verification
         run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
       - name: Run publication verification
