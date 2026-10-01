@@ -100,8 +100,28 @@ jobs:
       - name: Run timing-sensitive lifecycle regressions
         run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
 
+  verify-integrity:
+    name: Run integrity regressions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24"
+      - name: Install pinned Python test runner
+        run: python -m pip install pytest==8.4.2
+      - name: Verify claims, canonical events, MCP and snapshot preservation
+        run: python -m pytest -q lazyqoder-plugin/tests/test_v134_run_integrity.py lazyqoder-plugin/tests/test_v134_snapshot_integrity.py
+
   publish:
-    needs: [verify, verify-lifecycle]
+    needs: [verify, verify-lifecycle, verify-integrity]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

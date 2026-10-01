@@ -6,13 +6,13 @@ LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, *
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
-This local release candidate is v1.3.3; publication remains pending.
-Package checks do not prove host activation.
+The current package version is v1.3.4. Fresh native-host acceptance remains
+pending; package checks do not prove a host loaded it.
 
-## v1.3.3
+## v1.3.4
 
-This candidate repairs restricted-role hooks and deferred MCP behavior, and
-synchronizes agent mirrors. See [release notes](RELEASE_NOTES.md) for the
+v1.3.4 makes run updates transactional, preserves checkpoints and concurrent
+plan edits, and reports blocked, failed and exhausted work explicitly. See [release notes](RELEASE_NOTES.md) for the
 changes and verification scope; fresh native-host testing is pending.
 
 ## From v1.3.0: work the way you talk
@@ -173,6 +173,7 @@ runtime.
 ## Learn more
 
 - [Install and verify a host](docs/03-install-and-host-verification.md)
+- [Remove receipt-owned assets safely](docs/08-safe-removal.md)
 - [Historical v1.3.0 route](docs/v1.3.0-supported-route.md)
 - [Workflow playbooks — how the modes pick work](docs/04-workflow-playbooks.md)
 - [Evidence and completion — what "done" proves](docs/05-evidence-and-completion.md)
