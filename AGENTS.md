@@ -2,9 +2,12 @@
 
 LazyQoder supports its documented CLI and IDE/app hosts. Automated package checks run in CI on Ubuntu and macOS as defined by the workflows; the supplied live-host reports are historical macOS observations. No current-session host activation is established. Package files, host settings, credentials, marketplace state, and live sessions remain separate authorities.
 
-## Current documentation release: v1.3.4
+See [the current platform audit](docs/reference/platform-status-2026-10-02.md)
+for version-specific native features and legacy route limits.
 
-This package version is v1.3.4.
+## Current documentation release: v1.3.5
+
+This package version is v1.3.5.
 Historical releases and rollback assets are listed on the repository's Releases page.
 The route IDs are
 `qodercli-cli`, `qodercli-ide`, and `qoder`. v2 native modes are
@@ -29,6 +32,9 @@ and has readable artifacts. If run creation is interrupted before `state.json`,
 recover only its transaction material, preserve caller files, then retry.
 
 ## Durable onboarding (start here)
+
+Optional TypeScript LSP requires Node.js **22.22.2+**; core lifecycle compatibility
+with Node.js 20 does not imply compatibility with that optional provider.
 
 For new installations, use **Node.js LTS 24 (recommended)** or **Node.js LTS 22 (supported alternative)**, plus **Git**. Node.js LTS 20 is also accepted by the lifecycle for compatibility; its CI jobs do not set the recommended install runtime. Bootstrap `onboard` only from
 the verified official origin `https://github.com/elvinzhao10/LazyQoder.git`.
