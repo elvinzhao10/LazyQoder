@@ -37,9 +37,11 @@ caller workspace files.
 8. Verify one real Skill/command appropriate to the selected route and all six
    MCP connections. Otherwise **HOST READINESS: PENDING**.
 
-Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI route whenever the CLI is
-available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
+Route status is explicit: the local marketplace is the **legacy `qodercli`
+adapter**, usable only with a matching executable and build. Current `qoder`
+documents `qoder plugins install <local-directory>` as a separate native route;
+LazyQoder acceptance for that route remains pending. Never translate legacy
+commands to `qoder`. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. The `manual-skills-mcp-fallback` is recovery
 only. None is current host proof until observed.
 
@@ -50,7 +52,11 @@ host-internal changes. That feedback is historical observation only, not an
 installation route. The GUI flows failed in that tested build. A current
 unsupported build remains **HOST READINESS: PENDING**.
 
-## Qoder CLI local marketplace
+## Legacy qodercli local marketplace
+
+First record the executable and exact build and confirm support for this
+legacy adapter. Do not run its commands against current `qoder` or infer
+compatibility from an executable on PATH.
 
 Run durable `status --route qodercli-marketplace` and use its active durable
 release root containing `.qodercli-plugin/marketplace.json`:

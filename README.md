@@ -137,8 +137,12 @@ The release verifier runs classified shell regressions serially, all package
 
 Pick one host route during onboarding:
 
-- **Qoder CLI** uses the documented local marketplace route.
-- **Qoder IDE** uses that marketplace route when the CLI is available.
+- **Current Qoder CLI** documents `qoder plugins install <local-directory>`.
+  This is a separate native route; LazyQoder acceptance remains pending.
+- **Legacy `qodercli`** uses the packaged marketplace adapter only when the
+  executable and build match that route. Never translate its commands to `qoder`.
+- **Qoder IDE** may use that legacy marketplace route only with a matching
+  `qodercli` build and separate IDE observation.
 - **Qoder app** uses its full-plugin marketplace route.
 
 Skills plus manual MCP connectors are a recovery-only option. Do not run that
