@@ -1,181 +1,66 @@
-# LazyQoder v1.3.4 — safer runs, clearer host boundaries
+# LazyQoder v1.3.5 - runtime verification and platform clarity
 
-A small maintenance release for the LazySeries family. It repairs runtime and
-host-adapter boundaries while retaining the workflow foundation inherited from
-family versions v1.3.0–v1.3.3. Those inherited features are not new in this patch
-and do not imply prior public releases of the Kimi or DeepSeek ports.
+A maintenance release across the six LazySeries siblings. It carries forward
+the workflow and run-integrity foundation from 1.3.0 through 1.3.4.
 
 ## Eval-driven fixes
 
-- Task claims and iteration updates share one transaction; blocked or exhausted queues cannot report completion.
-- Repeated run creation preserves history, and stale snapshot commits cannot overwrite intervening plan edits.
-- MCP tools return standard content envelopes and reject malformed arguments without terminating the server.
-- Finalization requires all intended tasks done; persisted status is assessed
-  separately from completion evidence.
-
-## Cumulative workflow experience
-
-Describe work in natural language or use explicit workflow entry points.
-Keep editable Markdown plans, durable decisions, evidence-bound completion
-and verification sized to the change. Planning-only requests remain separate
-from execution authority. The README presents these inherited features together
-with the 1.3.4 fixes; historical notes below retain the version-by-version record.
+- Runtime-floor checks execute named package, installation and lifecycle tests.
+  Missing or unknown exercises and failed subprocesses cannot report PASS.
+- Optional TypeScript LSP installation is tested separately with engine-strict
+  dependency installation and the installed server executable.
+- Hook payloads are bounded before parsing and kept out of process arguments.
+  Invalid or oversized events preserve each adapter's exit and state contract.
+- Current product names, configuration scopes and native extension capabilities
+  are distinguished from legacy routes and unverified live integration.
 
 ## Measured efficiency
 
-No new latency, token-saving, cost or recall improvement is measured for this
-patch. Ledger append/compaction, learned routing and shared-core migration are deferred.
+Hook boundary repairs avoid payload-sized process arguments and bound input
+memory. The first host-independent verification unit is vendored identically
+in sibling packages, with product-specific exercises in small adapters.
+No latency, token, cost or native-host performance improvement is claimed.
+Persistent LSP sessions and event-ledger compaction remain future measured work.
 
 ## Host capability matrix
 
-Fresh native host activation and complete onboarding/offboarding acceptance remain pending. Package tests and release publication do not establish those host observations.
+Current Qoder CLI documentation uses `qoder plugins` and `.qoder-plugin`; older `qodercli` marketplace commands are a separate compatibility route. IDE and app acceptance remain independent.
 
-Package and distribution checks do not prove a current native host session.
-**HOST READINESS: PENDING** until loading, command/skill behavior and the expected
-MCP connections are observed. The README links the selected host's setup guide.
+See [the dated platform audit](docs/reference/platform-status-2026-10-02.md).
+**HOST READINESS: PENDING** until the selected current client demonstrates
+discovery, skill/command execution, relevant hooks and MCP connections.
+Official feature documentation and package tests are separate evidence.
 
-## Migration and upgrade
+## Dependencies and runtime requirements
 
-Use the receipt-aware upgrade route with an explicit project binding. Preserve project evidence and unknown host configuration. No credentials or production host settings are changed by package verification.
-
-Read [AGENTS.md](AGENTS.md) and [the install guide](docs/03-install-and-host-verification.md).
-Choose one route, check the installed package version, and restart the host.
-Source checkouts and release archives have different build requirements; follow
-the documented route. Do not reset populated runs merely to upgrade.
-
-## Known risks
-
-Native acceptance is separate from package readiness. Token/cost budgets are
-metadata; pending approvals are persisted observations without a live approval
-queue. Shell loop policy beyond the configured global cap needs orchestrator enforcement.
-
-## Rollback
-
-Retain the published v1.3.3 tag and ownership receipts. Remove only receipt-owned, unmodified assets and use a fresh host session to verify removal.
-
-## Documentation and family presentation
-
-Aligned sibling README structure, current setup navigation and a shared six-repo
-family table. Personal environment files and caches are ignored while example
-configuration and pinned fixture logs remain publishable. Earlier release notes
-remain below as historical evidence.
-
-## Post-publication repository maintenance
-
-The current main-branch dependency lock uses patched `fast-uri` 3.1.8.
-This addresses [host canonicalization](https://github.com/advisories/GHSA-hrr3-gc8f-f4qj).
-Existing published v1.3.4 archives retain their original tagged dependency
-contents. Use the current source lock for this fix; a refreshed archive needs
-a subsequent versioned release.
-
-## Prior release notes
-
-# LazyQoder v1.3.3 — reliability and release consistency
-
-**Status:** v1.3.3 release. Package, lifecycle, and publication checks passed locally and in PR CI. Fresh Qoder activation remains pending.
-
-## Eval-driven fixes
-
-- Restricted-role hooks reject conflicting identities, malformed or oversized mutating input, and unrestricted shell dispatch.
-- Deferred optional MCP servers retain a valid protocol endpoint. Canonical agent definitions now synchronize to required mirrors, with count and drift checks.
-
-## Measured efficiency
-
-No token, latency, or cost improvement has been measured for this patch.
-
-## Host capability matrix
-
-Package checks exercise Qoder IDE and CLI routes. Fresh host activation and MCP behavior still require observation on a recorded build and session.
+Node.js 24 is recommended. Core lifecycle compatibility remains Node.js 20;
+LazyTrae's standalone CLI also retains its separate Node.js 18 compatibility
+tier. Optional TypeScript language-server 6.x requires Node.js 22.22.2 or later;
+5.x providers retain their own Node.js 20 requirement.
+Python language-server providers are aligned at basedpyright 1.40.1.
+LazyTrae uses fast-uri 4.2.1 directly and the patched 3.1.8 Ajv edge, with
+security and normalization regressions preserved.
 
 ## Migration and upgrade
 
-Update from v1.3.2 through the normal host route. Preserve caller state and verify installed package identity.
+Use the receipt-aware lifecycle update with an explicit project binding.
+Preserve populated run state, modified assets, unknown files and host settings.
+Select the exact client and version before following a native installation route.
+Kimi Code clients can share configuration; Kimi Work is a separate target.
+
+Read [AGENTS.md](AGENTS.md), [README.md](README.md) and the selected host guide.
+Use a newly versioned archive; existing 1.3.4 tags and assets remain intact.
 
 ## Known risks
 
-Role enforcement depends on trusted host identity and an explicitly restricted run. Package checks do not establish host sandboxing or live connection health.
+Authenticated current-client acceptance remains pending. A copied configuration,
+manifest validation, or isolated lifecycle fixture cannot establish host loading.
+Optional providers must satisfy their own runtime floor.
+Native features added upstream are not automatically wired into the adapter.
 
 ## Rollback
 
-Use lifecycle rollback to the prior verified v1.3.2 release while preserving run evidence and caller state.
-
-## Prior release notes
-
-# LazyQoder v1.3.2 — durable verification handoff
-
-**Status:** v1.3.2 release. Source, publication, and main-branch CI checks passed. Fresh Qoder activation remains pending; package verification alone does not establish host readiness.
-
-## Eval-driven fixes
-
-- The verifier contract writes a run-scoped, revision-bound report as checks finish; the orchestrator contract blocks a verdict when that report is missing, incomplete, or stale. Generic completion APIs do not yet enforce this report format.
-- The orchestrator contract requires focused checks between stages, one full matrix at closure, a compact run digest, and completion events instead of active polling. It forbids duplicate dispatch while owned paths or evidence are changing.
-- Where the host supplies agent identity, the PreToolUse hook denies an orchestrator Write/Edit outside its own state directory. Host payloads without identity still require the agent contract to enforce this boundary.
-
-## Measured efficiency
-
-The B3 postmortem identifies repeated whole-suite verification and polling as major token sinks. v1.3.2 has no measured token, latency, or cost reduction yet.
-
-## Release verification and version history
-
-PR #13 introduced the B3 runtime changes. The then-current publication workflow verified core behavior, lifecycle behavior, and the release archive before attaching the asset. An earlier v1.3.2 publication at `3035cc7` contained only the CI and documentation correction; its archive SHA-256 was `8e15c0e09b6fbccfc3db6ce4ee52ee50ab098e279ae9f924678c3c19103062eb`. This corrected v1.3.2 supersedes that mistaken package and includes the B3 runtime changes. Existing v1.3.2 installations may not see a version-based update: reinstall the corrected release and confirm Qoder Skills, commands, agents, hooks, and MCP connections in a fresh session before claiming live readiness.
-
-The short-lived v1.3.3 publication pointed to `d6e6a49`; its archive SHA-256 was `e4cceab598b50a8f88d30e79db03e7dc9308d153e1249683e6570a96c7de12d3`. It is being withdrawn as part of this version correction. These commit and digest records preserve the provenance of both superseded artifacts.
-
-## Host capability matrix
-
-| Host | Package route | Current session |
-| --- | --- | --- |
-| Qoder CLI, Qoder IDE, Qoder app | Existing documented routes | Pending live observation |
-
-## Migration and upgrade
-
-Upgrade from the last independently verified installed package using the documented lifecycle after inventorying managed and modified assets. Preserve caller files and existing run evidence. The report contract applies to new verification attempts; old conversational verdicts do not become durable evidence.
-
-## Known risks
-
-The role-aware hook depends on host-provided agent identity and does not classify arbitrary Bash writes. Quota termination can still leave an in-progress report; it must remain blocked until independently resumed or rerun.
-
-## Rollback
-
-Use the lifecycle rollback to the prior verified release. Keep v1.3.2 run evidence for diagnosis and do not mark in-progress reports complete.
-
-## Prior release notes (v1.3.1)
-
-The mistaken first v1.3.2 publication is recorded above for provenance. Its tag and release were replaced at the user's request; the corrected archive has different bytes.
-
-# LazyQoder v1.3.1
-
-**Scope:** v1.3.1 package release notes. The corrected package requires repository and release-package verification; Qoder activation in a fresh host session still needs live testing.
-
-## Eval-driven fixes
-
-- **Safer execution:** Workflow intent ignores quoted or historical command mentions while retaining explicit requests to start work. Isolation reports namespace allocation accurately; it does not claim to have created a Git worktree. Cleanup preserves populated allocations, linked files, and caller-owned changes.
-- **Better evidence:** Outcome comparisons hash the supplied task, budget, and permission snapshots and reject mismatched cohorts. Reports distinguish absent, partial, and validated evidence, count explicit host-billed costs from failed runs, and reject fixture telemetry as execution data. Hashes verify supplied bytes, not the truth of their contents.
-- **Predictable delegation:** Subagents keep the current session model by default. A plan may propose `efficient` or `performance` for named tasks, but switching requires an explicit plan decision and `--allow-switch`. The selector is advisory and does not change host settings or imply that a model is available on the account.
-- **Package and tooling fixes:** Installed-package and release-root validation now distinguish their routes, check pinned inventory integrity, and reject an invalid explicit release root. Agent metadata accepts optional model aliases and memory scopes; CLI discovery includes `qodercli`. Dependency search handles extension-bearing imports with fewer search processes, and verification avoids repeating the full suite for Python preflight. No end-to-end speed or cost gain has been measured.
-- **Current guidance:** README, contributor, lifecycle, and verification documentation reflect v1.3.1. Obsolete attribution and initial-port files were removed; credits and licenses remain in NOTICE and LICENSE.
-- **CI harness correction:** The MCP grep-fallback regression harness retains the Python interpreter selected by CI `setup-python`, with its existing 1.5-second response bound and grep fallback. This fixes interpreter selection only; runtime MCP behavior is unchanged.
-
-## Measured efficiency
-
-No measured productivity, latency, or native-cost improvement is claimed. The CI correction makes the regression check use the configured Python interpreter; it does not claim a product efficiency gain. The corrected source must pass its own repository and release-package verification before publication.
-
-## Host capability matrix
-
-| Host | Release route | Live status |
-| --- | --- | --- |
-| Qoder CLI | Release-root marketplace | Pending fresh-session test |
-| Qoder IDE | CLI-backed marketplace when available | Pending fresh-session test |
-| Qoder app | Full-plugin marketplace | Pending fresh-session test |
-
-## Migration and upgrade
-
-Before upgrading, record the installed version and lifecycle ownership, then validate the exact v1.3.1 archive. Keep host readiness pending until the selected route is observed in a fresh Qoder session.
-
-## Known risks
-
-Repository and CI checks do not establish that a release archive loads in a host. Installation, activation, MCP, specialist, cancellation, and completed-task behavior remain unobserved in fresh Qoder sessions. Evidence hashes bind supplied bytes but do not establish their independent truth.
-
-## Rollback
-
-Stop the host session and use the lifecycle offboard/rollback route for the previous release. Remove only unmodified receipt-owned assets; preserve modified, unknown, linked, caller-owned, and host-managed files. Start a fresh session to verify the restored installation.
+Retain the previous release and receipts. Follow the scoped lifecycle removal
+or rollback plan, preserving user-modified and foreign assets. Host-managed
+registrations require their selected client's removal flow; never remove
+credentials, sessions or entire shared configuration directories.

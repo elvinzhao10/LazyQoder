@@ -3,8 +3,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const RELEASE_VERSION = '1.3.4';
-const PREVIOUS_VERSION = '1.3.3';
+const RELEASE_VERSION = '1.3.5';
+const PREVIOUS_VERSION = '1.3.4';
 const VERSION_JSON_PATHS = [
   ['lazyqoder-plugin/.qodercli-plugin/plugin.json', ['version']],
   ['lazyqoder-plugin/.qoder-plugin/plugin.json', ['version']],

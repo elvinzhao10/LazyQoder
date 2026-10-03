@@ -2,9 +2,12 @@
 
 LazyQoder supports its documented CLI and IDE/app hosts. Automated package checks run in CI on Ubuntu and macOS as defined by the workflows; the supplied live-host reports are historical macOS observations. No current-session host activation is established. Package files, host settings, credentials, marketplace state, and live sessions remain separate authorities.
 
-## Current documentation release: v1.3.4
+See [the current platform audit](docs/reference/platform-status-2026-10-02.md)
+for version-specific native features and legacy route limits.
 
-This package version is v1.3.4.
+## Current documentation release: v1.3.5
+
+This package version is v1.3.5.
 Historical releases and rollback assets are listed on the repository's Releases page.
 The route IDs are
 `qodercli-cli`, `qodercli-ide`, and `qoder`. v2 native modes are
@@ -29,6 +32,9 @@ and has readable artifacts. If run creation is interrupted before `state.json`,
 recover only its transaction material, preserve caller files, then retry.
 
 ## Durable onboarding (start here)
+
+Optional TypeScript LSP requires Node.js **22.22.2+**; core lifecycle compatibility
+with Node.js 20 does not imply compatibility with that optional provider.
 
 For new installations, use **Node.js LTS 24 (recommended)** or **Node.js LTS 22 (supported alternative)**, plus **Git**. Node.js LTS 20 is also accepted by the lifecycle for compatibility; its CI jobs do not set the recommended install runtime. Bootstrap `onboard` only from
 the verified official origin `https://github.com/elvinzhao10/LazyQoder.git`.
@@ -70,7 +76,7 @@ When the user types `onboard`:
 2. Run `status` through the durable `launcher.js`. If absent, use the verified
    source entrypoint to run `onboard`; if blocked, preserve the state and report
    the exact issue.
-3. When upgrading from v1.0.2, inventory receipt-owned versus modified/unknown
+3. When upgrading from an earlier release, inventory receipt-owned versus modified/unknown
    assets first. Preserve user changes and host settings until the new session
    is observed. Never infer host readiness from a PATH entry, `--plugin-dir`,
    file existence, or a load-check.
@@ -97,9 +103,11 @@ When the user types `onboard`:
    readiness; without observation, **HOST READINESS: PENDING** remains the only
    honest result.
 
-Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI route whenever the Qoder CLI is
-available**. The Qoder app uses the nested `.qoder-plugin/plugin.json` as its
+Route status is explicit: the local marketplace is the **legacy `qodercli`
+adapter**, usable only with a matching executable and build. Current `qoder`
+documents `qoder plugins install <local-directory>` as a separate native route;
+LazyQoder acceptance for that route remains pending. Never translate legacy
+commands to `qoder`. The Qoder app uses the nested `.qoder-plugin/plugin.json` as its
 default marketplace full-plugin route. The `manual-skills-mcp-fallback` is a
 recovery-only route. None of those labels proves the current build:
 without current observation, **HOST READINESS: PENDING**.
@@ -120,9 +128,12 @@ that tested build; the Qoder CLI exact host version/build was not recorded.
 | **Qoder app full plugin** | The active release's `lazyqoder-plugin/.qoder-plugin/plugin.json`, declaring Skills, commands, agents, hooks, and `.mcp.json`. | Use the marketplace/plugin surface exposed by the current build. Keep readiness pending until a current receipt confirms one loaded Skill, command, agent, hook, and all six MCP servers in the same build/session. |
 | **Qoder app recovery fallback** | Skills import/copy from `lazyqoder-plugin/skills/` only, plus six individual manual local MCP connectors. | Use only after the full-plugin route is removed with receipt-scoped ownership. Observe one imported Skill and all six connector statuses; commands, agents, and hooks remain excluded. |
 
-## Qoder CLI local marketplace handoff
+## Legacy qodercli local marketplace handoff
 
-The supported local route uses the **release root** (the directory containing
+First record the executable and exact build and confirm that they support the
+legacy marketplace adapter. Do not run these commands against current `qoder`
+or infer compatibility from its presence on PATH. This legacy route uses the
+**release root** (the directory containing
 `.qodercli-plugin/marketplace.json`) printed by durable
 `status --route qodercli-marketplace`, not a source checkout or the nested
 `lazyqoder-plugin/` directory:
