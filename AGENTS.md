@@ -76,7 +76,7 @@ When the user types `onboard`:
 2. Run `status` through the durable `launcher.js`. If absent, use the verified
    source entrypoint to run `onboard`; if blocked, preserve the state and report
    the exact issue.
-3. When upgrading from v1.0.2, inventory receipt-owned versus modified/unknown
+3. When upgrading from an earlier release, inventory receipt-owned versus modified/unknown
    assets first. Preserve user changes and host settings until the new session
    is observed. Never infer host readiness from a PATH entry, `--plugin-dir`,
    file existence, or a load-check.
@@ -104,7 +104,7 @@ When the user types `onboard`:
    honest result.
 
 Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI route whenever the Qoder CLI is
+route and the preferred Qoder IDE route whenever the Qoder CLI is
 available**. The Qoder app uses the nested `.qoder-plugin/plugin.json` as its
 default marketplace full-plugin route. The `manual-skills-mcp-fallback` is a
 recovery-only route. None of those labels proves the current build:
