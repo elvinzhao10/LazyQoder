@@ -9,12 +9,13 @@ from __future__ import annotations
 
 import importlib
 import importlib.util
+import io
 import json
 import os
 import sys
 import tempfile
 from collections.abc import Callable
-from contextlib import ExitStack
+from contextlib import ExitStack, redirect_stderr
 from pathlib import Path
 from unittest import mock
 
@@ -42,6 +43,7 @@ def run_fault_case(
     target_code: str,
     configure: Callable[[ExitStack], None],
     target_must_start: bool,
+    cleanup_status: str = "inspection-unavailable",
 ) -> None:
     with tempfile.TemporaryDirectory(prefix=f"todo13-{name}-") as temporary:
         root = Path(temporary)
@@ -62,23 +64,46 @@ def run_fault_case(
             "-c",
             target_code.format(target_started=str(target_started)),
         ]
+        diagnostic_log = io.StringIO()
         try:
-            with ExitStack() as patches:
+            with ExitStack() as patches, redirect_stderr(diagnostic_log):
                 configure(patches)
                 returncode = runner.main()
         finally:
             sys.argv = prior_argv
+            sys.stderr.write(diagnostic_log.getvalue())
         result = json.loads(result_path.read_text(encoding="utf-8"))
         assert returncode == 125, (name, returncode, result)
         assert result["status"] == "unavailable" and result["reason"] == "process_cleanup_failed", result
-        assert result["cleanup"]["status"] == "inspection-unavailable", result
+        assert result["cleanup"]["status"] == cleanup_status, result
         assert result["cleanup"]["supervisor_teardown"] == "verified-absent", result
         assert target_started.exists() is target_must_start, (name, target_started.exists())
+        observation = result["cleanup"]["observation"]
+        diagnostics = [json.loads(line.removeprefix("CLEANUP_DIAGNOSTIC: "))
+                       for line in diagnostic_log.getvalue().splitlines() if line.startswith("CLEANUP_DIAGNOSTIC: ")]
+        assert len(diagnostics) == 1 and diagnostics[0]["observation"] == observation, diagnostics
+        assert diagnostics[0]["status"] == cleanup_status, diagnostics
+        assert diagnostics[0]["supervisor_teardown"] == "verified-absent", diagnostics
+        assert observation["root"]["pid"] in result["cleanup"]["tracked_pids"], result
+        if cleanup_status == "inspection-unavailable":
+            assert observation["inspection_available"] is False, result
+            assert observation["current"] == [], result
+        else:
+            assert observation["inspection_available"] is True and observation["current"], result
+            assert result["cleanup"]["supervisor_status"] == "exited", result
+        if name in ("teardown-eperm", "signal-eperm"):
+            assert "PASS: misleading target success" in result["tail"], result
+        print("RECEIPT:", json.dumps(result))
 
 
 def prelaunch_fault(patches: ExitStack) -> None:
     unavailable = lifecycle_module.InspectionUnavailable("EPERM prelaunch inspection")
     patches.enter_context(mock.patch.object(runner, "inspect_processes", return_value=unavailable))
+
+
+def signal_fault(patches: ExitStack) -> None:
+    refused = lifecycle_module.SignalResult.refused("injected EPERM")
+    patches.enter_context(mock.patch.object(runner, "signal_owned_group", return_value=refused))
 
 
 def synthetic_handshake(process, _status_file, _inspector, _deadline):
@@ -144,11 +169,19 @@ run_fault_case(
 )
 run_fault_case(
     "teardown-eperm",
-    "import pathlib; pathlib.Path({target_started!r}).write_text('started')",
+    "import pathlib; pathlib.Path({target_started!r}).write_text('started'); print('PASS: misleading target success')",
     teardown_fault,
     True,
+)
+run_fault_case(
+    "signal-eperm",
+    "import pathlib; pathlib.Path({target_started!r}).write_text('started'); print('PASS: misleading target success')",
+    signal_fault,
+    True,
+    "signal-refused",
 )
 
 print("PASS: prelaunch EPERM produces typed failure without starting target or leaking supervisor")
 print("PASS: runtime EPERM produces typed failure and mandatory supervisor teardown")
 print("PASS: teardown EPERM produces typed failure and mandatory supervisor teardown")
+print("PASS: signal refusal preserves failure despite successful target output and captures live identity")
