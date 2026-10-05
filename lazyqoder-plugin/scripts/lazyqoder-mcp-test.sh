@@ -147,6 +147,140 @@ check_invalid_tool_params() {
     fi
 }
 
+check_dashboard_service_optional_port() {
+    # dashboard_service must answer on the default no-port path; the launcher
+    # runs under `set -u`, so the optional port expansion has to stay safe on
+    # bash 3.2 hosts. Drives start/status/stop with and without the port from
+    # a temp fixture project over the real stdio protocol.
+    local tmp project head fixed_port server physical_plugin
+    tmp="$(mktemp -d "${TMPDIR:-/tmp}/lazyqoder-mcp-dashboard.XXXXXX")"
+    project="$tmp/project"
+    # The dashboard host only self-executes when its argv path matches the
+    # resolved module URL, so drive the launcher through the physical plugin
+    # root; copied-plugin gates run under TMPDIR symlink components.
+    physical_plugin="$(cd -P "$PLUGIN" && pwd -P)"
+    server="$physical_plugin/mcp/status-dashboard/server.sh"
+    mkdir -p "$project"
+    local git_env=(GIT_CONFIG_NOSYSTEM=1 "HOME=$tmp")
+    env "${git_env[@]}" git -C "$project" init -q
+    env "${git_env[@]}" git -C "$project" config user.name "Qoder Dashboard MCP QA"
+    env "${git_env[@]}" git -C "$project" config user.email "qoder@example.invalid"
+    printf '.lazyqoder/\n' > "$project/.gitignore"
+    env "${git_env[@]}" git -C "$project" add .gitignore >/dev/null
+    env "${git_env[@]}" git -C "$project" commit -qm fixture >/dev/null
+    if ! CWD="$project" bash "$PLUGIN/scripts/state/create-run.sh" probe "Qoder dashboard MCP probe" >/dev/null 2>&1; then
+        FAIL=$((FAIL+1)); FAIL_LIST+=("status-dashboard/dashboard_service-optional-port")
+        echo "  FAIL: status-dashboard/dashboard_service-optional-port (fixture run creation failed)" >&2
+        rm -rf "$tmp"
+        return
+    fi
+    head="$(env "${git_env[@]}" git -C "$project" rev-parse HEAD)"
+    fixed_port="$(python3 -c 'import socket; stream = socket.socket(); stream.bind(("127.0.0.1", 0)); print(stream.getsockname()[1]); stream.close()')"
+    if python3 - "$project" "$head" "$(command -v node)" "$PLUGIN/shared/dashboard-host/test/workload.mjs" <<'PYFIX' \
+        && python3 - "$tmp/session.in" "$fixed_port" <<'PYREQ'
+import hashlib, json, sys
+from pathlib import Path
+
+root, head, node, workload = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+run = Path(root) / ".lazyqoder/runs/probe"
+digest = lambda text: hashlib.sha256(text.encode()).hexdigest()
+plan = "# Qoder plan\n- [x] [C1] Original Qoder criterion\n"
+artifact = str(run / "actual.txt")
+commands = [[node, workload, "write", artifact, "Qoder adopted edit"], [node, workload, "verify", artifact, "Qoder adopted edit"]]
+commands_bytes = f"{json.dumps(commands)}\n"
+state_path = run / "state.json"
+state = json.loads(state_path.read_text())
+state["status"] = "active"
+state["plan_reference"] = ".lazyqoder/runs/probe/plan.md"
+state["plan_revision"] = 1
+state["_approved_plan_sha256"] = digest(plan)
+state["dashboard_project_id"] = "project:qoder"
+state["tasks"] = [
+    {"id": "P", "title": "Qoder dashboard parent", "status": "running", "depends_on": [], "execution_authority": {
+        "repo_head": head, "criterion_ids": ["C1"], "plan_reference": state["plan_reference"], "plan_sha256": digest(plan),
+        "plan_commands_path": ".lazyqoder/runs/probe/commands.json", "plan_commands_sha256": digest(commands_bytes)}},
+    {"id": "A", "title": "Qoder dashboard child", "status": "queued", "depends_on": [], "criteria": [{"id": "C1", "task_id": "A",
+        "version": 1, "requirement": "Original Qoder criterion", "applicability": "required", "verification": "unverified",
+        "scenarios": [], "result_ids": [], "history": []}]},
+]
+(run / "checkpoints").mkdir(parents=True, exist_ok=True)
+(run / "plan.md").write_text(plan)
+(run / "checkpoints/plan-revision.md").write_text(plan)
+(run / "commands.json").write_text(commands_bytes)
+state_path.write_text(json.dumps(state))
+PYFIX
+import json, sys
+from pathlib import Path
+
+out, port = Path(sys.argv[1]), int(sys.argv[2])
+def call(identifier, arguments):
+    return json.dumps({"jsonrpc": "2.0", "id": identifier, "method": "tools/call",
+                       "params": {"name": "dashboard_service", "arguments": arguments}})
+binding = {"project_id": "project:qoder", "run_id": "probe"}
+out.write_text("\n".join((
+    call(3, {**binding, "action": "start"}),
+    call(4, {**binding, "action": "status"}),
+    call(5, {**binding, "action": "stop"}),
+    call(6, {**binding, "action": "start", "port": port}),
+    call(7, {**binding, "action": "status", "port": port}),
+    call(8, {**binding, "action": "stop", "port": port}),
+)) + "\n")
+PYREQ
+    then
+        if CWD="$project" QODER_PLUGIN_ROOT="$physical_plugin" bash "$server" < "$tmp/session.in" > "$tmp/session.out" 2> "$tmp/session.err" \
+            && python3 - "$tmp/session.out" "$project" "$fixed_port" <<'PYJUDGE'
+import json, sys
+from pathlib import Path
+
+replies = [json.loads(line) for line in Path(sys.argv[1]).read_text().splitlines() if line]
+project, fixed_port = Path(sys.argv[2]), int(sys.argv[3])
+assert len(replies) == 6, f"expected 6 replies, got {len(replies)}"
+by_id = {reply["id"]: reply for reply in replies}
+
+def payload(identifier):
+    reply = by_id[identifier]
+    assert "error" not in reply and "result" in reply, reply
+    result = reply["result"]
+    assert result.get("isError", False) is False, reply
+    block = result["content"][0]
+    assert block["type"] == "text", reply
+    return json.loads(block["text"])
+
+started = payload(3)
+assert started["status"] == "running" and started["entry"] == "browser", started
+ephemeral = started["identity"]["port"]
+assert isinstance(ephemeral, int) and 1 <= ephemeral <= 65535, started
+assert started["identity"]["projectId"] == "project:qoder" and started["identity"]["runId"] == "probe", started
+assert started["url"] == f"http://127.0.0.1:{ephemeral}", started
+assert Path(started["credential_file"]).is_file(), started
+print(f"PASS: dashboard_service start without port returns the service identity on port {ephemeral}")
+status = payload(4)
+assert status["status"] == "running" and status["identity"]["port"] == ephemeral, status
+assert status["identity"]["pid"] == started["identity"]["pid"], status
+stopped = payload(5)
+assert stopped["status"] == "stopped" and stopped["cleanup"] == "verified-absent", stopped
+assert stopped["port"] == ephemeral and stopped["pid"] == started["identity"]["pid"], stopped
+print("PASS: dashboard_service status/stop without port share the identity and verify the cleanup")
+pinned = payload(6)
+assert pinned["status"] == "running" and pinned["identity"]["port"] == fixed_port, pinned
+assert payload(7)["identity"]["port"] == fixed_port, by_id[7]
+assert payload(8)["status"] == "stopped" and payload(8)["cleanup"] == "verified-absent", by_id[8]
+print(f"PASS: dashboard_service with explicit port {fixed_port} binds, reports and stops the same identity")
+PYJUDGE
+        then
+            PASS=$((PASS+1)); PASS_LIST+=("status-dashboard/dashboard_service-optional-port")
+        else
+            FAIL=$((FAIL+1)); FAIL_LIST+=("status-dashboard/dashboard_service-optional-port")
+            echo "  FAIL: status-dashboard/dashboard_service-optional-port" >&2
+            cat "$tmp/session.err" >&2 || true
+        fi
+    else
+        FAIL=$((FAIL+1)); FAIL_LIST+=("status-dashboard/dashboard_service-optional-port")
+        echo "  FAIL: status-dashboard/dashboard_service-optional-port (fixture or session preparation failed)" >&2
+    fi
+    rm -rf "$tmp"
+}
+
 tools_call() {
     python3 - "$1" <<'PYEOF'
 import json
@@ -212,6 +346,7 @@ for server in run-ledger verification status-dashboard context-graph code-intel 
     check_stream_protocol "$server"
 done
 check_invalid_tool_params
+check_dashboard_service_optional_port
 
 echo ""
 echo "=== Results ==="

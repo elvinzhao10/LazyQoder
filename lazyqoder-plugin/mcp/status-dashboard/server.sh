@@ -203,7 +203,7 @@ PYEOF
       if [ "$PORT" -lt 1 ] || [ "$PORT" -gt 65535 ]; then err -32602 "dashboard service port must be an integer from 1 to 65535"; continue; fi
     fi
     PORT_ARGS=(); [ -n "$PORT" ] && PORT_ARGS=(--port "$PORT")
-    if ! RESULT=$(node "$PLUGIN_ROOT/shared/dashboard-host/cli.mjs" "$ACTION" --project-root "$CWD" --project-id "$PROJECT_ID" --run-id "$RID" "${PORT_ARGS[@]}" 2>&1); then
+    if ! RESULT=$(node "$PLUGIN_ROOT/shared/dashboard-host/cli.mjs" "$ACTION" --project-root "$CWD" --project-id "$PROJECT_ID" --run-id "$RID" ${PORT_ARGS[@]+"${PORT_ARGS[@]}"} 2>&1); then
       err "$RESULT"; continue
     fi
     reply_tool "$RESULT"
