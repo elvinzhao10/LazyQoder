@@ -7,8 +7,11 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Final, TypeAlias, assert_never
 
+from lazyqoder_cleanup_diagnostics import CleanupObservation
+
 
 MIN_PROCESS_GROUP_ID: Final = 2
+DIAGNOSTIC_RECORD_LIMIT: Final = 16
 
 
 class CleanupStatus(StrEnum):
@@ -70,6 +73,7 @@ class CleanupReceipt:
     status: CleanupStatus
     tracked_pids: tuple[int, ...]
     detail: str = ""
+    observation: CleanupObservation | None = None
 
     def as_json(self) -> dict[str, str | list[int]]:
         return {
@@ -164,8 +168,27 @@ def _receipt(
     status: CleanupStatus,
     tracker: OwnershipTracker,
     detail: str = "",
+    inspection: InspectionResult | None = None,
 ) -> CleanupReceipt:
-    return CleanupReceipt(status, tuple(record.pid for record in tracker.tracked), detail)
+    observation = None
+    if status is not CleanupStatus.VERIFIED_ABSENT:
+        tracked_pids = {record.pid for record in tracker.tracked}
+        current: tuple[ProcessRecord, ...] = ()
+        available = False
+        match inspection:
+            case InspectionAvailable(records=records):
+                available = True
+                current = tuple(record for record in records
+                                if record.pid in tracked_pids or record.group_id == tracker.root.group_id)
+            case InspectionUnavailable() | None:
+                pass
+            case unreachable:
+                assert_never(unreachable)
+        observation = CleanupObservation(
+            tracker.root, tracker.tracked[:DIAGNOSTIC_RECORD_LIMIT], current[:DIAGNOSTIC_RECORD_LIMIT],
+            len(tracker.tracked), len(current), available,
+        )
+    return CleanupReceipt(status, tuple(record.pid for record in tracker.tracked), detail, observation)
 
 
 def cleanup_owned_processes(
@@ -180,22 +203,22 @@ def cleanup_owned_processes(
         inspection = inspector()
         match inspection:
             case InspectionUnavailable(reason=reason):
-                return _receipt(CleanupStatus.INSPECTION_UNAVAILABLE, tracker, reason)
+                return _receipt(CleanupStatus.INSPECTION_UNAVAILABLE, tracker, reason, inspection)
             case InspectionAvailable():
                 tracker = tracker.observe(inspection)
                 owned, escaped, identity_changed, foreign_group_member = _current_owned(tracker, inspection)
             case unreachable:
                 assert_never(unreachable)
         if identity_changed:
-            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "tracked PID start identity changed")
+            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "tracked PID start identity changed", inspection)
         if foreign_group_member:
-            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "untracked process occupies owned group identity")
+            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "untracked process occupies owned group identity", inspection)
         if escaped and not owned:
-            return _receipt(CleanupStatus.VERIFIED_REMAINING, tracker, "tracked descendant left owned group")
+            return _receipt(CleanupStatus.VERIFIED_REMAINING, tracker, "tracked descendant left owned group", inspection)
         if not owned:
             return _receipt(CleanupStatus.VERIFIED_ABSENT, tracker)
         if tracker.root.group_id < MIN_PROCESS_GROUP_ID or tracker.root.group_id != tracker.root.pid:
-            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "owned process group identity changed")
+            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "owned process group identity changed", inspection)
         signal_result = signaler(tracker.root.group_id, signal_number)
         match signal_result.status:
             case SignalStatus.SENT | SignalStatus.NOT_FOUND:
@@ -204,45 +227,45 @@ def cleanup_owned_processes(
                 refused_detail = signal_result.detail
             case unreachable:
                 assert_never(unreachable)
-        post_signal = inspector()
-        match post_signal:
+        inspection = inspector()
+        match inspection:
             case InspectionUnavailable(reason=reason):
-                return _receipt(CleanupStatus.INSPECTION_UNAVAILABLE, tracker, reason)
+                return _receipt(CleanupStatus.INSPECTION_UNAVAILABLE, tracker, reason, inspection)
             case InspectionAvailable():
-                tracker = tracker.observe(post_signal)
-                remaining, escaped, identity_changed, foreign_group_member = _current_owned(tracker, post_signal)
+                tracker = tracker.observe(inspection)
+                remaining, escaped, identity_changed, foreign_group_member = _current_owned(tracker, inspection)
             case unreachable:
                 assert_never(unreachable)
         if identity_changed:
-            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "tracked PID start identity changed")
+            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "tracked PID start identity changed", inspection)
         if foreign_group_member:
-            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "untracked process occupies owned group identity")
+            return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "untracked process occupies owned group identity", inspection)
         if escaped:
-            return _receipt(CleanupStatus.VERIFIED_REMAINING, tracker, "tracked descendant left owned group")
+            return _receipt(CleanupStatus.VERIFIED_REMAINING, tracker, "tracked descendant left owned group", inspection)
         if not remaining:
             return _receipt(CleanupStatus.VERIFIED_ABSENT, tracker)
         if refused_detail:
-            return _receipt(CleanupStatus.SIGNAL_REFUSED, tracker, refused_detail)
+            return _receipt(CleanupStatus.SIGNAL_REFUSED, tracker, refused_detail, inspection)
         if signal_number == signal.SIGKILL:
             settle_deadline = time.monotonic() + 0.5
             while time.monotonic() < settle_deadline:
                 time.sleep(0.02)
-                settled = inspector()
-                match settled:
+                inspection = inspector()
+                match inspection:
                     case InspectionUnavailable(reason=reason):
-                        return _receipt(CleanupStatus.INSPECTION_UNAVAILABLE, tracker, reason)
+                        return _receipt(CleanupStatus.INSPECTION_UNAVAILABLE, tracker, reason, inspection)
                     case InspectionAvailable():
-                        tracker = tracker.observe(settled)
-                        remaining, escaped, identity_changed, foreign_group_member = _current_owned(tracker, settled)
+                        tracker = tracker.observe(inspection)
+                        remaining, escaped, identity_changed, foreign_group_member = _current_owned(tracker, inspection)
                     case unreachable:
                         assert_never(unreachable)
                 if identity_changed or foreign_group_member:
-                    return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "process identity changed during cleanup")
+                    return _receipt(CleanupStatus.IDENTITY_CHANGED, tracker, "process identity changed during cleanup", inspection)
                 if escaped:
-                    return _receipt(CleanupStatus.VERIFIED_REMAINING, tracker, "tracked descendant left owned group")
+                    return _receipt(CleanupStatus.VERIFIED_REMAINING, tracker, "tracked descendant left owned group", inspection)
                 if not remaining:
                     return _receipt(CleanupStatus.VERIFIED_ABSENT, tracker)
-    return _receipt(CleanupStatus.VERIFIED_REMAINING, tracker, "owned process survived TERM and KILL")
+    return _receipt(CleanupStatus.VERIFIED_REMAINING, tracker, "owned process survived TERM and KILL", inspection)
 
 
 def persistence_allowed(

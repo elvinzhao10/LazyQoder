@@ -200,6 +200,14 @@ def main() -> int:
             supervisor_teardown = "verified-absent"
         cleanup["supervisor_status"] = child.status.value
         cleanup["supervisor_teardown"] = supervisor_teardown
+        if cleanup_receipt.observation is not None:
+            cleanup["observation"] = cleanup_receipt.observation.as_json()
+            print("CLEANUP_DIAGNOSTIC: " + json.dumps({
+                "status": cleanup_receipt.status.value,
+                "observation": cleanup["observation"],
+                "supervisor_status": child.status.value,
+                "supervisor_teardown": supervisor_teardown,
+            }), file=sys.stderr, flush=True)
         output_complete = output.within_cap()
         output.enforce_cap()
         tail = output.tail()
