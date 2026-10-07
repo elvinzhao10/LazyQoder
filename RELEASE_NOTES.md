@@ -8,7 +8,7 @@ without changing host-readiness boundaries.
 
 - The persistent project record is vendored as the family's second pinned
   tree: `lazyqoder-plugin/shared/project/` + `project.vendor.json` re-pin to
-  family tree `95c0e0fc…` (source revision `7bf5bd8`). Qoder's adapter keeps
+  family tree `1feb5646…` (source revision `537f393`). Qoder's adapter keeps
   its own authority — journal/CAS evidence, bridges, and native identity —
   over the shared runtime: init/read/command/observe routes, registered
   original-source editing, reconciliation, and telemetry.
