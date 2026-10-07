@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { digest, host, plugin, processCall } from './fixture.mjs';
 import { ACTIVITY_OBSERVER, producerAttemptObservations } from '../project.mjs';
+import { capabilities } from '../capabilities.mjs';
 
 const python = process.env.LAZYQODER_TEST_PYTHON ?? 'python3';
 const pythonDir = python.includes('/') ? dirname(python) : null;
@@ -303,6 +304,9 @@ test('project telemetry records from Qoder journal/CAS evidence and never invent
     assert.notEqual(executorPayload.agent.id, verifierPayload.agent.id);
     assert.notEqual(executorPayload.session.id, verifierPayload.session.id);
     for (const payload of payloads.values()) {
+      // Journal-derived facts carry no native role claim: both role sites stay unreported.
+      assert.equal(payload.role, 'unreported');
+      assert.equal(payload.agent.role, 'unreported');
       assert.deepEqual(payload.conversational_telemetry, { status: 'unavailable', reason: 'NOT_REPORTED_BY_PRODUCER' });
       assert.equal(payload.activity.live_conversational_agent, false);
       // Telemetry carries delivery facts only: no approval observation exists to misread.
@@ -433,4 +437,10 @@ test('status-dashboard MCP serves project tools under bash 3.2 with no-port safe
     assert.equal(stopped.cleanup, 'verified-absent');
     assert.equal(stopped.port, started.identity.port);
   } finally { await f.cleanup(); }
+});
+
+test('per-surface capability record claims no observed host adoption', () => {
+  for (const [capability, status] of Object.entries(capabilities)) {
+    assert.notEqual(status, 'observed', `${capability} must not claim observed host adoption`);
+  }
 });
