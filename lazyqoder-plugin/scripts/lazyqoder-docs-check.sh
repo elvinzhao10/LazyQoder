@@ -112,6 +112,11 @@ check_init_deep_evidence_contract() {
     fi
 }
 
+# shared/project is the byte-pinned vendor family (project.vendor.json): its
+# markdown is distributed verbatim from the LazyBuddy sibling and its internal
+# cross-references point at the Buddy-side contract proof the family selection
+# deliberately excludes, so this Qoder-authored link gate must not re-lint it.
+# Byte integrity is enforced by the vendor manifest, not by this check.
 for scan_dir in "${PLUGIN_ROOT}"; do
     [ -d "$scan_dir" ] || continue
     while IFS= read -r -d '' md_file; do
@@ -137,7 +142,7 @@ for scan_dir in "${PLUGIN_ROOT}"; do
             fi
         done < <(sed 's/`[^`]*`//g' "$md_file" 2>/dev/null | grep -oE '\[[^]]+\]\([^)]*\)' | sed 's/\[[^]]*\](\(.*\))/\1/' || true)
     done < <(
-        find "$scan_dir" -type d -name node_modules -prune -o -name "*.md" -print0 2>/dev/null || true
+        find "$scan_dir" -type d -name node_modules -prune -o -type d -path "$PLUGIN_ROOT/shared/project" -prune -o -name "*.md" -print0 2>/dev/null || true
     )
 done
 

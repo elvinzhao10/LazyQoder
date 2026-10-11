@@ -4,6 +4,25 @@ A documentation and surface release across the LazySeries siblings. It vendors
 the family's shared dashboard core and documents the Qoder-native adapter
 without changing host-readiness boundaries.
 
+## Project platform (2026-10-07)
+
+- The persistent project record is vendored as the family's second pinned
+  tree: `lazyqoder-plugin/shared/project/` + `project.vendor.json` re-pin to
+  family tree `1feb5646…` (source revision `537f393`). Qoder's adapter keeps
+  its own authority — journal/CAS evidence, bridges, and native identity —
+  over the shared runtime: init/read/command/observe routes, registered
+  original-source editing, reconciliation, and telemetry.
+- Honesty hardening in the project-adapter suite: every journal-derived
+  observation payload asserts `role` and `agent.role` stay `unreported`, and
+  the per-surface capability record asserts no key ever claims observed host
+  adoption; both assertions are mutation-proven (fabricated role or observed
+  status fails the suite).
+- Boundaries stay explicit in the project context summary: the vendored
+  git-observation collectors are byte-pinned but wired to no Qoder-exposed
+  route (commit links are run-side `repo_head`/`content_revision`); host
+  embedding, chat handoff, and host wake remain unobserved; native host
+  readiness stays pending.
+
 ## Eval-driven fixes
 
 - A portable dashboard core is vendored under
