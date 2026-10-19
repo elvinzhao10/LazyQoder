@@ -17,11 +17,13 @@ without changing host-readiness boundaries.
   the per-surface capability record asserts no key ever claims observed host
   adoption; both assertions are mutation-proven (fabricated role or observed
   status fails the suite).
-- Boundaries stay explicit in the project context summary: the vendored
-  git-observation collectors are byte-pinned but wired to no Qoder-exposed
-  route (commit links are run-side `repo_head`/`content_revision`); host
-  embedding, chat handoff, and host wake remain unobserved; native host
-  readiness stays pending.
+- Boundaries stay explicit in the project context summary: the served dashboard
+  does expose a live git view — a live probe saw `/api/project/git` answer 200
+  behind the authenticated session and invoke the vendored
+  `git-observation/local` collector, reporting `observed` with the fixture's
+  commit facts (unauthenticated reads reject 401); run-side commit links stay
+  `repo_head`/`content_revision`; host embedding, chat handoff, and host wake
+  remain unobserved; native host readiness stays pending.
 
 ## Eval-driven fixes
 
