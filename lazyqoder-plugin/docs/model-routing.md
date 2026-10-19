@@ -20,10 +20,38 @@ retries. Qoder CLI can use these plan options when switching is enabled:
 specific model or a quality guarantee. Qoder CLI documents model aliases in
 Subagent frontmatter. Qoder IDE documentation does not: it shows a current
 `[ModelName](modelId)` value or omission to inherit the conversation, with a
-user selecting a role model in Quest settings. Therefore these literal aliases
+user selecting a role model in the host's model-selection UI. (The Qoder IDE
+Quest window was retired on 2026-10-15; the Editor window and the Qoder app
+remain the IDE-side selection surfaces.) Therefore these literal aliases
 are CLI-scoped plan options. For IDE/app routes they are advisory task
 classes until the current UI shows a valid selection; package metadata alone
 does not prove the host applied them.
+
+## Vendor tier notices (rescanned 2026-10-18)
+
+These are documentation observations only. None of them is a host
+observation, and none changes a stored approval or a host-readiness claim.
+
+- The vendor announced the **Performance tier is replaced by a tier named
+  Fast**, effective 2026-10-10 for Qoder Desktop and 2026-10-16 for all
+  products, with CLI 1.1.70+ required to display it
+  ([announcement](https://docs.qoder.com/product-overview/fast-mode-announcement)).
+  The announcement describes automatic replacement, not an alias guarantee.
+  The current CLI [model reference](https://docs.qoder.com/cli/model) and
+  [subagent reference](https://docs.qoder.com/cli/subagent) still document
+  `performance` and do not list `fast` as a selectable alias, so the package
+  keeps recommending `performance` and must not pass the literal `fast`
+  until a current host visibly accepts it. A host that renamed the tier may
+  display Fast where `performance` was requested; that display is not
+  evidence the literal alias was honored.
+- The vendor removed the **Lite model tier** on 2026-09-18
+  ([notice](https://docs.qoder.com/release-notes/lite-model-tier-retirement-notice)).
+  Headless CLI, Agent SDK, and API requests that specify Lite fail rather
+  than fall back. Never select or recommend `lite`. The subagent reference
+  still lists `lite` among common `model` values; that is a vendor
+  inconsistency, and this package follows the removal notice.
+- Do not treat `auto` as a quality-tier switch: the CLI documents it as the
+  Smart Routing default tier, and this package's default stays `inherit`.
 
 ## Produce a recommendation
 
