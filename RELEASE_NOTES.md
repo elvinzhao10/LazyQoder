@@ -4,6 +4,57 @@ A documentation and surface release across the LazySeries siblings. It vendors
 the family's shared dashboard core and documents the Qoder-native adapter
 without changing host-readiness boundaries.
 
+## Completion pass (2026-10-19)
+
+A scoped completion pass over the 1.4.0 surfaces; every bullet cites the
+branch commit that delivers it.
+
+- Per-repo dashboard isolation: the family-wide per-repo store isolation and
+  foreign-runtime refusal matrix (2992f03) — a foreign runtime's state and
+  event writes are refused, and each repository's dashboard stores stay
+  isolated to this package's own roots.
+- Served-project truth reconciled (6fbaa7f): the Qoder served dashboard does
+  expose the live git view (`/api/project/git` answers 200 behind the
+  authenticated session and invokes the vendored `git-observation/local`
+  collector); run-side commit links stay `repo_head`/`content_revision`.
+- Qoder host-harness rescan, conservative adoption (e6de762): capability
+  observations refreshed against the live rescan; no unobserved capability
+  is claimed and no code adoption was warranted by what the rescan saw.
+- Family repin (b03e345): both vendored families re-pinned at source
+  revision `bb696092` — dashboard tree `e55a9c00…`, project tree `16561f3…`
+  — carrying the family's completed project-dashboard UI (dark-first design
+  tokens v2, de-tabbed shell with the static retractable sidebar and
+  in-place navigation, six redesigned views, navigation guards,
+  measured-and-held performance budgets) into this package byte-identically.
+- Residuals, honestly: host embedding, chat handoff, and host wake remain
+  unobserved; host readiness stays pending; this package's known
+  wall-clock telemetry flake is pre-existing (observed before this pass,
+  unchanged by it).
+
+## Project platform (2026-10-07)
+
+- The persistent project record is vendored as the family's second pinned
+  tree: `lazyqoder-plugin/shared/project/` + `project.vendor.json` re-pinned
+  at delivery prep to family tree `1feb5646…` (source revision `537f393`)
+  and in the completion repin to tree `16561f3…` at source revision
+  `bb696092` (b03e345, alongside the dashboard family at tree `e55a9c00…`).
+  Qoder's adapter keeps
+  its own authority — journal/CAS evidence, bridges, and native identity —
+  over the shared runtime: init/read/command/observe routes, registered
+  original-source editing, reconciliation, and telemetry.
+- Honesty hardening in the project-adapter suite: every journal-derived
+  observation payload asserts `role` and `agent.role` stay `unreported`, and
+  the per-surface capability record asserts no key ever claims observed host
+  adoption; both assertions are mutation-proven (fabricated role or observed
+  status fails the suite).
+- Boundaries stay explicit in the project context summary: the served dashboard
+  does expose a live git view — a live probe saw `/api/project/git` answer 200
+  behind the authenticated session and invoke the vendored
+  `git-observation/local` collector, reporting `observed` with the fixture's
+  commit facts (unauthenticated reads reject 401); run-side commit links stay
+  `repo_head`/`content_revision`; host embedding, chat handoff, and host wake
+  remain unobserved; native host readiness stays pending.
+
 ## Eval-driven fixes
 
 - A portable dashboard core is vendored under
