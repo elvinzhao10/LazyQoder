@@ -1444,7 +1444,7 @@ lsp_status() {
     if [ "$language" = "typescript" ] && ! typescript_runtime_ready; then
         echo "STATE: incompatible"
         echo "LANGUAGE: typescript"
-        echo "REASON: typescript-language-server@6.0.0 requires Node.js 22.22.2 or newer"
+        echo "REASON: typescript-language-server@6.0.1 requires Node.js 22.22.2 or newer"
         return 0
     fi
     if provider="$(lsp_provider "$language")"; then
@@ -1469,7 +1469,7 @@ lsp_install() {
     if [ "$language" = "typescript" ] && ! typescript_runtime_ready; then
         echo "STATE: incompatible"
         echo "LANGUAGE: typescript"
-        echo "REASON: typescript-language-server@6.0.0 requires Node.js 22.22.2 or newer"
+        echo "REASON: typescript-language-server@6.0.1 requires Node.js 22.22.2 or newer"
         return 0
     fi
     if provider="$(lsp_provider "$language")"; then

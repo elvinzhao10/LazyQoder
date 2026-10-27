@@ -420,8 +420,8 @@ bash scripts/lazyqoder-tooling.sh lsp-uninstall \
   --target "/absolute/project" --tooling-root "/absolute/lazyqoder-lsp-tools"
 ```
 
-The locked TS/JS provider is `typescript-language-server@6.0.0` with
-`typescript@7.0.2`; it requires Node.js 22.22.2 or newer. The locked Python
+The locked TS/JS provider is `typescript-language-server@6.0.1` with
+`typescript@6.0.3`; it requires Node.js 22.22.2 or newer. The locked Python
 provider is `basedpyright@1.40.1`. Missing, unsupported, and incompatible
 providers are non-blocking readiness states. No target manifest, lockfile,
 source file, global path, or host-managed configuration is modified.
@@ -433,7 +433,7 @@ cross-file relationship questions. It is disabled by default. LazyQoder keeps
 `context-graph` available as a clearly labeled grep-based heuristic fallback;
 it is not represented as semantic CodeGraph analysis.
 
-CodeGraph is pinned to `@colbymchenry/codegraph@1.6.0` and can only be
+CodeGraph is pinned to `@colbymchenry/codegraph@1.6.2` and can only be
 provisioned in an explicit empty caller-owned tooling root. The lifecycle does
 not invoke upstream `codegraph install` or `codegraph uninstall`, download a
 fallback platform binary, enable CodeGraph telemetry, or change host MCP
