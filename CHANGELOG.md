@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0] — platform audit 2026-10-27
+
+Refresh current Qoder release and configuration guidance, remove retired IDE Quest mappings, and record documented versus unobserved plugin, hook and MCP boundaries. Host readiness remains pending; see the [platform audit](docs/reference/platform-status-2026-10-27.md) for source links.
+
+## [1.4.0] - 2026-10-19 — historical completion pass (isolation, rescan, repin)
+
+Complete the 1.4.0 surfaces on the Qoder side: the family-wide per-repo store isolation and foreign-runtime refusal matrix (2992f03); the reconciled served-project truth stating the live git view explicitly (`/api/project/git`, 200 behind the session, vendored local collector; run-side links stay `repo_head`/`content_revision`) (6fbaa7f); the conservative Qoder rescan outcome — capability observations refreshed, no unobserved capability claimed (e6de762); and the family repin at source revision `bb696092` — dashboard tree `e55a9c00…`, project tree `16561f3…` — carrying the family's completed project-dashboard UI (dark-first tokens v2, de-tabbed sidebar shell with in-place navigation, six redesigned views, navigation guards, held performance budgets) into this package byte-identically (b03e345). Host embedding, chat handoff, and wake stay unobserved; host readiness stays pending; the known wall-clock telemetry flake is pre-existing. See RELEASE_NOTES.md "Completion pass (2026-10-19)".
+
+## [1.4.0] - 2026-10-07 — project platform
+
+Adopt the family's persistent project platform through the Qoder-native adapter: the vendored `lazyqoder-plugin/shared/project/` family re-pins to tree `1feb5646…` (source revision `537f393`; its README no longer links files the family selection excludes and its CLI entry guard resolves symlinked invocation paths instead of silently no-oping), while Qoder's journal/CAS authority, bridges, and native identity remain the owning surfaces. Harden honesty assertions in the project-adapter suite: journal-derived observation payloads assert `role` stays `unreported` at both sites, and the capability record asserts no key ever claims observed host adoption (both mutation-proven). The project context summary gains the explicit git-observation boundary: the vendored collectors are byte-pinned but wired to no Qoder-exposed route, and commit links stay run-side (`repo_head`/`content_revision`). Host embedding, chat handoff, and wake remain unobserved; host readiness stays pending. See RELEASE_NOTES.md.
+
 ## [1.4.0] - 2026-10-05
 
 Vendor the family's shared dashboard core and document the Qoder-native adapter: an authenticated loopback service behind `cli.mjs start|status|open|stop`, a browser UI with Work/Verification/Plan-edit views, task inspector, evidence preview and queue planning (queue edits never start work), six status-dashboard MCP tools (`dashboard_service`, `copy_task_context`), a bash-3.2-safe optional port validated 1–65535, and honest capability labels (embedding/chat handoff/wake unobserved; host readiness pending). See RELEASE_NOTES.md.

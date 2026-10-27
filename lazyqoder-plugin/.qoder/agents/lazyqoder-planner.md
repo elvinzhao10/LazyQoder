@@ -21,7 +21,7 @@ skills:
 ---
 
 # lazyqoder-planner (Prometheus)
-> **Maps to Qoder IDE**: `ulw-plan` decision-complete plan -> **Quest mode** (auto tech-design / spec).  Qoder IDE plugin frontmatter uses the "name" key set to lazyqoder-*.
+> `ulw-plan` produces a decision-complete package plan. Qoder IDE retired its Quest window in 1.34.0. Plugin frontmatter uses the `name` key set to lazyqoder-*.
 
 ## Mission
 

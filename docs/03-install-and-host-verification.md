@@ -120,8 +120,8 @@ non-mutating six-entry JSON—with absolute release-local `server.sh` arguments,
 `cwd`, `CWD`, and `QODER_PROJECT_DIR` set to the consumer project—is in
 [Host routes](reference/host-routes.md#manual-connector-specification).
 
-`.qodercli/settings.json` is shareable non-secret project scope; ignored
-`.qodercli/settings.local.json` is local/machine scope, and secrets must never
+For the current documented `qoder` CLI, `.qoder/settings.json` is shareable non-secret project scope; ignored
+`.qoder/settings.local.json` is local/machine scope, and secrets must never
 be committed. `--plugin-dir` is development/testing only, never persistent.
 The detailed host adapters are in [Host capability matrix](10-host-capability-matrix.md)
 and [Host routes](reference/host-routes.md).

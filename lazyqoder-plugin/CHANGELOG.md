@@ -1,5 +1,9 @@
 # LazyQoder Plugin Changelog
 
+## [1.4.0] — platform audit 2026-10-27
+
+Refresh current Qoder release and configuration guidance, remove retired IDE Quest mappings, and record documented versus unobserved plugin, hook and MCP boundaries. Host readiness remains pending; see the repository platform audit for source links.
+
 ## [1.4.0] - Shared dashboard surface and honest capability labels
 
 - Vendor the family's shared dashboard core with hash-pinned metadata; vendored bytes are never edited per package.
