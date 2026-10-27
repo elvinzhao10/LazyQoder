@@ -86,7 +86,7 @@ test('preserves the original twelve handler commands byte for byte', () => {
   assert.deepEqual(routes, originalHandlers);
 });
 
-test('declares exactly twenty-five documented events through one added-event boundary', () => {
+test('declares exactly twenty-five package events through one added-event boundary', () => {
   // Given: the package hook declaration and shared event vocabulary.
   const hooks = readHooks();
   const vocabulary = JSON.parse(fs.readFileSync(path.join(pluginRoot, 'contracts', 'lazyseries-host-event-vocabulary.v1.json'), 'utf8'));

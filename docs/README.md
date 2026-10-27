@@ -1,6 +1,6 @@
 # Technical architecture guide
 
-The current package version is [v1.3.5](../RELEASE_NOTES.md). Package
+The current package version is [v1.4.0](../RELEASE_NOTES.md). Package
 verification and fresh native-host acceptance are separate; host acceptance
 remains pending.
 
@@ -27,11 +27,11 @@ flowchart TD
 
 The host loads integrations; `lazyqoder-plugin/` supplies their definitions.
 Scripts and MCP endpoints operate only on their defined package/project
-boundaries. Host state is deliberately outside those boundaries. On Qoder IDE,
-the harness primitives are augmented by native surfaces: RepoWiki (init-deep),
-Quest mode (ulw-plan), Agent mode + Subagents (start-work/ulw-loop), Expert
-teams (review-work/reviewer/verifier), Model selector (routing), and
-Agent-mode MCP (the eight local servers).
+boundaries. Host state is deliberately outside those boundaries. Current IDE releases retain the Editor window, Agent and Experts; the Quest
+window was retired in IDE 1.34.0. LazyQoder's planning workflow is package
+behavior and is not evidence of a native Quest mapping. Six MCP servers are
+shipped; each requires live connection verification. See the
+[current platform audit](reference/platform-status-2026-10-27.md).
 
 ## Read the implementation in this order
 

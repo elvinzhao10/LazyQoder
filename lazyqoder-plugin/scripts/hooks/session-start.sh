@@ -7,7 +7,7 @@ hook_read_input || exit 0
 CWD=$(cat "$HOOK_INPUT_FILE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('cwd','.'))" 2>/dev/null || echo ".")
 PLUGIN_ROOT="${QODER_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 
-echo "(LazyQoder v1.3.5): Session starting — checking project state..."
+echo "(LazyQoder v1.4.0): Session starting — checking project state..."
 
 if [ ! -d "$PLUGIN_ROOT" ] || [ ! -f "$PLUGIN_ROOT/scripts/lazyqoder-load-check.sh" ]; then
     echo "SESSIONSTART_READINESS=failed reason=plugin-root-unavailable" >&2

@@ -1,8 +1,20 @@
 # LazyQoder Plugin
 
-The package source in this worktree is v1.3.5. Package readiness does not prove native-host activation.
+The package source in this worktree is v1.4.0. Package readiness does not prove native-host activation. The repository root README links the 2026-10-27 platform audit.
 
-## v1.3.5 installation
+The status-dashboard server exposes seven tools: four status views,
+`dashboard_service`, `copy_task_context`, and typed `project` operations.
+The current dashboard provides a long-run monitor with separate execution and
+verification progress, timestamped activity trends, and a bounded searchable
+resource trace. Missing usage is shown as unreported. Health lists package
+Skills, MCP servers, hooks and agent definitions separately from observed host
+activity. Research supports revision-checked capture and SHA-256 evidence
+references; capture does not verify a finding. These are package capabilities,
+not proof of host integration or measured cost savings. The vendor manifest records dashboard source `62f3a0de` and tree SHA-256
+`b525d678…` at this audit; consult the manifest for the current pin.
+
+
+## v1.4.0 installation
 
 **Node.js LTS 24 (recommended) or 22 (supported alternative)** and **Git** are recommended. The lifecycle also accepts Node.js LTS 20 for compatibility. Bootstrap `onboard` only
 from `https://github.com/elvinzhao10/LazyQoder.git`, then use
@@ -53,15 +65,13 @@ workspace. Only an explicitly verified lifecycle-owned sibling bootstrap lock
 or product `staging/`/`locks/` artifact is recoverable; never remove or replace
 caller workspace files.
 
-Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI route whenever the CLI is
-available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
+Route status is explicit: the local marketplace is the **legacy `qodercli` marketplace route**, valid only for an identified matching build. Current `qoder` documents a separate local plugin installation route whose LazyQoder acceptance remains pending. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. `manual-skills-mcp-fallback` is recovery-only.
 None is current host proof until observed.
 
 ## Quick Start
 
-`.qodercli-plugin/plugin.json` is the documented Qoder CLI host entry point.
+`.qodercli-plugin/plugin.json` is the legacy CLI adapter entry point; current `qoder` documents `.qoder-plugin/plugin.json`.
 `.qoder-plugin/plugin.json` is the Qoder app marketplace source for Skills,
 commands, agents, hooks, and all six MCP servers. Package metadata remains
 pending until current build/session evidence is observed. Skills import/copy
@@ -218,8 +228,8 @@ are host-managed.
 
 ## Qoder CLI project-local configuration
 
-`.qodercli/settings.json` may be shared for non-secret project defaults.
-`.qodercli/settings.local.json` is local/machine scope and must remain ignored
+For the current documented `qoder` CLI, `.qoder/settings.json` may be shared for non-secret project defaults.
+`.qoder/settings.local.json` is local/machine scope and must remain ignored
 and unstaged; secrets must never be committed. Repeating the local marketplace
 route or package readiness checks preserves both files and does not write host
 configuration.
@@ -410,9 +420,9 @@ bash scripts/lazyqoder-tooling.sh lsp-uninstall \
   --target "/absolute/project" --tooling-root "/absolute/lazyqoder-lsp-tools"
 ```
 
-The locked TS/JS provider is `typescript-language-server@5.3.0` with
-`typescript@6.0.3`; it requires Node.js 20 or newer. The locked Python
-provider is `basedpyright@1.39.10`. Missing, unsupported, and incompatible
+The locked TS/JS provider is `typescript-language-server@6.0.1` with
+`typescript@6.0.3`; it requires Node.js 22.22.2 or newer. The locked Python
+provider is `basedpyright@1.40.1`. Missing, unsupported, and incompatible
 providers are non-blocking readiness states. No target manifest, lockfile,
 source file, global path, or host-managed configuration is modified.
 
@@ -423,7 +433,7 @@ cross-file relationship questions. It is disabled by default. LazyQoder keeps
 `context-graph` available as a clearly labeled grep-based heuristic fallback;
 it is not represented as semantic CodeGraph analysis.
 
-CodeGraph is pinned to `@colbymchenry/codegraph@1.6.0` and can only be
+CodeGraph is pinned to `@colbymchenry/codegraph@1.6.2` and can only be
 provisioned in an explicit empty caller-owned tooling root. The lifecycle does
 not invoke upstream `codegraph install` or `codegraph uninstall`, download a
 fallback platform binary, enable CodeGraph telemetry, or change host MCP

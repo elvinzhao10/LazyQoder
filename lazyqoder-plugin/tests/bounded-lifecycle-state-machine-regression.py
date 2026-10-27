@@ -8,12 +8,14 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from collections.abc import Callable
 from pathlib import Path
 
 
 def load_runner(path: Path):
+    sys.path.insert(0, str(path.resolve().parent))
     spec = importlib.util.spec_from_file_location("bounded_lifecycle_red", path)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
@@ -78,6 +80,20 @@ def cleanup_case(name: str, observations, signal_results, expected: str, expecte
     )
     assert receipt.status.value == expected, (name, receipt)
     assert signaler.groups == expected_groups, (name, signaler.groups)
+    if expected != "verified-absent":
+        observation = receipt.observation
+        assert observation is not None, (name, "missing refusal observation")
+        data = observation.as_json()
+        assert data["root"]["pid"] == root.pid, (name, data)
+        assert data["tracked_count"] >= 2, (name, data)
+        assert len(data["tracked"]) <= 16 and len(data["current"]) <= 16, data
+        if isinstance(observations[-1], runner.InspectionUnavailable):
+            assert data["inspection_available"] is False, (name, data)
+        else:
+            assert [(item["pid"], item["started"], item["group_id"]) for item in data["current"]] == [
+                (item.pid, item.started, item.group_id) for item in observations[-1].records
+            ], (name, data)
+        print("RECEIPT:", json.dumps({"case": name, "status": expected, "observation": data}))
     print(f"PASS: {name} -> {expected}")
 
 
@@ -116,6 +132,54 @@ cleanup_case("tracked descendant escaped PGID", (available(escaped),), (), "veri
 cleanup_case("missing process inspection", (unavailable("ps-missing"),), (), "inspection-unavailable", [])
 cleanup_case("malformed process inspection", (unavailable("ps-malformed"),), (), "inspection-unavailable", [])
 cleanup_case("timed-out process inspection", (unavailable("ps-timeout"),), (), "inspection-unavailable", [])
+cleanup_case("post-signal identity reuse", (available(child), available(reused)),
+             (runner.SignalResult.sent(),), "identity-changed", [4100])
+cleanup_case("post-signal foreign group", (available(child), available(foreign_group_member)),
+             (runner.SignalResult.sent(),), "identity-changed", [4100])
+cleanup_case("post-signal escaped child", (available(child), available(escaped)),
+             (runner.SignalResult.sent(),), "verified-remaining", [4100])
+cleanup_case("settling identity reuse",
+             (available(child), available(child), available(child), available(child), available(reused)),
+             (runner.SignalResult.sent(), runner.SignalResult.sent()), "identity-changed", [4100, 4100])
+
+# Given a large owned tree and an unrelated process, when the root PID is reused,
+# then the refusal captures bounded identity-only observations without signalling.
+large_tree = tuple(runner.ProcessRecord(pid, root.pid, root.pid, "S" * 100, "x" * 100)
+                   for pid in range(4200, 4240))
+large_tracker = runner.OwnershipTracker.establish(root, available(root, *large_tree))
+large_signaler = RecordingSignaler()
+changed_root = record(root.pid, 1, root.pid, "replacement-start")
+unrelated = record(9998, 1, 9998, "secret-unrelated-start")
+large_receipt = runner.cleanup_owned_processes(
+    large_tracker, SequenceInspector(available(changed_root, *large_tree, unrelated)), large_signaler,
+)
+assert large_receipt.status.value == "identity-changed" and large_signaler.groups == []
+large_data = large_receipt.observation.as_json()
+assert large_data["tracked_count"] == 41 and large_data["current_count"] == 41, large_data
+assert len(large_data["tracked"]) == 16 and len(large_data["current"]) == 16, large_data
+assert large_data["root"]["started"] == "root-start", large_data
+assert large_data["current"][0]["started"] == "replacement-start", large_data
+assert "secret-unrelated-start" not in json.dumps(large_data), large_data
+assert all(set(item) == {"pid", "parent_pid", "group_id", "state", "started"}
+           for item in large_data["tracked"] + large_data["current"]), large_data
+assert all(len(item["state"]) <= 16 and len(item["started"]) <= 64
+           for item in large_data["tracked"] + large_data["current"]), large_data
+print("PASS: bounded refusal observation excludes unrelated process data")
+
+# Given an invalid root group, when cleanup is attempted, then no signal is sent.
+invalid_root = record(4100, 1, 1, "invalid-start")
+invalid_tracker = runner.OwnershipTracker.establish(invalid_root, available(invalid_root))
+invalid_signaler = RecordingSignaler()
+invalid_receipt = runner.cleanup_owned_processes(invalid_tracker, SequenceInspector(), invalid_signaler)
+assert invalid_receipt.status.value == "inspection-unavailable" and invalid_signaler.groups == []
+assert invalid_receipt.observation.as_json()["inspection_available"] is False
+print("PASS: invalid root group remains refused without signalling")
+invalid_receipt = runner.cleanup_owned_processes(
+    runner.OwnershipTracker(invalid_root, (invalid_root,)),
+    SequenceInspector(available(invalid_root)), invalid_signaler,
+)
+assert invalid_receipt.status.value == "identity-changed" and invalid_signaler.groups == []
+print("PASS: invalid group at signal boundary remains refused without signalling")
 
 foreign_tracker = runner.OwnershipTracker.establish(root, available(root, child))
 foreign_signaler = RecordingSignaler()
@@ -127,6 +191,7 @@ foreign_receipt = runner.cleanup_owned_processes(
 assert foreign_receipt.status.value == "identity-changed", foreign_receipt
 assert foreign_receipt.tracked_pids == (4100, 4101), foreign_receipt
 assert foreign_signaler.groups == [], foreign_signaler.groups
+assert foreign_receipt.observation.current == (foreign_group_member,), foreign_receipt
 print("PASS: never-descended recycled PGID fails closed without signalling")
 
 continuous_tracker = runner.OwnershipTracker.establish(root, available(root, child))

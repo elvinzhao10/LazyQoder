@@ -2,10 +2,10 @@
 
 This page explains the deployment boundary in code terms. A plugin package contains files a host may load; it does not contain the host's marketplace database, session state, or connector process table.
 
-## v1.3.5 route and host readiness
+## v1.4.0 route and host readiness
 
 This documentation boundary covers `qodercli-cli`, `qodercli-ide`, and
-`qoder`; the package version is v1.3.5. Marketplace is the default
+`qoder`; the package version is v1.4.0. Marketplace is the default
 full-plugin route for Qoder CLI and the Qoder app. The Skills/manual-MCP route
 is recovery-only and mutually exclusive with a full-plugin route. v2 records
 native mode as `invoke-documented`, `observe-only`, `descriptor-only`, or
@@ -120,8 +120,8 @@ non-mutating six-entry JSON—with absolute release-local `server.sh` arguments,
 `cwd`, `CWD`, and `QODER_PROJECT_DIR` set to the consumer project—is in
 [Host routes](reference/host-routes.md#manual-connector-specification).
 
-`.qodercli/settings.json` is shareable non-secret project scope; ignored
-`.qodercli/settings.local.json` is local/machine scope, and secrets must never
+For the current documented `qoder` CLI, `.qoder/settings.json` is shareable non-secret project scope; ignored
+`.qoder/settings.local.json` is local/machine scope, and secrets must never
 be committed. `--plugin-dir` is development/testing only, never persistent.
 The detailed host adapters are in [Host capability matrix](10-host-capability-matrix.md)
 and [Host routes](reference/host-routes.md).

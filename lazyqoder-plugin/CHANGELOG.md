@@ -1,5 +1,16 @@
 # LazyQoder Plugin Changelog
 
+## [1.4.0] — platform audit 2026-10-27
+
+Refresh current Qoder release and configuration guidance, remove retired IDE Quest mappings, and record documented versus unobserved plugin, hook and MCP boundaries. Host readiness remains pending; see the repository platform audit for source links.
+
+## [1.4.0] - Shared dashboard surface and honest capability labels
+
+- Vendor the family's shared dashboard core with hash-pinned metadata; vendored bytes are never edited per package.
+- Add the Qoder-native dashboard-host adapter: authenticated loopback service, browser entry, transactional edits with exact-revision consumption and distinct verifier proof, queue persistence without execution.
+- Extend status-dashboard MCP to six tools with `dashboard_service` (optional port validated 1–65535, bash-3.2-safe expansion) and `copy_task_context`.
+- Report honest capability labels; embedding, chat handoff and wake stay unobserved and host readiness stays pending.
+
 ## [1.3.5] - Runtime verification and platform clarity
 
 - Execute real runtime-floor exercises and check optional LSP requirements separately.

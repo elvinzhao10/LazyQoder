@@ -1,8 +1,8 @@
 # Host routes
 
-## v1.3.5 route and host readiness
+## v1.4.0 route and host readiness
 
-This guide is the v1.3.5 documentation boundary for `qodercli-cli`,
+This guide is the v1.4.0 documentation boundary for `qodercli-cli`,
 `qodercli-ide`, and `qoder`; native-host readiness remains pending.
 Marketplace is the default full-plugin route for Qoder CLI and the Qoder app.
 The manual Skills/MCP route is recovery-only and mutually exclusive with a
@@ -52,13 +52,44 @@ build, or any current-session activation. The Qoder CLI exact version/build is
 also unrecorded. Qoder host routes and GUI flows remain **HOST READINESS:
 PENDING** until observed in a fresh current build.
 
-Public contract references: Qoder CLI documents [local plugin
-marketplaces](https://www.qodercli.ai/docs/cli/plugin-marketplaces),
-[project settings scopes](https://www.qodercli.ai/docs/cli/qodercli-dir),
-[IDE Skills](https://www.qodercli.ai/docs/ide/Features/Skills), and [IDE MCP
-JSON](https://www.qodercli.ai/docs/ide/User-guide/MCP). Qoder IDE publicly
-documents its [MCP settings UI](https://www.qoder.ai/docs/qoder/From-Beginner-to-Expert-Guide/Function-Description/MCP-Guide), not universal
-directory-marketplace compatibility.
+Public contract references (rescanned 2026-10-18; the former
+`www.qodercli.ai` and `www.qoder.ai` page families no longer resolve): Qoder
+CLI documents [plugins and local plugin
+marketplaces](https://docs.qoder.com/cli/plugins), the [plugin
+reference](https://docs.qoder.com/cli/plugins-reference), [CLI MCP server
+JSON](https://docs.qoder.com/cli/mcp-servers) with the [MCP
+reference](https://docs.qoder.com/cli/mcp-reference), and app-side
+[Skills](https://docs.qoder.com/qoder/skills) plus the [MCP
+guide](https://docs.qoder.com/user-guide/chat/model-context-protocol). The
+current CLI reference documents `qoder plugins marketplace add` accepting a
+local directory, with `update` and `marketplace` gated by a plugin-marketplace
+feature flag. That does not demote or promote either packaged route, and the
+older `qodercli` compatibility route stays separate and untested here.
+
+### Capability rescan 2026-10-18
+
+- All 25 hook events shipped in `hooks/hooks.json` remain documented on the
+  current [hooks reference](https://docs.qoder.com/cli/hooks-reference),
+  which now lists 27 events. The two additional names, `TeammateIdle` and
+  `Setup`, appear only in that table with one-line triggers; the sibling
+  [hooks guide](https://docs.qoder.com/cli/hooks) omits them and publishes
+  no payload, matcher, or blocking semantics. They are recorded as
+  unknown-consistency documentation, not adopted: no handler, manifest, or
+  doctor allowlist entry is added until the vendor pages agree and a
+  current session is observed.
+- Qoder app permission-mode prose moved to [Access
+  permissions](https://docs.qoder.com/qoder/approval-and-sandbox) and now
+  describes three modes; see the observation-bundle note for why the
+  descriptor enumeration is unchanged.
+- The [CLI release notes](https://docs.qoder.com/release-notes/qoder-cli)
+  add versions 1.1.66–1.1.73 since the 2026-10-02 audit, including a
+  built-in `qoder-plugins` marketplace (1.1.66) and `qoder sites`
+  subcommands (1.1.73). Neither is a package seam and neither is claimed
+  observed. Model-tier notices (Performance renamed to Fast effective
+  2026-10-16; Lite removed 2026-09-18; Qoder IDE Quest window retired
+  2026-10-15) are recorded in the package model-routing guide.
+- **HOST READINESS: PENDING** is unchanged by this rescan; documentation is
+  not host observation.
 
 | Host route | Safe package artifact | Required host observation |
 | --- | --- | --- |
@@ -79,7 +110,7 @@ inspect before the next:
 1. After approval, open the host's **Plugins / Marketplace → Add local
    directory** GUI, choose the absolute release root containing
    `.qodercli-plugin/marketplace.json`, and wait.
-2. Inspect the version the marketplace actually displays. v1.3.5 is the
+2. Inspect the version the marketplace actually displays. v1.4.0 is the
    package version; do not infer host activation from this
    documentation or install in the discovery action. If the control or marketplace is absent, record the
    current host version/build and exact error as `UNAVAILABLE`, leave **HOST
@@ -192,8 +223,8 @@ Sampling, Prompts, or Resources capability remains explicitly `unavailable`.
 Secret material is rejected. Native checkpoints cannot cover external files
 or advance the run ledger, and every receipt remains non-promoting.
 
-`.qodercli/settings.json` is the shareable non-secret project scope;
-`.qodercli/settings.local.json` is local/machine scope and must remain ignored
+For the current documented `qoder` CLI, `.qoder/settings.json` is the shareable non-secret project scope;
+`.qoder/settings.local.json` is local/machine scope and must remain ignored
 and unstaged; secrets must never be committed. Repeating safe package checks
 preserves both files and does not write host configuration.
 

@@ -13,7 +13,7 @@ acceptance criteria: observable pass/fail conditions
 proof surface: test, CLI, API, browser, or host session
 ```
 
-`skills/qoder-ulw-plan/` teaches the planning role to preserve uncertainty as a decision rather than silently inventing it. It maps to Qoder IDE **Quest mode**, which auto-generates a technical design/spec for the stated goal. `skills/qoder-start-work/` assumes that a plan has already identified the acceptance criteria and runs inside Qoder IDE **Agent mode + Subagents**. This is why planning and execution are separate files and separate host actions.
+`skills/qoder-ulw-plan/` teaches the planning role to preserve uncertainty as a decision rather than silently inventing it. The IDE Quest window was retired in 1.34.0; this package planning workflow does not depend on it. `skills/qoder-start-work/` assumes that a plan has already identified the acceptance criteria and runs inside Qoder IDE **Agent mode + Subagents**. This is why planning and execution are separate files and separate host actions.
 
 ## From request to records
 

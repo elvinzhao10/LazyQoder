@@ -1,7 +1,7 @@
 ---
 name: lazy-ulw-plan
 version: 1.0.0
-description: "Strategic planning consultant for Qoder IDE. Produces one decision-complete work plan from vague or large requests. Explore-first, asks only genuine owner-decisions. Maps to Qoder IDE Quest mode (auto tech-design/spec)."
+description: "Strategic planning consultant for Qoder IDE. Produces one decision-complete work plan from vague or large requests. Explore-first, asks only genuine owner-decisions."
 ---
 
 # ulw-plan

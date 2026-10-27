@@ -75,15 +75,28 @@ typed JSON on stderr and exit nonzero before publication.
 
 ## Public-document boundary
 
-The policy follows Qoder's public [Overview](https://www.qoder.cn/docs/qoder/Overview),
-[Permission Modes](https://www.qoder.cn/docs/qoder/From-Beginner-to-Expert-Guide/Function-Description/Permission-Modes),
-[Memory](https://www.qoder.cn/docs/qoder/From-Beginner-to-Expert-Guide/Function-Description/Memory),
-[Skills](https://www.qoder.cn/docs/qoder/From-Beginner-to-Expert-Guide/Function-Description/Skills-Market),
-[MCP guide](https://www.qoder.cn/docs/qoder/From-Beginner-to-Expert-Guide/Function-Description/MCP-Guide),
-[Connectors](https://www.qoder.cn/docs/qoder/From-Beginner-to-Expert-Guide/Function-Description/Connector),
-[Experts](https://www.qoder.cn/docs/qoder/From-Beginner-to-Expert-Guide/Function-Description/Expert-Center),
-[Automations](https://www.qoder.cn/docs/qoder/From-Beginner-to-Expert-Guide/Function-Description/Automation-Guide),
-and [Assistant](https://www.qoder.cn/docs/qoder/From-Beginner-to-Expert-Guide/Function-Description/Assistant).
-Those pages document UI behavior and status concepts. They do not document a
-stable task/artifact/memory/Skills/Connector/Expert/Automation/Assistant
-observation API for this package. Accordingly, the boundary never invents one.
+Rescanned 2026-10-18: the former `www.qoder.cn`/`www.qoder.ai`
+"From-Beginner-to-Expert-Guide" pages this section cited now return 404, and
+`www.qodercli.ai` no longer resolves. The current public set lives under
+`docs.qoder.com`. The policy follows Qoder's public
+[Overview](https://docs.qoder.com/qoder/overview),
+[Access permissions](https://docs.qoder.com/qoder/approval-and-sandbox),
+[Memory](https://docs.qoder.com/qoder/memory),
+[Skills](https://docs.qoder.com/qoder/skills),
+[MCP guide](https://docs.qoder.com/user-guide/chat/model-context-protocol),
+[Connectors](https://docs.qoder.com/qoder/connectors),
+[Experts](https://docs.qoder.com/user-guide/editor/experts-mode),
+and [Automations](https://docs.qoder.com/qoder/automations).
+No current dedicated Assistant page was located in the 2026-10-18 rescan, so
+the Assistant surface keeps its descriptor-only boundary without a page
+citation. Those pages document UI behavior and status concepts. They do not
+document a stable task/artifact/memory/Skills/Connector/Expert/Automation/
+Assistant observation API for this package. Accordingly, the boundary never
+invents one.
+
+One drift is recorded, not adopted: the current Access permissions page
+documents three app modes — Ask for approval (default), Auto approve, and
+Full access — while this contract's persisted permission-mode descriptor
+still enumerates `default` and `full-access`. Extending the enumeration
+requires a current-session observation of the third mode; vendor prose alone
+does not change the strict parser.

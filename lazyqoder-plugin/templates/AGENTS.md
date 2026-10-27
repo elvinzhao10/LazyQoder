@@ -73,8 +73,8 @@ session as the next action. Inside a Qoder CLI session, the interactive
 `--plugin-dir
 <absolute-release-root>` is development/testing only, never persistent.
 
-`.qodercli/settings.json` is shareable non-secret project scope.
-`.qodercli/settings.local.json` is ignored local/machine scope and must remain
+For the current documented `qoder` CLI, `.qoder/settings.json` is shareable non-secret project scope.
+`.qoder/settings.local.json` is ignored local/machine scope and must remain
 unstaged; secrets must never be committed.
 
 ## Qoder CLI route

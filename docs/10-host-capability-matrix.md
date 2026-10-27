@@ -4,9 +4,9 @@ LazyQoder deliberately aligns policy and package safety across hosts while keepi
 
 ## Onboarding baseline
 
-## v1.3.5 evidence boundary
+## v1.4.0 evidence boundary
 
-The v1.3.5 documentation covers `qodercli-cli`, `qodercli-ide`, and
+The v1.4.0 documentation covers `qodercli-cli`, `qodercli-ide`, and
 `qoder`; no current host activation is claimed. Marketplace is the default full-plugin route for Qoder CLI and
 the Qoder app. The Skills/manual-MCP route is recovery-only and mutually exclusive
 with a full-plugin route in the same project.
@@ -79,8 +79,8 @@ proves host readiness.
 For the Qoder IDE GUI alternative, wait for marketplace discovery, install
 as a separate action, then fully restart before inspecting a fresh session.
 
-`.qodercli/settings.json` is shareable non-secret project scope.
-`.qodercli/settings.local.json` is ignored local/machine scope and remains
+For the current documented `qoder` CLI, `.qoder/settings.json` is shareable non-secret project scope.
+`.qoder/settings.local.json` is ignored local/machine scope and remains
 unstaged; secrets must never be committed. Package checks preserve both.
 
 ## Structural differences

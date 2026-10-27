@@ -2,12 +2,12 @@
 
 LazyQoder supports its documented CLI and IDE/app hosts. Automated package checks run in CI on Ubuntu and macOS as defined by the workflows; the supplied live-host reports are historical macOS observations. No current-session host activation is established. Package files, host settings, credentials, marketplace state, and live sessions remain separate authorities.
 
-See [the current platform audit](docs/reference/platform-status-2026-10-02.md)
+See [the current platform audit](docs/reference/platform-status-2026-10-27.md)
 for version-specific native features and legacy route limits.
 
-## Current documentation release: v1.3.5
+## Current documentation release: v1.4.0
 
-This package version is v1.3.5.
+This package version is v1.4.0.
 Historical releases and rollback assets are listed on the repository's Releases page.
 The route IDs are
 `qodercli-cli`, `qodercli-ide`, and `qoder`. v2 native modes are
@@ -215,8 +215,8 @@ command, agent, hook, and all six MCP connections, may report host ready.
 
 ## Qoder CLI project-local configuration
 
-`.qodercli/settings.json` may hold shareable, non-secret project defaults.
-`.qodercli/settings.local.json` is local/machine scope and must remain ignored
+For the current documented `qoder` CLI, `.qoder/settings.json` may hold shareable, non-secret project defaults.
+`.qoder/settings.local.json` is local/machine scope and must remain ignored
 and unstaged; secrets must never be committed. Package checks and repeated safe
 setup preserve both files and do not write host configuration.
 
