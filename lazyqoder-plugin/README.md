@@ -1,6 +1,18 @@
 # LazyQoder Plugin
 
-The package source in this worktree is v1.4.0. Package readiness does not prove native-host activation.
+The package source in this worktree is v1.4.0. Package readiness does not prove native-host activation. The repository root README links the 2026-10-27 platform audit.
+
+The status-dashboard server exposes seven tools: four status views,
+`dashboard_service`, `copy_task_context`, and typed `project` operations.
+The current dashboard provides a long-run monitor with separate execution and
+verification progress, timestamped activity trends, and a bounded searchable
+resource trace. Missing usage is shown as unreported. Health lists package
+Skills, MCP servers, hooks and agent definitions separately from observed host
+activity. Research supports revision-checked capture and SHA-256 evidence
+references; capture does not verify a finding. These are package capabilities,
+not proof of host integration or measured cost savings. The vendor manifest records dashboard source `62f3a0de` and tree SHA-256
+`b525d678…` at this audit; consult the manifest for the current pin.
+
 
 ## v1.4.0 installation
 
@@ -53,15 +65,13 @@ workspace. Only an explicitly verified lifecycle-owned sibling bootstrap lock
 or product `staging/`/`locks/` artifact is recoverable; never remove or replace
 caller workspace files.
 
-Route status is explicit: the local marketplace is the **documented Qoder CLI
-CLI route and the preferred Qoder CLI route whenever the CLI is
-available**. The Qoder app uses `.qoder-plugin/plugin.json` as its default
+Route status is explicit: the local marketplace is the **legacy `qodercli` marketplace route**, valid only for an identified matching build. Current `qoder` documents a separate local plugin installation route whose LazyQoder acceptance remains pending. The Qoder app uses `.qoder-plugin/plugin.json` as its default
 marketplace full-plugin route. `manual-skills-mcp-fallback` is recovery-only.
 None is current host proof until observed.
 
 ## Quick Start
 
-`.qodercli-plugin/plugin.json` is the documented Qoder CLI host entry point.
+`.qodercli-plugin/plugin.json` is the legacy CLI adapter entry point; current `qoder` documents `.qoder-plugin/plugin.json`.
 `.qoder-plugin/plugin.json` is the Qoder app marketplace source for Skills,
 commands, agents, hooks, and all six MCP servers. Package metadata remains
 pending until current build/session evidence is observed. Skills import/copy
@@ -218,8 +228,8 @@ are host-managed.
 
 ## Qoder CLI project-local configuration
 
-`.qodercli/settings.json` may be shared for non-secret project defaults.
-`.qodercli/settings.local.json` is local/machine scope and must remain ignored
+For the current documented `qoder` CLI, `.qoder/settings.json` may be shared for non-secret project defaults.
+`.qoder/settings.local.json` is local/machine scope and must remain ignored
 and unstaged; secrets must never be committed. Repeating the local marketplace
 route or package readiness checks preserves both files and does not write host
 configuration.

@@ -8,7 +8,7 @@ Create a decision-complete work plan. The planner explores the codebase, researc
 
 ## Qoder IDE mapping
 
-LazyQoder's decision-complete planning primitive maps to **Qoder IDE Quest mode** (auto tech-design/spec). The `lazy-ulw-plan` skill produces an explicit, human-reviewable plan document that mirrors the structured spec Quest mode generates.
+The `lazy-ulw-plan` skill produces an explicit, human-reviewable plan. Qoder IDE retired the Quest window in 1.34.0; this package workflow does not depend on it.
 
 ## Usage
 

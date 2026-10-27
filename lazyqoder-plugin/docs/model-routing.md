@@ -21,7 +21,7 @@ specific model or a quality guarantee. Qoder CLI documents model aliases in
 Subagent frontmatter. Qoder IDE documentation does not: it shows a current
 `[ModelName](modelId)` value or omission to inherit the conversation, with a
 user selecting a role model in the host's model-selection UI. (The Qoder IDE
-Quest window was retired on 2026-10-15; the Editor window and the Qoder app
+Quest window was retired in IDE 1.34.0 on 2026-10-16; the Editor window and the Qoder app
 remain the IDE-side selection surfaces.) Therefore these literal aliases
 are CLI-scoped plan options. For IDE/app routes they are advisory task
 classes until the current UI shows a valid selection; package metadata alone

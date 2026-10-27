@@ -1,6 +1,10 @@
 # Changelog
 
-## [1.4.0] - 2026-10-19 — completion pass (isolation, rescan, repin)
+## [1.4.0] — platform audit 2026-10-27
+
+Refresh current Qoder release and configuration guidance, remove retired IDE Quest mappings, and record documented versus unobserved plugin, hook and MCP boundaries. Host readiness remains pending; see the [platform audit](docs/reference/platform-status-2026-10-27.md) for source links.
+
+## [1.4.0] - 2026-10-19 — historical completion pass (isolation, rescan, repin)
 
 Complete the 1.4.0 surfaces on the Qoder side: the family-wide per-repo store isolation and foreign-runtime refusal matrix (2992f03); the reconciled served-project truth stating the live git view explicitly (`/api/project/git`, 200 behind the session, vendored local collector; run-side links stay `repo_head`/`content_revision`) (6fbaa7f); the conservative Qoder rescan outcome — capability observations refreshed, no unobserved capability claimed (e6de762); and the family repin at source revision `bb696092` — dashboard tree `e55a9c00…`, project tree `16561f3…` — carrying the family's completed project-dashboard UI (dark-first tokens v2, de-tabbed sidebar shell with in-place navigation, six redesigned views, navigation guards, held performance budgets) into this package byte-identically (b03e345). Host embedding, chat handoff, and wake stay unobserved; host readiness stays pending; the known wall-clock telemetry flake is pre-existing. See RELEASE_NOTES.md "Completion pass (2026-10-19)".
 

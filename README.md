@@ -12,7 +12,7 @@ LazyQoder helps you use structured, evidence-based workflows in **Qoder CLI**, *
 and guidance; a host is only considered ready after it is observed in a fresh
 session.
 
-[Platform status](docs/reference/platform-status-2026-10-02.md) · [Get started](#recommended-install-with-ai-help) · [Host routes](#choose-one-route) ·
+[Platform status](docs/reference/platform-status-2026-10-27.md) · [Get started](#recommended-install-with-ai-help) · [Host routes](#choose-one-route) ·
 [1.4.0 notes](RELEASE_NOTES.md) · [Family](#lazyseries-family) · [Docs](docs/)
 
 > **Current package version: v1.4.0. HOST READINESS: PENDING.** Local checks and release
@@ -24,9 +24,9 @@ session.
 - A shared dashboard core is vendored in the package, with a native Qoder
   adapter (`lazyqoder-plugin/shared/dashboard-host/`) behind an authenticated
   loopback service and a browser UI.
-- The status-dashboard MCP server now exposes six tools: the four status views
-  plus `dashboard_service` and `copy_task_context`.
-- The completion pass repinned both vendored families at `bb696092`
+- The status-dashboard MCP server now exposes seven tools: the four status views
+  plus `dashboard_service`, `copy_task_context`, and the typed `project` tool.
+- The historical completion pass repinned both vendored families at `bb696092`
   (dashboard tree `e55a9c00…`, project tree `16561f3…`), carrying the
   family's redesigned project dashboard — dark-first family design language,
   a de-tabbed shell with a static retractable sidebar and in-place
@@ -60,10 +60,19 @@ claim is made.
 | v1.3.3 hardening | Host-specific hook, MCP and publication repairs. |
 | v1.3.4 maintenance | Transactional run integrity, safer lifecycle and native adapter repairs. |
 | v1.3.5 repairs | Real runtime exercises, bounded hooks, dependency updates and current platform guidance. |
-| v1.4.0 dashboard | Shared dashboard core vendored, native adapter with authenticated loopback service, six-tool status-dashboard MCP, honest capability labels. |
+| v1.4.0 dashboard | Shared dashboard core vendored, native adapter with authenticated loopback service, seven-tool status-dashboard MCP, honest capability labels. |
 | v1.4.0 completion | Repinned families at `bb696092` with the redesigned project dashboard (dark-first, sidebar shell, in-place navigation), per-repo isolation and refreshed capability observations. |
 
 ## Shared dashboard surface
+
+The current dashboard provides a long-run monitor with separate execution and
+verification progress, timestamped activity trends, and a bounded searchable
+resource trace. Missing usage is shown as unreported. Health lists package
+Skills, MCP servers, hooks and agent definitions separately from observed host
+activity. Research supports revision-checked capture and SHA-256 evidence
+references; capture does not verify a finding. These are package capabilities,
+not proof of host integration or measured cost savings. The vendor manifest records dashboard source `62f3a0de` and tree SHA-256
+`b525d678…` at this audit; consult the manifest for the current pin.
 
 The package ships a portable dashboard core
 (`lazyqoder-plugin/shared/dashboard/`, hash-pinned through
@@ -92,7 +101,8 @@ capability labels above.
 - The status-dashboard MCP server exposes `dashboard_service` (start, inspect,
   stop, or return the local browser dashboard entry) and `copy_task_context`
   (copy a validated native Qoder producer context without executing or
-  consuming it) alongside the four status views. The optional `port` argument
+  consuming it), and `project` (typed project operations) alongside the four
+  status views. The optional `port` argument
   is validated to integers from 1 to 65535 and expands safely under bash 3.2.
 - These are package capabilities. They do not change host readiness: embedding,
   chat handoff and wake remain unobserved, and **HOST READINESS: PENDING**

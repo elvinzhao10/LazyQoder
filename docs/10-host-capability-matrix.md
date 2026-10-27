@@ -79,8 +79,8 @@ proves host readiness.
 For the Qoder IDE GUI alternative, wait for marketplace discovery, install
 as a separate action, then fully restart before inspecting a fresh session.
 
-`.qodercli/settings.json` is shareable non-secret project scope.
-`.qodercli/settings.local.json` is ignored local/machine scope and remains
+For the current documented `qoder` CLI, `.qoder/settings.json` is shareable non-secret project scope.
+`.qoder/settings.local.json` is ignored local/machine scope and remains
 unstaged; secrets must never be committed. Package checks preserve both.
 
 ## Structural differences

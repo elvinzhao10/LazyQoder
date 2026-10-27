@@ -10,7 +10,7 @@ before assuming a command is available.
 | Situation | Start with | Outcome |
 | --- | --- | --- |
 | Need a map of an unfamiliar repository | `qoder-init-deep` | Hierarchical project memory and a `.lazyqoder/context/` knowledge base. Maps to Qoder IDE **RepoWiki** (auto, always-synced code wiki). |
-| Request is vague, large, or has design choices | `qoder-ulw-plan` | One decision-complete plan; it does not implement product code. Maps to Qoder IDE **Quest mode** (auto tech-design/spec). |
+| Request is vague, large, or has design choices | `qoder-ulw-plan` | One decision-complete plan; it does not implement product code. The retired IDE Quest window is not required. |
 | An approved plan is ready to execute | `qoder-start-work` | Orchestrated delegation, evidence, and review gates. Runs in Qoder IDE **Agent mode + Subagents**. |
 | Completion must stay open until criteria have proof | `qoder-ulw-loop` | Goals with binding success criteria and recorded evidence. Runs in Qoder IDE **Agent mode + Subagents**. |
 | A completed change needs independent review | `qoder-review-work` | Five review lanes: goal, QA, code, security, and context. Maps to Qoder IDE **Expert teams**. |

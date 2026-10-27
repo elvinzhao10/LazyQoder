@@ -1,10 +1,27 @@
 # LazyQoder v1.4.0 - shared dashboard surface and honest capability labels
 
+## Platform audit (2026-10-27)
+
+Official release histories list CLI 1.1.79 and IDE 1.36.0.
+Current settings paths and retired Quest guidance are corrected; the [audit](docs/reference/platform-status-2026-10-27.md)
+records extension gaps and the unverified host boundary. No host installation or
+activation was performed, and no efficiency improvement is claimed.
+
 A documentation and surface release across the LazySeries siblings. It vendors
 the family's shared dashboard core and documents the Qoder-native adapter
 without changing host-readiness boundaries.
 
-## Completion pass (2026-10-19)
+
+The current dashboard provides a long-run monitor with separate execution and
+verification progress, timestamped activity trends, and a bounded searchable
+resource trace. Missing usage is shown as unreported. Health lists package
+Skills, MCP servers, hooks and agent definitions separately from observed host
+activity. Research supports revision-checked capture and SHA-256 evidence
+references; capture does not verify a finding. These are package capabilities,
+not proof of host integration or measured cost savings. The vendor manifest records dashboard source `62f3a0de` and tree SHA-256
+`b525d678…` at this audit; consult the manifest for the current pin.
+
+## Completion pass (2026-10-19, historical)
 
 A scoped completion pass over the 1.4.0 surfaces; every bullet cites the
 branch commit that delivers it.
@@ -64,10 +81,11 @@ branch commit that delivers it.
   covered by an adapter suite: edits stay pending until an exact revision is
   consumed, a distinct independent verifier proves them, queue persistence
   never executes work, and the owned loopback lifecycle emits signed receipts.
-- The status-dashboard MCP server exposes six tools: the four status views
+- The status-dashboard MCP server exposes seven tools: the four status views
   plus `dashboard_service` (start, inspect, stop, or return the local browser
   dashboard entry) and `copy_task_context` (copy a validated native Qoder
-  producer context without executing or consuming it).
+  producer context without executing or consuming it), and `project` (typed
+  project operations).
 - The optional `dashboard_service` port argument is validated to integers from
   1 to 65535 and expands safely under bash 3.2 (guarded expansion
   `${PORT_ARGS[@]+…}`); the no-port case keeps the default binding and is

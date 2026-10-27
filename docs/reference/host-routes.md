@@ -223,8 +223,8 @@ Sampling, Prompts, or Resources capability remains explicitly `unavailable`.
 Secret material is rejected. Native checkpoints cannot cover external files
 or advance the run ledger, and every receipt remains non-promoting.
 
-`.qodercli/settings.json` is the shareable non-secret project scope;
-`.qodercli/settings.local.json` is local/machine scope and must remain ignored
+For the current documented `qoder` CLI, `.qoder/settings.json` is the shareable non-secret project scope;
+`.qoder/settings.local.json` is local/machine scope and must remain ignored
 and unstaged; secrets must never be committed. Repeating safe package checks
 preserves both files and does not write host configuration.
 
