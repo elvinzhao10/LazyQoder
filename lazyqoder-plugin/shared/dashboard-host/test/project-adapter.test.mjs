@@ -271,7 +271,8 @@ test('project telemetry records from Qoder journal/CAS evidence and never invent
     const gateState = JSON.parse(await readFile(f.statePath, 'utf8'));
     assert.equal(gateState.human_gates[0].status, 'pending');
 
-    const observed = await f.project('observe', ['--run-id', 'probe', '--stale-after-ms', '1000']);
+    const observedAt = new Date(Date.now() + 60_000).toISOString();
+    const observed = await f.project('observe', ['--run-id', 'probe', '--stale-after-ms', '1000', '--observed-at', observedAt]);
     assert.equal(observed.code, 0, observed.stderr);
     const outcome = JSON.parse(observed.stdout);
     assert.deepEqual(outcome.recorded.sort(), ['observation:attempt:probe:executor:killed',
