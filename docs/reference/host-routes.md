@@ -1,5 +1,7 @@
 # Host routes
 
+Current CLI documentation uses `qoder plugins install`, `.qoder-plugin/plugin.json` and `/plugins reload`. The `qodercli`/`.qodercli-plugin` instructions below describe the historical adapter only; use the selected current build's [official plugin guide](https://docs.qoder.com/cli/plugins) and verify discovery. The package does not silently rename or migrate host configuration.
+
 ## v1.4.0 route and host readiness
 
 This guide is the v1.4.0 documentation boundary for `qodercli-cli`,
