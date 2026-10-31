@@ -1,6 +1,18 @@
 # LazyQoder Plugin
 
-The package source in this worktree is v1.4.0. Package readiness does not prove native-host activation. The repository root README links the 2026-10-27 platform audit.
+## Unreleased 1.4.1 — verification, history and scale
+
+The combined former 1.4.1 and 1.4.2 scope is implemented in this development branch. Package metadata and the published baseline remain **1.4.0**; this PR does not publish a release. Live-host acceptance is **deferred by the maintainer as of 2026-10-30**, and remains pending.
+
+- Retain versioned verification scenarios, compare attempts by their source/criterion/plan subject, and promote an observed failure into an unverified regression scenario.
+- Bind rerun review to the exact plan, criterion and captured source. Pending, rejected, stale and used approvals cannot authorize another native attempt; independent verification remains required.
+- Inspect checkpoint/decision history through authenticated, paginated reads. Deduplicate identical runtime events with transactional recovery while retaining the original ledger and failed attempts.
+- Preserve first-review plan bytes, correct legacy review-state updates, and harden owned-process cleanup against PID reuse and exit races.
+- Reduce repeated replay and unnecessary review-source capture in measured local cases. These measurements do not establish whole-task latency, token or cost savings.
+
+See the [1.4.1 completion and validation record](docs/verification/1.4.1-completion.md) and [usage/contracts](docs/verification/1.4.1-verification-history.md).
+
+The package source in this worktree is v1.4.0. Package readiness does not prove native-host activation. The repository root README links the 2026-10-30 platform audit.
 
 The status-dashboard server exposes seven tools: four status views,
 `dashboard_service`, `copy_task_context`, and typed `project` operations.
@@ -10,8 +22,7 @@ resource trace. Missing usage is shown as unreported. Health lists package
 Skills, MCP servers, hooks and agent definitions separately from observed host
 activity. Research supports revision-checked capture and SHA-256 evidence
 references; capture does not verify a finding. These are package capabilities,
-not proof of host integration or measured cost savings. The vendor manifest records dashboard source `62f3a0de` and tree SHA-256
-`b525d678…` at this audit; consult the manifest for the current pin.
+not proof of host integration or measured cost savings. The pinned dashboard and project provenance is recorded in `shared/dashboard.vendor.json` and `shared/project.vendor.json`.
 
 
 ## v1.4.0 installation
