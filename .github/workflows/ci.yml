@@ -66,6 +66,8 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --fund=false
       - name: Run package verification
         run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
+      - name: Shared dashboard and project adapter regressions
+        run: node --test --test-concurrency=2 lazyqoder-plugin/shared/dashboard-host/test/*.test.mjs
       - name: Run targeted execution isolation, outcome evaluator, and model routing contracts
         run: node --test lazyqoder-plugin/tests/execution-isolation.test.js lazyqoder-plugin/contracts/tests/outcome-evaluation.test.js lazyqoder-plugin/tests/model-routing.test.js
       - name: Run publication verification
@@ -93,6 +95,8 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --fund=false
       - name: Run package verification
         run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
+      - name: Shared dashboard and project adapter regressions
+        run: node --test --test-concurrency=2 lazyqoder-plugin/shared/dashboard-host/test/*.test.mjs
       - name: Run targeted execution isolation, outcome evaluator, and model routing contracts
         run: node --test lazyqoder-plugin/tests/execution-isolation.test.js lazyqoder-plugin/contracts/tests/outcome-evaluation.test.js lazyqoder-plugin/tests/model-routing.test.js
 
@@ -118,6 +122,8 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --fund=false
       - name: Run timing-sensitive lifecycle regressions
         run: bash lazyqoder-plugin/scripts/lazyqoder-verify.sh
+      - name: Shared dashboard and project adapter regressions
+        run: node --test --test-concurrency=2 lazyqoder-plugin/shared/dashboard-host/test/*.test.mjs
       - name: Run model routing contracts
         run: node --test lazyqoder-plugin/tests/model-routing.test.js
 

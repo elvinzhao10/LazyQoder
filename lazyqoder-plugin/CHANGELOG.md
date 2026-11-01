@@ -1,5 +1,23 @@
 # LazyQoder Plugin Changelog
 
+## [1.4.1] — 2026-11-01
+
+Prepare the combined verification/history/scale release, native adapter guidance and consistent runtime/MCP identities. See the root release notes and 1.4.1 integration guide. Model-driven host acceptance remains deferred.
+
+### Verification, history and scale
+
+Release **1.4.1** combines the former 1.4.1 and 1.4.2 verification, history and scale scope. Live-host acceptance is **deferred by the maintainer as of 2026-10-30**, and remains pending.
+
+- Retain versioned verification scenarios, compare attempts by their source/criterion/plan subject, and promote an observed failure into an unverified regression scenario.
+- Bind rerun review to the exact plan, criterion and captured source. Pending, rejected, stale and used approvals cannot authorize another native attempt; independent verification remains required.
+- Inspect checkpoint/decision history through authenticated, paginated reads. Deduplicate identical runtime events with transactional recovery while retaining the original ledger and failed attempts.
+- Preserve first-review plan bytes, correct legacy review-state updates, and harden owned-process cleanup against PID reuse and exit races.
+- Reduce repeated replay and unnecessary review-source capture in measured local cases. These measurements do not establish whole-task latency, token or cost savings.
+
+The current qoder CLI and legacy qodercli adapters remain distinct. The current .qoder-plugin manifest is shipped; no command is silently translated between executables. Native hook delivery requires the selected build.
+
+See the [1.4.1 completion record](docs/verification/1.4.1-completion.md).
+
 ## [1.4.0] — platform audit 2026-10-27
 
 Refresh current Qoder release and configuration guidance, remove retired IDE Quest mappings, and record documented versus unobserved plugin, hook and MCP boundaries. Host readiness remains pending; see the repository platform audit for source links.
