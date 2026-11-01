@@ -3,9 +3,13 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const RELEASE_VERSION = '1.4.0';
-const PREVIOUS_VERSION = '1.3.5';
+const RELEASE_VERSION = '1.4.1';
+const PREVIOUS_VERSION = '1.4.0';
 const VERSION_JSON_PATHS = [
+  [".qoder/marketplace.json", ["plugins", 0, "version"]],
+  [".qodercli-plugin/marketplace.json", ["plugins", 0, "version"]],
+  ["lazyqoder-plugin/contracts/marketplace-route-contract.v1.json", ["version"]],
+  ["lazyqoder-plugin/contracts/lazyqoder-machine-status.v2.schema.json", ["properties", "version", "const"]],
   ['lazyqoder-plugin/.qodercli-plugin/plugin.json', ['version']],
   ['lazyqoder-plugin/.qoder-plugin/plugin.json', ['version']],
   ['.qoder-plugin/marketplace.json', ['plugins', 0, 'version']],

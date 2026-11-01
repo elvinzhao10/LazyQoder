@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "1.4.0",
+  "version": "1.4.1",
   "identity": {
     "marketplace": "lazyqoder",
     "owner": "LazyQoder",
@@ -8,9 +8,9 @@
     "qodercli_install_id": "lazyqoder@lazyqoder"
   },
   "artifacts": {
-    ".qoder-plugin/marketplace.json": "4b526fe7c8f636981cf2086a79edb8b197e4cf2ed4ddce7c22f2513aaf1eb811",
-    "lazyqoder-plugin/.qodercli-plugin/plugin.json": "35ac8efc0da3af2fa78eaeebe5196fb241c597731a4b5190207ea7013a3459bb",
-    "lazyqoder-plugin/.qoder-plugin/plugin.json": "0416de80148245cd507439c2a565ac83e4c244cbb421ffb75c288d286d3e9c43"
+    ".qoder-plugin/marketplace.json": "17448377cd64ff5a040f30d2da2e81fec0ccecc94c6e272bcfc32274b72f479b",
+    "lazyqoder-plugin/.qodercli-plugin/plugin.json": "5967a1cde28777c70ef17c5e159fcfc305a7c7a3b81a525c80e37b73e1500382",
+    "lazyqoder-plugin/.qoder-plugin/plugin.json": "a2ca39e54f393c85235875c6a0081fce73f2193673cb3cbac5e353456d0d6a92"
   },
   "payload": {
     "roots": [
@@ -24,7 +24,7 @@
       ".mcp.json"
     ],
     "file_count": 71,
-    "inventory_sha256": "b31bde6d69647dd6f3d8ad2377d92f11599fe5d75a5b6d6e29557bfdb941bc62"
+    "inventory_sha256": "74ec926fee103cc07813772bd8c6f51da5e5fa16d6c4eaf4ce78397d19176783"
   },
   "default_routes": {
     "qodercli-ide": "qodercli-marketplace",

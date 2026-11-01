@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.1] — Unreleased
+
+Prepare the combined verification/history/scale release, align package/runtime versions, document current native app routes and preserve deferred live acceptance. Current Qoder uses .qoder-plugin/plugin.json and qoder plugins install; the .qodercli-plugin route remains for older builds. Keep the selected client and scope explicit. Both manifests share the packaged commands, agents, hooks and MCP payload.
+
 ## Unreleased 1.4.1 — verification, history and scale
 
 The combined former 1.4.1 and 1.4.2 scope is implemented in this development branch. Package metadata and the published baseline remain **1.4.0**; this PR does not publish a release. Live-host acceptance is **deferred by the maintainer as of 2026-10-30**, and remains pending.
